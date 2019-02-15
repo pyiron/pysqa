@@ -29,7 +29,6 @@ setup(
     keywords='pysqa',
     packages=find_packages(exclude=["*tests*"]),
     install_requires=['defusedxml',
-                      'importlib',
                       'jinja2',
                       'pandas',
                       'pyyaml'],
