@@ -290,7 +290,7 @@ class QueueAdapter(object):
             queue_lst_dict (dict):
             directory (str):
         """
-        for queue_name, queue_dict in queue_lst_dict.items():
+        for queue_dict in queue_lst_dict.values():
             with open(os.path.join(directory, queue_dict['script']), 'r') as f:
                 queue_dict['template'] = Template(f.read())
 
