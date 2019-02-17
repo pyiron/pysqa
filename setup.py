@@ -2,10 +2,11 @@
 Setuptools based setup module
 """
 from setuptools import setup, find_packages
+import versioneer
 
 setup(
     name='pysqa',
-    version='0.0.1',
+    version=versioneer.get_version(),
     description='pysqa - simple queue adapter',
     long_description='https://github.com/pysqa/pysqa',
 
@@ -32,4 +33,5 @@ setup(
                       'jinja2',
                       'pandas',
                       'pyyaml'],
+    cmdclass=versioneer.get_cmdclass(),
     )
