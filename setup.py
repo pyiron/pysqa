@@ -33,6 +33,6 @@ setup(
                       'jinja2',
                       'pandas',
                       'pyyaml'],
-    data_files = [("", ["LICENSE"])]
+    data_files = [("", ["LICENSE"])],
     cmdclass=versioneer.get_cmdclass(),
     )
