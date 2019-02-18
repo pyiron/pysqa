@@ -15,7 +15,7 @@ matrix:
         - conda install -y -c conda-forge python=${PYTHONVER} coverage defusedxml pandas yaml jinja2
         - pip install --pre .
       script:
-        - coverage run -m unittest discover tests --omit pysqa/_version.py
+        - coverage run --omit pysqa/_version.py -m unittest discover tests
 
     - name: test_linux_3_7
       os: linux
@@ -31,7 +31,7 @@ matrix:
         - conda install -y -c conda-forge python=${PYTHONVER} coverage coveralls defusedxml pandas yaml jinja2
         - pip install --pre .
       script:
-        - coverage run -m unittest discover tests --omit pysqa/_version.py
+        - coverage run --omit pysqa/_version.py -m unittest discover tests
       after_success:
         - coveralls
         - coverage xml
@@ -65,7 +65,7 @@ matrix:
         - conda install -y -c conda-forge python=${PYTHONVER} coverage defusedxml pandas yaml jinja2
         - pip install --pre .
       script:
-        - coverage run -m unittest discover tests --omit pysqa/_version.py
+        - coverage run --omit pysqa/_version.py -m unittest discover tests
 
     - name: test_osx_3_7
       os: osx
@@ -81,4 +81,4 @@ matrix:
         - conda install -y -c conda-forge python=${PYTHONVER} coverage defusedxml pandas yaml jinja2
         - pip install --pre .
       script:
-        - coverage run -m unittest discover tests --omit pysqa/_version.py
+        - coverage run --omit pysqa/_version.py -m unittest discover tests
