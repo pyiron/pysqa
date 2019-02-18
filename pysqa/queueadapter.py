@@ -19,6 +19,32 @@ __date__ = "Feb 9, 2019"
 
 
 class QueueAdapter(object):
+    """
+    The goal of the QueueAdapter class is to make submitting to a queue system as easy as starting another sub process
+    locally.
+
+    Args:
+        directory (str): directory containing the queue.yaml files as well as corresponding jinja2 templates for the
+                         individual queues.
+
+    Attributes:
+
+        .. attribute:: config
+
+            QueueAdapter configuration read from the queue.yaml file.
+
+        .. attribute:: queue_list
+
+            List of available queues
+
+        .. attribute:: queue_view
+
+            Pandas DataFrame representation of the available queues, read from queue.yaml.
+
+        .. attribute:: queues
+
+            Queues available for auto completion QueueAdapter().queues.<queue name> returns the queue name.
+    """
     def __init__(self, directory='.'):
         self._config = self._read_config(file_name=os.path.join(directory, 'queue.yaml'))
         self._fill_queue_dict(queue_lst_dict=self._config['queues'])
@@ -338,6 +364,10 @@ class QueueAdapter(object):
 
 
 class Queues(object):
+    """
+    Queues is an abstract class simply to make the list of queues available for auto completion. This is mainly used in
+    interactive environments like jupyter.
+    """
     def __init__(self, list_of_queues):
         self._list_of_queues = list_of_queues
 
