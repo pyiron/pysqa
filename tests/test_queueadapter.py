@@ -4,7 +4,7 @@
 import os
 import pandas
 import unittest
-from pysqa.queueadapter import QueueAdapter
+from pysqa import QueueAdapter
 
 __author__ = "Jan Janssen"
 __copyright__ = "Copyright 2019, Jan Janssen"
