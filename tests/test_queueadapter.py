@@ -25,6 +25,9 @@ class TestRunmode(unittest.TestCase):
         cls.sge = QueueAdapter(directory=os.path.join(cls.path, 'config/sge'))
         cls.moab = QueueAdapter(directory=os.path.join(cls.path, 'config/moab'))
 
+    def test_missing_config(self):
+        self.assertRaises(ValueError, QueueAdapter, directory=os.path.join(self.path, 'config/error'))
+
     def test_config(self):
         self.assertEqual(self.torque.config['queue_type'], 'TORQUE')
         self.assertEqual(self.slurm.config['queue_type'], 'SLURM')
@@ -55,6 +58,7 @@ class TestRunmode(unittest.TestCase):
         template = "#!/bin/bash\n#BSUB -q queue\n#BSUB -J job.py\n#BSUB -o time.out\n#BSUB -n 10\n#BSUB -cwd .\n" \
                    "#BSUB -e error.out\n#BSUB -W 259200\n\npython test.py"
         self.assertEqual(self.lsf._job_submission_template(command='python test.py'), template)
+        self.assertRaises(ValueError, self.sge._job_submission_template, command='python test.py', queue='notavailable')
 
     def test_interfaces(self):
         self.assertEqual(self.sge._commands.submit_job_command, ['qsub', '-terse'])
@@ -85,3 +89,10 @@ class TestRunmode(unittest.TestCase):
         df = pandas.DataFrame({'jobid': pandas.to_numeric(df_merge.jobid), 'user': df_merge.user,
                                'jobname': df_merge.jobname, 'status': df_merge.status})
         self.assertTrue(df.equals(self.sge._commands.convert_queue_status(queue_status_output=content)))
+
+    def test_queue_list(self):
+        self.assertEqual(sorted(self.sge.queue_list), ['impi_hy', 'impi_hydra', 'impi_hydra_cmfe', 'impi_hydra_small'])
+
+    def test_queues(self):
+        self.assertEqual(self.sge.queues.impi_hydra, 'impi_hydra')
+        self.assertEqual(sorted(dir(self.sge.queues)), ['impi_hy', 'impi_hydra', 'impi_hydra_cmfe', 'impi_hydra_small'])

@@ -1,0 +1,5 @@
+queue_type: Error
+queue_primary: error
+queues:
+  lsf: {cores_max: 100, cores_min: 10, run_time_max: 259200, script: lsf.sh}
+

@@ -41,6 +41,7 @@ class QueueAdapter(object):
         else:
             raise ValueError()
         self._commands = getattr(importlib.import_module(module_name), class_name)()
+        self._queues = Queues(self.queue_list)
 
     @property
     def config(self):
@@ -68,6 +69,10 @@ class QueueAdapter(object):
             pandas.DataFrame:
         """
         return pandas.DataFrame(self._config['queues']).T.drop(['script', 'template'], axis=1)
+
+    @property
+    def queues(self):
+        return self._queues
 
     def submit_job(self, queue=None, job_name=None, working_directory=None, cores=None, memory_max=None,
                    run_time_max=None, command=None):
@@ -330,3 +335,17 @@ class QueueAdapter(object):
             if value_max is not None:
                 return value_max
             return value
+
+
+class Queues(object):
+    def __init__(self, list_of_queues):
+        self._list_of_queues = list_of_queues
+
+    def __getattr__(self, item):
+        if item in self._list_of_queues:
+            return item
+        else:
+            raise AttributeError
+
+    def __dir__(self):
+        return self._list_of_queues
