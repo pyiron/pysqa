@@ -4,6 +4,7 @@
 import os
 import pandas
 import unittest
+import getpass
 from pysqa import QueueAdapter
 
 __author__ = "Jan Janssen"
@@ -96,3 +97,14 @@ class TestRunmode(unittest.TestCase):
     def test_queues(self):
         self.assertEqual(self.sge.queues.impi_hydra, 'impi_hydra')
         self.assertEqual(sorted(dir(self.sge.queues)), ['impi_hy', 'impi_hydra', 'impi_hydra_cmfe', 'impi_hydra_small'])
+        with self.assertRaises(AttributeError):
+            _ = self.sge.queues.notavailable
+
+    def test_get_user(self):
+        self.assertEqual(self.sge._get_user(), getpass.getuser())
+
+    def test_check_queue_parameters(self):
+        self.assertEqual((1, 604800, None), self.sge.check_queue_parameters(queue='impi_hydra_small'))
+
+    def test_queue_view(self):
+        self.assertIsInstance(self.slurm.queue_view, pandas.DataFrame)
