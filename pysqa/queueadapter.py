@@ -45,7 +45,7 @@ class QueueAdapter(object):
 
             Queues available for auto completion QueueAdapter().queues.<queue name> returns the queue name.
     """
-    def __init__(self, directory='.'):
+    def __init__(self, directory='~/.queues'):
         self._config = self._read_config(file_name=os.path.join(directory, 'queue.yaml'))
         self._fill_queue_dict(queue_lst_dict=self._config['queues'])
         self._load_templates(queue_lst_dict=self._config['queues'], directory=directory)
