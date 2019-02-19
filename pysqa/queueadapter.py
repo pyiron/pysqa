@@ -126,7 +126,10 @@ class QueueAdapter(object):
             f.writelines(queue_script)
         out = self._execute_command(commands_lst=self._commands.submit_job_command + [queue_script_path],
                                     working_directory=working_directory, split_output=False)
-        return int(out)
+        if out is not None:
+            return int(out)
+        else:
+            return None
 
     def enable_reservation(self, process_id):
         """
@@ -137,8 +140,12 @@ class QueueAdapter(object):
         Returns:
             str:
         """
-        return self._execute_command(commands_lst=self._commands.enable_reservation_command + [str(process_id)],
-                                     split_output=True)[0]
+        out = self._execute_command(commands_lst=self._commands.enable_reservation_command + [str(process_id)],
+                                    split_output=True)
+        if out is not None:
+            return out[0]
+        else:
+            return None
 
     def delete_job(self, process_id):
         """
@@ -149,8 +156,12 @@ class QueueAdapter(object):
         Returns:
             str:
         """
-        return self._execute_command(commands_lst=self._commands.delete_job_command + [str(process_id)],
-                                     split_output=True)[0]
+        out = self._execute_command(commands_lst=self._commands.delete_job_command + [str(process_id)],
+                                    split_output=True)
+        if out is not None:
+            return out[0]
+        else:
+            return None
 
     def get_queue_status(self, user=None):
         """
