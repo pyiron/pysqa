@@ -57,7 +57,10 @@ Delete a job from the queuing sytem:
 pysqa is released under the BSD license https://github.com/pysqa/pysqa/blob/master/LICENSE . It is a spin-off of the pyiron project https://github.com/pyiron/pyiron therefore if you use pysqa for your publication, please cite: 
 
     @article{pyiron-paper,
-       author={Jan Janssen and Sudarsan Surendralal and Yury Lysogorskiy and Mira Todorova and Tilmann Hickel and Ralf Drautz and Jörg Neugebauer},
-       title={pyiron: An integrated development environment for computational materials science},
-       year={2018}
+        author={Jan Janssen and Sudarsan Surendralal and Yury Lysogorskiy and Mira Todorova and Tilmann Hickel and Ralf Drautz and Jörg Neugebauer},
+        title={pyiron: An integrated development environment for computational materials science},
+        journal={Computational Materials Science},
+        volume={161},
+        url={https://doi.org/10.1016/j.commatsci.2018.07.043},
+        year={2018}
     }
