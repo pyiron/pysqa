@@ -7,7 +7,7 @@ from jinja2 import Template
 import os
 import pandas
 import subprocess
-from yaml import load
+import yaml
 
 __author__ = "Jan Janssen"
 __copyright__ = "Copyright 2019, Jan Janssen"
@@ -310,7 +310,7 @@ class QueueAdapter(object):
             dict:
         """
         with open(file_name, 'r') as f:
-            return load(f)
+            return yaml.load(f, Loader=yaml.FullLoader)
 
     @staticmethod
     def _fill_queue_dict(queue_lst_dict):
