@@ -27,7 +27,7 @@ class SlurmCommands(object):
 
     @property
     def get_queue_status_command(self):
-        return ['squeue --format "%A|%u|%t|%j" --noheader']
+        return ['squeue', '--format', '%A|%u|%t|%j', '--noheader']
 
     @staticmethod
     def convert_queue_status(queue_status_output):
