@@ -74,7 +74,7 @@ class TestRunmode(unittest.TestCase):
         self.assertEqual(self.lsf._commands.get_queue_status_command, ['qstat', '-x'])
         self.assertEqual(self.slurm._commands.submit_job_command, ['sbatch', '--parsable'])
         self.assertEqual(self.slurm._commands.delete_job_command, ['scancel'])
-        self.assertEqual(self.slurm._commands.get_queue_status_command, ['squeue'])
+        self.assertEqual(self.slurm._commands.get_queue_status_command, ['squeue', '--format', '%A|%u|%t|%j', '--noheader'])
         self.assertEqual(self.moab._commands.submit_job_command, ['msub'])
         self.assertEqual(self.moab._commands.delete_job_command, ['mjobctl', '-c'])
         self.assertEqual(self.moab._commands.get_queue_status_command, ['mdiag', '-x'])
