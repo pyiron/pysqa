@@ -33,6 +33,10 @@ class SlurmCommands(object):
         return ['squeue', '--format', '%A|%u|%t|%j', '--noheader']
 
     @staticmethod
+    def get_job_id_from_output(queue_submit_output):
+	      return int(queue_submit_output.splitlines()[-1].rstrip().lstrip())
+      
+    @staticmethod
     def convert_queue_status(queue_status_output):
         line_split_lst = [line.split('|') for line in queue_status_output.splitlines()]
         job_id_lst, user_lst, status_lst, job_name_lst = zip(*[(int(jobid), user, status.lower(), jobname) 
