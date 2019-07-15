@@ -31,4 +31,10 @@ class SlurmCommands(object):
 
     @staticmethod
     def convert_queue_status(queue_status_output):
-        raise NotImplementedError()
+        line_split_lst = [line.split('|') for line in queue_status_output.splitlines()]
+        job_id_lst, user_lst, status_lst, job_name_lst = zip(*[(int(jobid), user, status.lower(), jobname) 
+                                                               for jobid, user, status, jobname in line_split_lst])
+        return pandas.DataFrame({'jobid': job_id_lst,
+                                 'user': user_lst,
+                                 'jobname': job_name_lst, 
+                                 'status': status_lst})
