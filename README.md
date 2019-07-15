@@ -20,7 +20,7 @@ Or via anaconda from the conda-forge channel
 
 # Usage 
 pysqa requires the user to configure the type of queuing system as well as the available templates. Example configuration are available at:
-https://github.com/pysqa/pysqa/tree/master/tests/config
+https://github.com/pyiron/pysqa/tree/master/tests/config
 By default pysqa is searching for the queue configuration in `~/.queues/queue.yaml` and the corresponding jinja2 templates in the same folder.
 
 Import pysqa:
@@ -54,7 +54,7 @@ Delete a job from the queuing sytem:
 
 
 # License
-pysqa is released under the BSD license https://github.com/pysqa/pysqa/blob/master/LICENSE . It is a spin-off of the pyiron project https://github.com/pyiron/pyiron therefore if you use pysqa for your publication, please cite: 
+pysqa is released under the BSD license https://github.com/pyiron/pysqa/blob/master/LICENSE . It is a spin-off of the pyiron project https://github.com/pyiron/pyiron therefore if you use pysqa for your publication, please cite: 
 
     @article{pyiron-paper,
       title = {pyiron: An integrated development environment for computational materials science},
