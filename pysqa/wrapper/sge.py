@@ -33,6 +33,10 @@ class SunGridEngineCommands(object):
         return ['qstat', '-xml']
 
     @staticmethod
+    def get_job_id_from_output(queue_submit_output):
+	      return int(queue_submit_output)
+      
+    @staticmethod
     def convert_queue_status(queue_status_output):
         def leaf_to_dict(leaf):
             return [{sub_child.tag: sub_child.text for sub_child in child} for child in leaf]
