@@ -25,8 +25,8 @@ By default pysqa is searching for the queue configuration in `~/.queues/queue.ya
 
 Import pysqa:
 
-    from pysqa import Queueadapter 
-    sqa = Queueadapter(directory=‘~/.queues’)
+    from pysqa import QueueAdapter 
+    sqa = QueueAdapter(directory=‘~/.queues’)  # directory which contains the queue.yaml file 
 
 List available queues as list of queue names: 
 
