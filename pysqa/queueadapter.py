@@ -127,7 +127,7 @@ class QueueAdapter(object):
         out = self._execute_command(commands_lst=self._commands.submit_job_command + [queue_script_path],
                                     working_directory=working_directory, split_output=False)
         if out is not None:
-            return int(out)
+            return self._commands.get_job_id_from_output(out)
         else:
             return None
 
