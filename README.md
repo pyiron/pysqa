@@ -1,7 +1,7 @@
 # pysqa
 Simple queue adapter for python 
 
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/de30f320fd9f44ac9cbcce28eb2c54d1)](https://app.codacy.com/app/pyiron-runner/pysqa?utm_source=github.com&utm_medium=referral&utm_content=pyiron/pysqa&utm_campaign=Badge_Grade_Dashboard)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/9db80cb2477f46be870d1446540b4bf3)](https://www.codacy.com/app/pyiron-runner/pysqa?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=pyiron/pysqa&amp;utm_campaign=Badge_Grade_Dashboard)
 [![Build Status](https://travis-ci.org/pyiron/pysqa.svg?branch=master)](https://travis-ci.org/pyiron/pysqa)
 [![Build status](https://ci.appveyor.com/api/projects/status/9lpjai8rvt8324aj/branch/master?svg=true)](https://ci.appveyor.com/project/pyiron-runner/pysqa/branch/master)
 [![Coverage Status](https://coveralls.io/repos/github/pyiron/pysqa/badge.svg?branch=master)](https://coveralls.io/github/pyiron/pysqa?branch=master)
