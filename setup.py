@@ -10,7 +10,7 @@ setup(
     description='pysqa - simple queue adapter',
     long_description='The goal of pysqa is to make submitting to an HPC cluster as easy as starting another subprocess. This is based on the assumption that even though modern queuing systems allow for an wide range of different configuration, most users submit the majority of their jobs with very similar parameters. Therefore pysqa allows the users to store their submission scripts as jinja2 templates for quick access. After the submission pysqa allows the users to track the progress of their jobs, delete them or enable reservations using the built-in functionality of the queuing system. The currently supported queuing systems are: LFS, MOAB, SGE, SLURM, TORQUE.',
 
-    url='https://github.com/pysqa/pysqa',
+    url='https://github.com/pyiron/pysqa',
     author='Jan Janssen',
     author_email='janssen@mpie.de',
     license='BSD',
