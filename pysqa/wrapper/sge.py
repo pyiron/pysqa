@@ -34,7 +34,7 @@ class SunGridEngineCommands(object):
 
     @staticmethod
     def get_job_id_from_output(queue_submit_output):
-	return int(queue_submit_output)
+        return int(queue_submit_output)
       
     @staticmethod
     def convert_queue_status(queue_status_output):
