@@ -7,7 +7,7 @@ from jinja2 import Template
 import os
 import pandas
 import subprocess
-import yaml
+from yaml import load
 
 __author__ = "Jan Janssen"
 __copyright__ = "Copyright 2019, Jan Janssen"
@@ -126,10 +126,10 @@ class QueueAdapter(object):
             f.writelines(queue_script)
         out = self._execute_command(commands_lst=self._commands.submit_job_command + [queue_script_path],
                                     working_directory=working_directory, split_output=False)
-        if out is not None:
-            return int(out)
-        else:
-            return None
+        
+        lines = out.splitlines()
+        # Last line should contain the job id and nothing else
+        return int(lines[-1].rstrip().lstrip())
 
     def enable_reservation(self, process_id):
         """
@@ -140,12 +140,8 @@ class QueueAdapter(object):
         Returns:
             str:
         """
-        out = self._execute_command(commands_lst=self._commands.enable_reservation_command + [str(process_id)],
-                                    split_output=True)
-        if out is not None:
-            return out[0]
-        else:
-            return None
+        return self._execute_command(commands_lst=self._commands.enable_reservation_command + [str(process_id)],
+                                     split_output=True)[0]
 
     def delete_job(self, process_id):
         """
@@ -156,12 +152,8 @@ class QueueAdapter(object):
         Returns:
             str:
         """
-        out = self._execute_command(commands_lst=self._commands.delete_job_command + [str(process_id)],
-                                    split_output=True)
-        if out is not None:
-            return out[0]
-        else:
-            return None
+        return self._execute_command(commands_lst=self._commands.delete_job_command + [str(process_id)],
+                                     split_output=True)[0]
 
     def get_queue_status(self, user=None):
         """
@@ -310,7 +302,7 @@ class QueueAdapter(object):
             dict:
         """
         with open(file_name, 'r') as f:
-            return yaml.load(f, Loader=yaml.FullLoader)
+            return load(f)
 
     @staticmethod
     def _fill_queue_dict(queue_lst_dict):
