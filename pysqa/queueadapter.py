@@ -11,7 +11,7 @@ import yaml
 
 __author__ = "Jan Janssen"
 __copyright__ = "Copyright 2019, Jan Janssen"
-__version__ = "0.0.1"
+__version__ = "0.0.3"
 __maintainer__ = "Jan Janssen"
 __email__ = "janssen@mpie.de"
 __status__ = "production"
