@@ -205,6 +205,25 @@ class QueueAdapter(object):
         else:
             return None
 
+    def get_status_of_jobs(self, process_id_lst):
+        """
+
+        Args:
+            process_id_lst:
+
+        Returns:
+             list: ['running', 'pending', 'error', ...]
+        """
+        df = self.get_queue_status()
+        results_lst = []
+        for process_id in process_id_lst:
+            df_selected = df[df['jobid'] == process_id]['status']
+            if len(df_selected) != 0:
+                results_lst.append(df_selected.values[0])
+            else:
+                results_lst.append('finished')
+        return results_lst
+        
     def check_queue_parameters(self, queue, cores=1, run_time_max=None, memory_max=None, active_queue=None):
         """
 
