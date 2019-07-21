@@ -52,6 +52,13 @@ Delete a job from the queuing sytem:
 
     sqa.delete_job(process_id=1234) 
 
+Sample configurations for the specific queuing systems are availabe in the tests: 
+
+* lsf - https://github.com/pyiron/pysqa/tree/master/tests/config/lsf
+* moab - https://github.com/pyiron/pysqa/tree/master/tests/config/moab
+* SGE - https://github.com/pyiron/pysqa/tree/master/tests/config/sge
+* slurm - https://github.com/pyiron/pysqa/tree/master/tests/config/slurm
+* torque - https://github.com/pyiron/pysqa/tree/master/tests/config/torque
 
 # License
 pysqa is released under the BSD license https://github.com/pyiron/pysqa/blob/master/LICENSE . It is a spin-off of the pyiron project https://github.com/pyiron/pyiron therefore if you use pysqa for your publication, please cite: 
