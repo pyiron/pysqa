@@ -456,8 +456,6 @@ class QueueAdapter(object):
             return value
 
 
-
-
 class Queues(object):
     """
     Queues is an abstract class simply to make the list of queues available for auto completion. This is mainly used in
