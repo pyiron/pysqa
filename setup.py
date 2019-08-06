@@ -31,7 +31,7 @@ setup(
     packages=find_packages(exclude=["*tests*"]),
     install_requires=['defusedxml',
                       'jinja2',
-                      'pandas',
+                      'pandas>=0.23',
                       'pyyaml'],
     data_files = [("", ["LICENSE"])],
     cmdclass=versioneer.get_cmdclass(),
