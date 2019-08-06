@@ -8,6 +8,7 @@ import os
 import pandas
 import subprocess
 import yaml
+import re
 
 __author__ = "Jan Janssen"
 __copyright__ = "Copyright 2019, Jan Janssen"
@@ -369,8 +370,8 @@ class QueueAdapter(object):
         if not isinstance(value, str):
             raise TypeError()
 
-    @staticmethod
-    def _value_in_range(value, value_min=None, value_max=None):
+    @classmethod
+    def _value_in_range(cls, value, value_min=None, value_max=None):
         """
 
         Args:
@@ -381,10 +382,18 @@ class QueueAdapter(object):
         Returns:
             int/float/None:
         """
+
         if value is not None:
-            if value_min is not None and value < value_min:
+            value_, value_min_, value_max_ = [cls._memory_spec_string_to_value(v)
+                                              if v is not None and isinstance(v, str) else v
+                                              for v in (value, value_min, value_max)]
+            # ATTENTION: '60000' is interpreted as '60000M' since default magnitude is 'M'
+            # ATTENTION: int('60000') is interpreted as '60000B' since _memory_spec_string_to_value return the size in
+            # ATTENTION: bytes, as target_magnitude = 'b'
+            # We want to compare the the actual (k,m,g)byte value if there is any
+            if value_min_ is not None and value_ < value_min_:
                 return value_min
-            if value_max is not None and value > value_max:
+            if value_max_ is not None and value_ > value_max_:
                 return value_max
             return value
         else:
@@ -392,6 +401,58 @@ class QueueAdapter(object):
                 return value_min
             if value_max is not None:
                 return value_max
+            return value
+
+    @staticmethod
+    def _is_memory_string(value):
+        """
+        Tests a string if it specifies a certain amount of memory e.g.: '20G', '60b'. Also pure integer strings are
+        also valid.
+
+        Args:
+            value (str): the string to test
+
+        Returns:
+            (bool): A boolean value if the string matches a memory specification
+        """
+        memory_spec_pattern = r'[0-9]+[bBkKmMgGtT]?'
+        return re.findall(memory_spec_pattern, value)[0] == value
+
+    @classmethod
+    def _memory_spec_string_to_value(cls, value, default_magnitude='m', target_magnitude='b'):
+        """
+        Converts a valid memory string (tested by _is_memory_string) into an integer/float value of desired
+        magnitude `default_magnitude`. If it is a plain integer string (e.g.: '50000') it will be interpreted with
+        the magnitude passed in by the `default_magnitude`. The output will rescaled to `target_magnitude`
+
+        Args:
+            value (str): the string
+            default_magnitude (str): magnitude for interpreting plain integer strings [b, B, k, K, m, M, g, G, t, T]
+            target_magnitude (str): to which the output value should be converted [b, B, k, K, m, M, g, G, t, T]
+
+        Returns:
+            (float/int): the value of the string in `target_magnitude` units
+        """
+        magnitude_mapping = {
+            'b': 0,
+            'k': 1,
+            'm': 2,
+            'g': 3,
+            't': 4
+        }
+        if cls._is_memory_string(value):
+            integer_pattern = r'[0-9]+'
+            magnitude_pattern = r'[bBkKmMgGtT]+'
+            integer_value = int(re.findall(integer_pattern, value)[0])
+
+            magnitude = re.findall(magnitude_pattern, value)
+            if len(magnitude) > 0:
+                magnitude = magnitude[0].lower()
+            else:
+                magnitude = default_magnitude.lower()
+            # Convert it to default magnitude = megabytes
+            return (integer_value * 1024 ** magnitude_mapping[magnitude])/(1024 ** magnitude_mapping[target_magnitude])
+        else:
             return value
 
 

@@ -108,3 +108,16 @@ class TestRunmode(unittest.TestCase):
 
     def test_queue_view(self):
         self.assertIsInstance(self.slurm.queue_view, pandas.DataFrame)
+
+    def test_memory_string_comparison(self):
+        self.assertEqual(QueueAdapter._value_in_range(1023, value_min='1K'), '1K')
+        self.assertEqual(QueueAdapter._value_in_range(1035, value_min='1K'), 1035)
+        self.assertEqual(QueueAdapter._value_in_range(1035, value_max='1K'), '1K')
+        self.assertEqual(QueueAdapter._value_in_range('1035', value_min='1K'), '1035')
+        self.assertEqual(QueueAdapter._value_in_range('60000M', value_min='1K', value_max='50G'), '50G')
+        self.assertEqual(QueueAdapter._value_in_range('60000', value_min='1K', value_max='50G'), '50G')
+        self.assertEqual(QueueAdapter._value_in_range('60000M', value_min='1K', value_max='70G'), '60000M')
+        self.assertEqual(QueueAdapter._value_in_range(60000, value_min='1K', value_max='70G'), 60000)
+        self.assertEqual(QueueAdapter._value_in_range(90000 * 1024 ** 2, value_min='1K', value_max='70G'), '70G')
+        self.assertEqual(QueueAdapter._value_in_range('90000', value_min='1K', value_max='70G'), '70G')
+        self.assertEqual(QueueAdapter._value_in_range('60000M', value_min='60G', value_max='70G'), '60G')
