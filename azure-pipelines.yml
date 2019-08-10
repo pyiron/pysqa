@@ -1,0 +1,100 @@
+variables:
+  linux: 'ubuntu-16.04'
+  mac: 'macos-10.13'
+  windows: 'vs2017-win2016'
+
+pr:
+  branches:
+	include:
+	  - '*'
+
+jobs:
+- job: 'Linux'
+  pool:
+	vmImage: $(linux)
+  strategy:
+	matrix:
+	  Python27:
+		python.version: '2.7'
+	  Python37:
+		python.version: '3.7'
+	maxParallel: 4
+
+  steps:
+  - bash: echo "##vso[task.prependpath]/usr/share/miniconda/bin"
+	displayName: Add conda to PATH
+
+  - bash: conda create -n pysqa -q --yes -c conda-forge python=$(python.version) coverage defusedxml pandas yaml jinja2
+	displayName: conda install
+
+  - bash: |
+	  source activate pysqa
+	  pip install --pre .
+	displayName: pysqa install
+
+  - bash: |
+	  source activate pysqa
+	  coverage run --omit pysqa/_version.py -m unittest discover tests
+	displayName: run tests
+
+- job: 'OSX'
+  pool:
+	vmImage: $(mac)
+  strategy:
+	matrix:
+	  Python27:
+		python.version: '2.7'
+	  Python37:
+		python.version: '3.7'
+	maxParallel: 1
+
+  steps:
+  - bash: echo "##vso[task.prependpath]$CONDA/bin"
+	displayName: Add conda to PATH
+
+  - bash: sudo chown -R $USER $CONDA
+	displayName: Take ownership of conda installation
+
+  - bash: conda create -n pysqa -q --yes -c conda-forge python=$(python.version) coverage defusedxml pandas yaml jinja2
+	displayName: conda install
+
+  - bash: |
+	  source activate pysqa
+	  pip install --pre .
+	displayName: pysqa install
+
+  - bash: |
+	  source activate pysqa
+	  coverage run --omit pysqa/_version.py -m unittest discover tests
+	displayName: run tests
+
+ - job: 'Windows'
+   pool:
+	 vmImage: $(windows)
+   strategy:
+	 matrix:
+	   Python27:
+		 python.version: '2.7'
+	   Python37:
+		 python.version: '3.7'
+	 maxParallel: 1
+
+   steps:
+   - powershell: Write-Host "##vso[task.prependpath]$env:CONDA\Scripts"
+	 displayName: Add conda to PATH
+
+   - bash: echo "##vso[task.prependpath]$CONDA/bin"
+	 displayName: Add conda to PATH
+
+   - script: conda create -n pysqa -q --yes -c conda-forge python=$(python.version) coverage defusedxml pandas yaml jinja2
+	 displayName: conda install
+
+   - script: |
+	   call activate pysqa
+	   pip install --pre .
+	 displayName: pysqa install
+
+   - script: |
+	   call activate pysqa
+	   coverage run --omit pysqa/_version.py -m unittest discover tests
+	 displayName: run tests
