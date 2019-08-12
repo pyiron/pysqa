@@ -227,14 +227,14 @@ class QueueAdapter(object):
         cores = self._value_in_range(value=cores,
                                      value_min=active_queue['cores_min'],
                                      value_max=active_queue['cores_max'])
-        
+
         nodes = (cores-1)//(active_queue['cores_per_node']) + 1
 
         run_time_max = self._value_in_range(value=run_time_max,
                                             value_max=active_queue['run_time_max'])
-        
+
         memory_max = self._value_in_range(value=memory_max, # assume in bytes!
-                                          value_max=active_queue['mem_per_node_max']*nodes*1024**3) 
+                                          value_max=active_queue['mem_per_node_max']*nodes*1024**3)
         return cores, run_time_max, memory_max
 
     def _job_submission_template(self, queue=None, job_name=None, working_directory='.', cores=None,
@@ -268,7 +268,7 @@ class QueueAdapter(object):
         cores = int((cores-1)%active_queue['cores_per_node']) + 1
         memory_max = self._get_size(memory_max) + 'B'
         run_time_max = "{}:{}:{}".format(int(run_time_max//3600),int((run_time_max%3600)//60),int(run_time_max%60))
-        
+
         template = active_queue['template']
         return template.render(job_name=job_name,
                                working_directory=working_directory,
@@ -303,7 +303,7 @@ class QueueAdapter(object):
         if not queue is None:
             cmd += "module --quiet swap cluster/{}; ".format(queue)
         cmd += " ".join(commands_lst)
-        
+
         if working_directory is None:
             try:
                 out = subprocess.check_output(cmd, stderr=subprocess.STDOUT, shell=True)
@@ -314,9 +314,9 @@ class QueueAdapter(object):
                 out = subprocess.check_output(cmd, cwd=working_directory, stderr=subprocess.STDOUT, shell=True)
             except subprocess.CalledProcessError:
                 out = None
-        
+
         out = out.decode('utf8')
-        
+
         if out is not None and split_output:
             return out.split('\n')
         else:
@@ -395,14 +395,14 @@ class QueueAdapter(object):
             if value_max is not None:
                 return value_max
             return value
-    
-    @staticmethod   
+
+    @staticmethod
     def _get_size(size):
         system = [
         (1024 ** 5, 'P'),
-        (1024 ** 4, 'T'), 
-        (1024 ** 3, 'G'), 
-        (1024 ** 2, 'M'), 
+        (1024 ** 4, 'T'),
+        (1024 ** 3, 'G'),
+        (1024 ** 2, 'M'),
         (1024 ** 1, 'K'),
         (1024 ** 0, 'B'),
         ]
