@@ -9,7 +9,6 @@ import os
 import pandas
 import subprocess
 import yaml
-import time
 
 __author__ = "Jan Janssen"
 __copyright__ = "Copyright 2019, Jan Janssen"
