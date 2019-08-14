@@ -43,9 +43,9 @@ class SlurmCommands(object):
     @staticmethod
     def convert_queue_status(queue_status_output):
         qstat = queue_status_output.splitlines()
-        queue = qstat[0].split(':')[1].strip() # get queue name for pandas dataframe
-        if len(qstat[1:]) == 0: # if empty
-            return None
+        queue = qstat[0].split(':')[1].strip() # get queue name
+        if len(qstat[1:]) == 0: # first row contains cluster name, check if there are jobs
+            return pandas.DataFrame({'cluster': [],'jobid': [],'user': [],'jobname': [],'status': []})
 
         line_split_lst = [line.split('|') for line in qstat[1:]] # adapted here (starts from 1 since first line gives cluster)
         job_id_lst, user_lst, status_lst, job_name_lst, queue_lst = zip(*[(int(jobid), user, status.lower(), jobname, queue)
