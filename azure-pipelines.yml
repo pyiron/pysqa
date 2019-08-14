@@ -34,7 +34,7 @@ jobs:
 
   - bash: |
       source activate pysqa
-      coverage run --omit pysqa/_version.py -m unittest discover tests
+      coverage run -m unittest discover tests
     displayName: run tests
 
 - job: 'OSX'
@@ -65,7 +65,7 @@ jobs:
 
   - bash: |
       source activate pysqa
-      coverage run --omit pysqa/_version.py -m unittest discover tests
+      coverage run -m unittest discover tests
     displayName: run tests
 
 - job: 'Windows'
@@ -96,5 +96,5 @@ jobs:
 
   - script: |
       call activate pysqa
-      coverage run --omit pysqa/_version.py -m unittest discover tests
+      coverage run -m unittest discover tests
     displayName: run tests
