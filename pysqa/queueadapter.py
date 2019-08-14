@@ -9,6 +9,7 @@ import os
 import pandas
 import subprocess
 import yaml
+import time
 
 __author__ = "Jan Janssen"
 __copyright__ = "Copyright 2019, Jan Janssen"
@@ -176,7 +177,7 @@ class QueueAdapter(object):
         """
         out = self._execute_command(commands_lst=self._commands.get_queue_status_command, split_output=False, queue=queue)
         df = self._commands.convert_queue_status(queue_status_output=out)
-        if user is None or df is None:
+        if user is None or df.empty:
             return df
         else:
             return df[df['user'] == user]
@@ -188,9 +189,10 @@ class QueueAdapter(object):
            pandas.DataFrame:
         """
         df = pandas.DataFrame()
+        
         for queue in self.queue_list:
             user = self._get_user()
-            df = df.append(self.get_queue_status(user=user, queue=queue), ignore_index = True)
+            df = df.append(self.get_queue_status(user=user, queue=queue), ignore_index=True, sort=False)
         return df
 
     def get_status_of_job(self, process_id, queue=None):
@@ -299,11 +301,12 @@ class QueueAdapter(object):
         Returns:
             str:
         """
+        
         cmd = ""
         if not queue is None:
             cmd += "module --quiet swap cluster/{}; ".format(queue)
         cmd += " ".join(commands_lst)
-
+       
         if working_directory is None:
             try:
                 out = subprocess.check_output(cmd, stderr=subprocess.STDOUT, shell=True)
@@ -314,9 +317,8 @@ class QueueAdapter(object):
                 out = subprocess.check_output(cmd, cwd=working_directory, stderr=subprocess.STDOUT, shell=True)
             except subprocess.CalledProcessError:
                 out = None
-
+                
         out = out.decode('utf8')
-
         if out is not None and split_output:
             return out.split('\n')
         else:
