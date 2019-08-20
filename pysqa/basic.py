@@ -116,7 +116,7 @@ class BasisQueueAdapter(SharedQueueAdapter):
         queue_script_path = os.path.join(working_directory, 'run_queue.sh')
         with open(queue_script_path, 'w') as f:
             f.writelines(queue_script)
-        out = self._execute_command(commands_lst=self._commands.submit_job_command + [queue_script_path],
+        out = self._execute_command(commands=self._commands.submit_job_command + [queue_script_path],
                                     working_directory=working_directory, split_output=False)
         if out is not None:
             return self._commands.get_job_id_from_output(out)
@@ -132,7 +132,7 @@ class BasisQueueAdapter(SharedQueueAdapter):
         Returns:
             str:
         """
-        out = self._execute_command(commands_lst=self._commands.enable_reservation_command + [str(process_id)],
+        out = self._execute_command(commands=self._commands.enable_reservation_command + [str(process_id)],
                                     split_output=True)
         if out is not None:
             return out[0]
@@ -148,7 +148,7 @@ class BasisQueueAdapter(SharedQueueAdapter):
         Returns:
             str:
         """
-        out = self._execute_command(commands_lst=self._commands.delete_job_command + [str(process_id)],
+        out = self._execute_command(commands=self._commands.delete_job_command + [str(process_id)],
                                     split_output=True)
         if out is not None:
             return out[0]
@@ -164,7 +164,7 @@ class BasisQueueAdapter(SharedQueueAdapter):
         Returns:
             pandas.DataFrame:
         """
-        out = self._execute_command(commands_lst=self._commands.get_queue_status_command, split_output=False)
+        out = self._execute_command(commands=self._commands.get_queue_status_command, split_output=False)
         df = self._commands.convert_queue_status(queue_status_output=out)
         if user is None:
             return df

@@ -23,28 +23,22 @@ class SharedQueueAdapter(QueueAdapterInterface):
         return getpass.getuser()
 
     @staticmethod
-    def _execute_command(commands_lst, working_directory=None, split_output=True):
+    def _execute_command(commands, working_directory=None, split_output=True):
         """
 
         Args:
-            commands_lst (list):
+            commands (list/str):
             working_directory (str):
             split_output (bool):
 
         Returns:
             str:
         """
-        if working_directory is None:
-            try:
-                out = subprocess.check_output(commands_lst, stderr=subprocess.STDOUT, universal_newlines=True)
-            except subprocess.CalledProcessError:
-                out = None
-        else:
-            try:
-                out = subprocess.check_output(commands_lst, cwd=working_directory, stderr=subprocess.STDOUT,
-                                              universal_newlines=True)
-            except subprocess.CalledProcessError:
-                out = None
+        try:
+            out = subprocess.check_output(commands, cwd=working_directory, stderr=subprocess.STDOUT,
+                                          universal_newlines=True, shell=not isinstance(commands, list))
+        except subprocess.CalledProcessError:
+            out = None
         if out is not None and split_output:
             return out.split('\n')
         else:
