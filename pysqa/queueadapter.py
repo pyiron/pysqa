@@ -119,7 +119,7 @@ class QueueAdapter(object):
         """
         if isinstance(command, list):
             command = ''.join(command)
-        if working_directory is None: 
+        if working_directory is None:
             working_directory = '.'
         queue_script = self._job_submission_template(queue=queue, job_name=job_name,
                                                      working_directory=working_directory, cores=cores,
@@ -224,7 +224,7 @@ class QueueAdapter(object):
             else:
                 results_lst.append('finished')
         return results_lst
-        
+
     def check_queue_parameters(self, queue, cores=1, run_time_max=None, memory_max=None, active_queue=None):
         """
 

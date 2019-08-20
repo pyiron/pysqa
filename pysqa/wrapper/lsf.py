@@ -31,8 +31,8 @@ class LsfCommands(object):
 
     @staticmethod
     def get_job_id_from_output(queue_submit_output):
-	      raise NotImplementedError()
-      
+          raise NotImplementedError()
+
     @staticmethod
     def convert_queue_status(queue_status_output):
         raise NotImplementedError()
