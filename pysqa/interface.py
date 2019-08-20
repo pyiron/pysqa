@@ -1,26 +1,11 @@
 # coding: utf-8
 # Copyright (c) Jan Janssen
 
-import os
-import yaml
-from pysqa.basic import BasisQueueAdapter
 
-__author__ = "Jan Janssen"
-__copyright__ = "Copyright 2019, Jan Janssen"
-__version__ = "0.0.3"
-__maintainer__ = "Jan Janssen"
-__email__ = "janssen@mpie.de"
-__status__ = "production"
-__date__ = "Feb 9, 2019"
-
-
-class QueueAdapter(object):
-    def __init__(self, directory='~/.queues'):
-        config = self._read_config(file_name=os.path.join(directory, 'queue.yaml'))
-        if config['queue_type'] in ['SGE', 'TORQUE', 'SLURM', 'LSF', 'MOAB']:
-            self._adapter = BasisQueueAdapter(config=config, directory=directory)
-        else:
-            raise ValueError
+class QueueAdapterInterface(object):
+    # Functions which need to be implemented for each QueueAdapter
+    def __init__(self, config, directory='~/.queues'):
+       raise NotImplementedError
 
     @property
     def config(self):
@@ -29,7 +14,7 @@ class QueueAdapter(object):
         Returns:
             dict:
         """
-        return self._adapter.config
+        raise NotImplementedError
 
     @property
     def queue_list(self):
@@ -38,7 +23,7 @@ class QueueAdapter(object):
         Returns:
             list:
         """
-        return self._adapter.queue_list
+        raise NotImplementedError
 
     @property
     def queue_view(self):
@@ -47,11 +32,11 @@ class QueueAdapter(object):
         Returns:
             pandas.DataFrame:
         """
-        return self._adapter.queue_view
+        raise NotImplementedError
 
     @property
     def queues(self):
-        return self._adapter.queues
+        raise NotImplementedError
 
     def submit_job(self, queue=None, job_name=None, working_directory=None, cores=None, memory_max=None,
                    run_time_max=None, command=None):
@@ -69,8 +54,7 @@ class QueueAdapter(object):
         Returns:
             int:
         """
-        return self._adapter.submit_job(queue=queue, job_name=job_name, working_directory=working_directory,
-                                        cores=cores, memory_max=memory_max, run_time_max=run_time_max, command=command)
+        raise NotImplementedError
 
     def enable_reservation(self, process_id):
         """
@@ -81,7 +65,7 @@ class QueueAdapter(object):
         Returns:
             str:
         """
-        return self._adapter.enable_reservation(process_id=process_id)
+        raise NotImplementedError
 
     def delete_job(self, process_id):
         """
@@ -92,7 +76,7 @@ class QueueAdapter(object):
         Returns:
             str:
         """
-        return self._adapter.delete_job(process_id=process_id)
+        raise NotImplementedError
 
     def get_queue_status(self, user=None):
         """
@@ -103,7 +87,7 @@ class QueueAdapter(object):
         Returns:
             pandas.DataFrame:
         """
-        return self._adapter.get_queue_status(user=user)
+        raise NotImplementedError
 
     def get_status_of_my_jobs(self):
         """
@@ -111,7 +95,7 @@ class QueueAdapter(object):
         Returns:
            pandas.DataFrame:
         """
-        return self._adapter.get_status_of_my_jobs()
+        raise NotImplementedError
 
     def get_status_of_job(self, process_id):
         """
@@ -122,7 +106,7 @@ class QueueAdapter(object):
         Returns:
              str: ['running', 'pending', 'error']
         """
-        return self._adapter.get_status_of_job(process_id=process_id)
+        raise NotImplementedError
 
     def get_status_of_jobs(self, process_id_lst):
         """
@@ -133,7 +117,7 @@ class QueueAdapter(object):
         Returns:
              list: ['running', 'pending', 'error', ...]
         """
-        return self._adapter.get_status_of_jobs(process_id_lst=process_id_lst)
+        raise NotImplementedError
 
     def check_queue_parameters(self, queue, cores=1, run_time_max=None, memory_max=None, active_queue=None):
         """
@@ -148,18 +132,4 @@ class QueueAdapter(object):
         Returns:
             list: [cores, run_time_max, memory_max]
         """
-        return self._adapter.check_queue_parameters(queue=queue, cores=cores, run_time_max=run_time_max,
-                                                    memory_max=memory_max, active_queue=active_queue)
-
-    @staticmethod
-    def _read_config(file_name='queue.yaml'):
-        """
-
-        Args:
-            file_name (str):
-
-        Returns:
-            dict:
-        """
-        with open(file_name, 'r') as f:
-            return yaml.load(f, Loader=yaml.FullLoader)
+        raise NotImplementedError
