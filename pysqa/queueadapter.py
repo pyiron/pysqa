@@ -1,6 +1,5 @@
 # coding: utf-8
 # Copyright (c) Jan Janssen
-# Updated for HPC UGent by Sander Borgmans
 
 import getpass
 import importlib
@@ -9,10 +8,11 @@ import os
 import pandas
 import subprocess
 import yaml
+import re
 
 __author__ = "Jan Janssen"
 __copyright__ = "Copyright 2019, Jan Janssen"
-__version__ = "0.0.1"
+__version__ = "0.0.3"
 __maintainer__ = "Jan Janssen"
 __email__ = "janssen@mpie.de"
 __status__ = "production"
@@ -119,7 +119,8 @@ class QueueAdapter(object):
         """
         if isinstance(command, list):
             command = ''.join(command)
-
+        if working_directory is None: 
+            working_directory = '.'
         queue_script = self._job_submission_template(queue=queue, job_name=job_name,
                                                      working_directory=working_directory, cores=cores,
                                                      memory_max=memory_max, run_time_max=run_time_max, command=command)
@@ -127,13 +128,13 @@ class QueueAdapter(object):
         with open(queue_script_path, 'w') as f:
             f.writelines(queue_script)
         out = self._execute_command(commands_lst=self._commands.submit_job_command + [queue_script_path],
-                                    working_directory=working_directory, split_output=False, queue=queue) # adapted
+                                    working_directory=working_directory, split_output=False)
         if out is not None:
             return self._commands.get_job_id_from_output(out)
         else:
             return None
 
-    def enable_reservation(self, process_id, reservation_flag, queue=None): # not implemented I guess
+    def enable_reservation(self, process_id):
         """
 
         Args:
@@ -142,14 +143,14 @@ class QueueAdapter(object):
         Returns:
             str:
         """
-        out = self._execute_command(commands_lst=self._commands.enable_reservation_command + ['x=FLAGS:ADVRES:'+reservation_flag] + [str(process_id)],
-                                    split_output=True, queue=queue)
+        out = self._execute_command(commands_lst=self._commands.enable_reservation_command + [str(process_id)],
+                                    split_output=True)
         if out is not None:
             return out[0]
         else:
             return None
 
-    def delete_job(self, process_id, queue=None):
+    def delete_job(self, process_id):
         """
 
         Args:
@@ -159,13 +160,13 @@ class QueueAdapter(object):
             str:
         """
         out = self._execute_command(commands_lst=self._commands.delete_job_command + [str(process_id)],
-                                    split_output=True, queue=queue)
+                                    split_output=True)
         if out is not None:
             return out[0]
         else:
             return None
 
-    def get_queue_status(self, user=None, queue=None):
+    def get_queue_status(self, user=None):
         """
 
         Args:
@@ -174,9 +175,9 @@ class QueueAdapter(object):
         Returns:
             pandas.DataFrame:
         """
-        out = self._execute_command(commands_lst=self._commands.get_queue_status_command, split_output=False, queue=queue)
+        out = self._execute_command(commands_lst=self._commands.get_queue_status_command, split_output=False)
         df = self._commands.convert_queue_status(queue_status_output=out)
-        if user is None or df.empty:
+        if user is None:
             return df
         else:
             return df[df['user'] == user]
@@ -187,14 +188,9 @@ class QueueAdapter(object):
         Returns:
            pandas.DataFrame:
         """
-        df = pandas.DataFrame()
-        
-        for queue in self.queue_list:
-            user = self._get_user()
-            df = df.append(self.get_queue_status(user=user, queue=queue), ignore_index=True, sort=False)
-        return df
+        return self.get_queue_status(user=self._get_user())
 
-    def get_status_of_job(self, process_id, queue=None):
+    def get_status_of_job(self, process_id):
         """
 
         Args:
@@ -203,14 +199,33 @@ class QueueAdapter(object):
         Returns:
              str: ['running', 'pending', 'error']
         """
-        df = self.get_queue_status(queue=queue)
+        df = self.get_queue_status()
         df_selected = df[df['jobid'] == process_id]['status']
         if len(df_selected) != 0:
             return df_selected.values[0]
         else:
             return None
 
-    def check_queue_parameters(self, queue, cores=None, run_time_max=None, memory_max=None, active_queue=None): #adapted
+    def get_status_of_jobs(self, process_id_lst):
+        """
+
+        Args:
+            process_id_lst:
+
+        Returns:
+             list: ['running', 'pending', 'error', ...]
+        """
+        df = self.get_queue_status()
+        results_lst = []
+        for process_id in process_id_lst:
+            df_selected = df[df['jobid'] == process_id]['status']
+            if len(df_selected) != 0:
+                results_lst.append(df_selected.values[0])
+            else:
+                results_lst.append('finished')
+        return results_lst
+        
+    def check_queue_parameters(self, queue, cores=1, run_time_max=None, memory_max=None, active_queue=None):
         """
 
         Args:
@@ -228,17 +243,13 @@ class QueueAdapter(object):
         cores = self._value_in_range(value=cores,
                                      value_min=active_queue['cores_min'],
                                      value_max=active_queue['cores_max'])
-
-        nodes = (cores-1)//(active_queue['cores_per_node']) + 1
-
         run_time_max = self._value_in_range(value=run_time_max,
                                             value_max=active_queue['run_time_max'])
-
-        memory_max = self._value_in_range(value=memory_max, # assume in bytes!
-                                          value_max=active_queue['mem_per_node_max']*nodes*1024**3)
+        memory_max = self._value_in_range(value=memory_max,
+                                          value_max=active_queue['memory_max'])
         return cores, run_time_max, memory_max
 
-    def _job_submission_template(self, queue=None, job_name=None, working_directory='.', cores=None,
+    def _job_submission_template(self, queue=None, job_name='job.py', working_directory='.', cores=None,
                                  memory_max=None, run_time_max=None, command=None):
         """
 
@@ -260,21 +271,15 @@ class QueueAdapter(object):
         if queue not in self.queue_list:
             raise ValueError()
         active_queue = self._config['queues'][queue]
-        cores, run_time_max, memory_max = self.check_queue_parameters(queue=queue,
+        cores, run_time_max, memory_max = self.check_queue_parameters(queue=None,
                                                                       cores=cores,
                                                                       run_time_max=run_time_max,
                                                                       memory_max=memory_max,
                                                                       active_queue=active_queue)
-        nodes = (cores-1)//(active_queue['cores_per_node']) + 1
-        cores = int((cores-1)%active_queue['cores_per_node']) + 1
-        memory_max = self._get_size(memory_max) + 'B'
-        run_time_max = "{}:{}:{}".format(int(run_time_max//3600),int((run_time_max%3600)//60),int(run_time_max%60))
-
         template = active_queue['template']
         return template.render(job_name=job_name,
                                working_directory=working_directory,
                                cores=cores,
-                               nodes=nodes,
                                memory_max=memory_max,
                                run_time_max=run_time_max,
                                command=command)
@@ -289,7 +294,7 @@ class QueueAdapter(object):
         return getpass.getuser()
 
     @staticmethod
-    def _execute_command(commands_lst, working_directory=None, split_output=True, queue=None):
+    def _execute_command(commands_lst, working_directory=None, split_output=True):
         """
 
         Args:
@@ -300,24 +305,17 @@ class QueueAdapter(object):
         Returns:
             str:
         """
-        
-        cmd = ""
-        if not queue is None:
-            cmd += "module --quiet swap cluster/{}; ".format(queue)
-        cmd += " ".join(commands_lst)
-       
         if working_directory is None:
             try:
-                out = subprocess.check_output(cmd, stderr=subprocess.STDOUT, shell=True)
+                out = subprocess.check_output(commands_lst, stderr=subprocess.STDOUT, universal_newlines=True)
             except subprocess.CalledProcessError:
                 out = None
         else:
             try:
-                out = subprocess.check_output(cmd, cwd=working_directory, stderr=subprocess.STDOUT, shell=True)
+                out = subprocess.check_output(commands_lst, cwd=working_directory, stderr=subprocess.STDOUT,
+                                              universal_newlines=True)
             except subprocess.CalledProcessError:
                 out = None
-                
-        out = out.decode('utf8')
         if out is not None and split_output:
             return out.split('\n')
         else:
@@ -372,8 +370,8 @@ class QueueAdapter(object):
         if not isinstance(value, str):
             raise TypeError()
 
-    @staticmethod
-    def _value_in_range(value, value_min=None, value_max=None):
+    @classmethod
+    def _value_in_range(cls, value, value_min=None, value_max=None):
         """
 
         Args:
@@ -384,10 +382,17 @@ class QueueAdapter(object):
         Returns:
             int/float/None:
         """
+
         if value is not None:
-            if value_min is not None and value < value_min:
+            value_, value_min_, value_max_ = [cls._memory_spec_string_to_value(v)
+                                              if v is not None and isinstance(v, str) else v
+                                              for v in (value, value_min, value_max)]
+            # Numerical strings are interpreted as MB (default magnitude), while integers are interpreted as bytes
+            # String with magnitude prefixes are interpreted by _memory_spec_string_to_value
+            # We want to compare the the actual (k,m,g)byte value if there is any
+            if value_min_ is not None and value_ < value_min_:
                 return value_min
-            if value_max is not None and value > value_max:
+            if value_max_ is not None and value_ > value_max_:
                 return value_max
             return value
         else:
@@ -398,20 +403,56 @@ class QueueAdapter(object):
             return value
 
     @staticmethod
-    def _get_size(size):
-        system = [
-        (1024 ** 5, 'P'),
-        (1024 ** 4, 'T'),
-        (1024 ** 3, 'G'),
-        (1024 ** 2, 'M'),
-        (1024 ** 1, 'K'),
-        (1024 ** 0, 'B'),
-        ]
-        for factor, suffix in system:
-            if size >= factor:
-                break
-        amount = int(size/factor)
-        return str(amount) + suffix
+    def _is_memory_string(value):
+        """
+        Tests a string if it specifies a certain amount of memory e.g.: '20G', '60b'. Also pure integer strings are
+        also valid. Also allow prefix + byte symbol format e.g.: '20GB'.
+
+        Args:
+            value (str): the string to test
+
+        Returns:
+            (bool): A boolean value if the string matches a memory specification
+        """
+        memory_spec_pattern = r'[0-9]+[bBkKmMgGtT]{0,2}'
+        return re.findall(memory_spec_pattern, value)[0] == value
+
+    @classmethod
+    def _memory_spec_string_to_value(cls, value, default_magnitude='m', target_magnitude='b'):
+        """
+        Converts a valid memory string (tested by _is_memory_string) into an integer/float value of desired
+        magnitude `default_magnitude`. If it is a plain integer string (e.g.: '50000') it will be interpreted with
+        the magnitude passed in by the `default_magnitude`. The output will rescaled to `target_magnitude`
+
+        Args:
+            value (str): the string
+            default_magnitude (str): magnitude for interpreting plain integer strings [b, B, k, K, m, M, g, G, t, T]
+            target_magnitude (str): to which the output value should be converted [b, B, k, K, m, M, g, G, t, T]
+
+        Returns:
+            (float/int): the value of the string in `target_magnitude` units
+        """
+        magnitude_mapping = {
+            'b': 0,
+            'k': 1,
+            'm': 2,
+            'g': 3,
+            't': 4
+        }
+        if cls._is_memory_string(value):
+            integer_pattern = r'[0-9]+'
+            magnitude_pattern = r'[bBkKmMgGtT]+'
+            integer_value = int(re.findall(integer_pattern, value)[0])
+
+            magnitude = re.findall(magnitude_pattern, value)
+            if len(magnitude) > 0:
+                magnitude = magnitude[0].lower()[0] # only take prefix
+            else:
+                magnitude = default_magnitude.lower()
+            # Convert it to default magnitude = megabytes
+            return (integer_value * 1024 ** magnitude_mapping[magnitude])/(1024 ** magnitude_mapping[target_magnitude])
+        else:
+            return value
 
 
 class Queues(object):
