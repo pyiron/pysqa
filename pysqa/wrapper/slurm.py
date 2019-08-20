@@ -290,7 +290,7 @@ class QueueAdapterUGent(qa.QueueAdapter):
         else:
             return out
 
-        @staticmethod
+    @staticmethod
     def _fill_queue_dict(queue_lst_dict):
         """
 
