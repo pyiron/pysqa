@@ -11,7 +11,7 @@ from pysqa.interface import QueueAdapterInterface
 
 class SharedQueueAdapter(QueueAdapterInterface):
     def __init__(self, config, directory='~/.queues'):
-        super(QueueAdapterInterface, self).__init__(config=config, directory=directory)
+        super(SharedQueueAdapter, self).__init__(config=config, directory=directory)
 
     @staticmethod
     def _get_user():
