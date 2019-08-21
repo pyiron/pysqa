@@ -3,8 +3,10 @@
 # Distributed under the terms of "New BSD License", see the LICENSE file.
 
 __author__ = "Jan Janssen"
-__copyright__ = "Copyright 2019, Max-Planck-Institut für Eisenforschung GmbH - " \
-                "Computational Materials Design (CM) Department"
+__copyright__ = (
+    "Copyright 2019, Max-Planck-Institut für Eisenforschung GmbH - "
+    "Computational Materials Design (CM) Department"
+)
 __version__ = "1.0"
 __maintainer__ = "Jan Janssen"
 __email__ = "janssen@mpie.de"
@@ -15,11 +17,11 @@ __date__ = "Feb 9, 2019"
 class MoabCommands(object):
     @property
     def submit_job_command(self):
-        return ['msub']
+        return ["msub"]
 
     @property
     def delete_job_command(self):
-        return ['mjobctl', '-c']
+        return ["mjobctl", "-c"]
 
     @property
     def enable_reservation_command(self):
@@ -27,12 +29,12 @@ class MoabCommands(object):
 
     @property
     def get_queue_status_command(self):
-        return ['mdiag', '-x']
+        return ["mdiag", "-x"]
 
     @staticmethod
     def get_job_id_from_output(queue_submit_output):
-	      raise NotImplementedError()
-      
+        raise NotImplementedError()
+
     @staticmethod
     def convert_queue_status(queue_status_output):
         raise NotImplementedError()
