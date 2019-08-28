@@ -363,7 +363,7 @@ class BasisQueueAdapter(object):
         return getpass.getuser()
 
     @staticmethod
-    def _execute_command(commands, working_directory=None, split_output=True, shell=True):
+    def _execute_command(commands, working_directory=None, split_output=True, shell=False):
         """
 
         Args:
