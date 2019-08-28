@@ -58,6 +58,9 @@ class BasisQueueAdapter(object):
         elif self._config["queue_type"] == "MOAB":
             class_name = "MoabCommands"
             module_name = "pysqa.wrapper.moab"
+        elif self._config["queue_type"] == "GENT":
+            class_name = "GentCommands"
+            module_name = "pysqa.wrapper.gent"
         else:
             raise ValueError()
         self._commands = getattr(importlib.import_module(module_name), class_name)()

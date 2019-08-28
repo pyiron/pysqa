@@ -48,12 +48,13 @@ class ModularQueueAdapter(BasisQueueAdapter):
             run_time_max=run_time_max,
             command=command,
         )
-        cluster_module = self._queue_to_cluster_dict["queue"]
+        cluster_module = self._queue_to_cluster_dict[queue]
         commands = (
             ["module --quiet swap cluster/{};".format(cluster_module)]
             + self._commands.submit_job_command
             + [queue_script_path]
         )
+        commands = " ".join(commands)
         out = self._execute_command(
             commands=commands, working_directory=working_directory, split_output=False
         )
@@ -83,6 +84,7 @@ class ModularQueueAdapter(BasisQueueAdapter):
             + self._commands.enable_reservation_command
             + [str(cluster_queue_id)]
         )
+        commands = " ".join(commands)
         out = self._execute_command(commands=commands, split_output=True)
         if out is not None:
             return out[0]
@@ -107,6 +109,7 @@ class ModularQueueAdapter(BasisQueueAdapter):
             + self._commands.delete_job_command
             + [str(cluster_queue_id)]
         )
+        commands = " ".join(commands)
         out = self._execute_command(commands=commands, split_output=True)
         if out is not None:
             return out[0]
@@ -127,8 +130,13 @@ class ModularQueueAdapter(BasisQueueAdapter):
             cluster_commands = self._switch_cluster_command(
                 cluster_module=cluster_module
             )
+            commands = (
+                cluster_commands
+                + self._commands.get_queue_status_command
+            )
+            commands = " ".join(commands)
             out = self._execute_command(
-                commands=cluster_commands + self._commands.get_queue_status_command,
+                commands=commands,
                 split_output=False,
             )
             df = self._commands.convert_queue_status(queue_status_output=out)
@@ -142,7 +150,7 @@ class ModularQueueAdapter(BasisQueueAdapter):
     @staticmethod
     def _resolve_queue_id(process_id, cluster_dict):
         cluster_queue_id = int(process_id / 10)
-        cluster_module = cluster_dict[process_id - cluster_queue_id]
+        cluster_module = cluster_dict[process_id - cluster_queue_id*10]
         return cluster_module, cluster_queue_id
 
     @staticmethod
