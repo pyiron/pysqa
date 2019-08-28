@@ -152,4 +152,4 @@ class ModularQueueAdapter(BasisQueueAdapter):
 
     @staticmethod
     def _switch_cluster_command(cluster_module):
-        return ["module --quiet swap cluster/{};".format(cluster_module)]
+        return ["module", "--quiet", "swap", "cluster/{};".format(cluster_module)]
