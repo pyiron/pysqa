@@ -51,7 +51,7 @@ class ModularQueueAdapter(BasisQueueAdapter):
         )
         cluster_module = self._queue_to_cluster_dict[queue]
         commands = (
-            ["module --quiet swap cluster/{};".format(cluster_module)]
+            self._switch_cluster_command(cluster_module=cluster_module)
             + self._commands.submit_job_command
             + [queue_script_path]
         )
