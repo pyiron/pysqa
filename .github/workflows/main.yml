@@ -4,7 +4,6 @@ on: [push]
 
 jobs:
   run: 
-  name: Run
   runs-on: ${{ matrix.operating-system }}
   strategy:
     max-parallel: 4
