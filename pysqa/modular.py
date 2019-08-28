@@ -7,6 +7,7 @@ from pysqa.basic import BasisQueueAdapter
 
 class ModularQueueAdapter(BasisQueueAdapter):
     def __init__(self, config, directory="~/.queues"):
+        config["queue_type"] = "SLURM"
         super(ModularQueueAdapter, self).__init__(config=config, directory=directory)
         self._queue_to_cluster_dict = {
             k: v["cluster"] for k, v in self._config["queues"].items()
