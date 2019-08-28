@@ -1,0 +1,5 @@
+queue_type: GENT
+queue_primary: slurm
+cluster: [cluster1, cluster2, cluster3]
+queues:
+  slurm: {cluster: cluster1, cores_max: 100, cores_min: 10, run_time_max: 259200, script: slurm.sh}

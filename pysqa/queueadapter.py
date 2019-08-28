@@ -4,6 +4,7 @@
 import os
 import yaml
 from pysqa.basic import BasisQueueAdapter
+from pysqa.modular import ModularQueueAdapter
 
 __author__ = "Jan Janssen"
 __copyright__ = "Copyright 2019, Jan Janssen"
@@ -19,6 +20,8 @@ class QueueAdapter(object):
         config = self._read_config(file_name=os.path.join(directory, 'queue.yaml'))
         if config['queue_type'] in ['SGE', 'TORQUE', 'SLURM', 'LSF', 'MOAB']:
             self._adapter = BasisQueueAdapter(config=config, directory=directory)
+        elif config['queue_type'] in ['GENT']:
+            self._adapter = ModularQueueAdapter(config=config, directory=directory)
         else:
             raise ValueError
 
