@@ -49,14 +49,17 @@ class ModularQueueAdapter(BasisQueueAdapter):
             run_time_max=run_time_max,
             command=command,
         )
-        cluster_module = self._queue_to_cluster_dict["queue"]
+        cluster_module = self._queue_to_cluster_dict[queue]
         commands = (
             ["module --quiet swap cluster/{};".format(cluster_module)]
             + self._commands.submit_job_command
             + [queue_script_path]
         )
         out = self._execute_command(
-            commands=commands, working_directory=working_directory, split_output=False
+            commands=commands, 
+            working_directory=working_directory, 
+            split_output=False, 
+            shell=True,
         )
         if out is not None:
             cluster_queue_id = self._commands.get_job_id_from_output(out)
@@ -84,7 +87,7 @@ class ModularQueueAdapter(BasisQueueAdapter):
             + self._commands.enable_reservation_command
             + [str(cluster_queue_id)]
         )
-        out = self._execute_command(commands=commands, split_output=True)
+        out = self._execute_command(commands=commands, split_output=True, shell=True)
         if out is not None:
             return out[0]
         else:
@@ -108,7 +111,7 @@ class ModularQueueAdapter(BasisQueueAdapter):
             + self._commands.delete_job_command
             + [str(cluster_queue_id)]
         )
-        out = self._execute_command(commands=commands, split_output=True)
+        out = self._execute_command(commands=commands, split_output=True, shell=True)
         if out is not None:
             return out[0]
         else:
@@ -131,6 +134,7 @@ class ModularQueueAdapter(BasisQueueAdapter):
             out = self._execute_command(
                 commands=cluster_commands + self._commands.get_queue_status_command,
                 split_output=False,
+                shell=True,
             )
             df = self._commands.convert_queue_status(queue_status_output=out)
             df_lst.append(df)
