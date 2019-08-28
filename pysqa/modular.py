@@ -143,7 +143,7 @@ class ModularQueueAdapter(BasisQueueAdapter):
     @staticmethod
     def _resolve_queue_id(process_id, cluster_dict):
         cluster_queue_id = int(process_id / 10)
-        cluster_module = cluster_dict[process_id - cluster_queue_id]
+        cluster_module = cluster_dict[process_id - cluster_queue_id * 10]
         return cluster_module, cluster_queue_id
 
     @staticmethod
