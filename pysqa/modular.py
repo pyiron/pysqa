@@ -84,7 +84,7 @@ class ModularQueueAdapter(BasisQueueAdapter):
             + self._commands.enable_reservation_command
             + [str(cluster_queue_id)]
         )
-        commands = " ".join(commands)
+        #commands = " ".join(commands)
         out = self._execute_command(commands=commands, split_output=True)
         if out is not None:
             return out[0]
@@ -127,9 +127,7 @@ class ModularQueueAdapter(BasisQueueAdapter):
         """
         df_lst = []
         for cluster_module in self._config["cluster"]:
-            cluster_commands = self._switch_cluster_command(
-                cluster_module=cluster_module
-            )
+            cluster_commands = self._switch_cluster_command(cluster_module=cluster_module)
             commands = (
                 cluster_commands
                 + self._commands.get_queue_status_command
@@ -140,7 +138,7 @@ class ModularQueueAdapter(BasisQueueAdapter):
                 split_output=False,
             )
             df = self._commands.convert_queue_status(queue_status_output=out)
-            df_lst.append(df)
+            if not df is None: df_lst.append(df) # prevent empty clusters from throwing errors
         df = pandas.concat(df_lst, axis=1, sort=False).reset_index(drop=True)
         if user is None:
             return df

@@ -32,11 +32,11 @@ class GentCommands(object):
 
     @property
     def get_queue_status_command(self):
-        return ["squeue", "--format", "%A|%u|%t|%j", "--noheader"]
+        return ["squeue", "--format", "'%A|%u|%t|%j'", "--noheader"]
 
     @staticmethod
     def get_job_id_from_output(queue_submit_output):
-          return int(queue_submit_output.splitlines()[-1].rstrip().lstrip().split(';')[0]) 
+          return int(queue_submit_output.splitlines()[-1].rstrip().lstrip().split(';')[0])
 
     @staticmethod
     def get_queue_from_output(queue_submit_output):
@@ -45,11 +45,11 @@ class GentCommands(object):
     @staticmethod
     def convert_queue_status(queue_status_output):
         qstat = queue_status_output.splitlines()
-        queue = qstat[0].split(':')[1].strip() 
+        queue = qstat[0].split(':')[1].strip()
         if len(qstat) <= 1: # first row contains cluster name, check if there are jobs
-            return pandas.DataFrame(columns=['cluster', 'jobid', 'user', 'status', 'jobname'])
-       
-        line_split_lst = [line.split('|') for line in qstat[1:]] 
+            return None
+
+        line_split_lst = [line.split('|') for line in qstat[1:]]
         job_id_lst, user_lst, status_lst, job_name_lst, queue_lst = zip(*[(int(jobid), user, status.lower(), jobname, queue)
                                                                for jobid, user, status, jobname in line_split_lst])
         return pandas.DataFrame({'cluster': queue_lst,
