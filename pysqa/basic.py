@@ -1,14 +1,17 @@
 # coding: utf-8
 # Copyright (c) Jan Janssen
 
+import getpass
 import importlib
+from jinja2 import Template
 import os
+import subprocess
+import re
 import pandas
-from pysqa.shared import SharedQueueAdapter
 from pysqa.queues import Queues
 
 
-class BasisQueueAdapter(SharedQueueAdapter):
+class BasisQueueAdapter(object):
     """
     The goal of the QueueAdapter class is to make submitting to a queue system as easy as starting another sub process
     locally.
@@ -106,16 +109,13 @@ class BasisQueueAdapter(SharedQueueAdapter):
         Returns:
             int:
         """
-        if isinstance(command, list):
-            command = ''.join(command)
-        if working_directory is None:
-            working_directory = '.'
-        queue_script = self._job_submission_template(queue=queue, job_name=job_name,
-                                                     working_directory=working_directory, cores=cores,
-                                                     memory_max=memory_max, run_time_max=run_time_max, command=command)
-        queue_script_path = os.path.join(working_directory, 'run_queue.sh')
-        with open(queue_script_path, 'w') as f:
-            f.writelines(queue_script)
+        working_directory, queue_script_path = self._write_queue_script(queue=queue,
+                                                                        job_name=job_name,
+                                                                        working_directory=working_directory,
+                                                                        cores=cores,
+                                                                        memory_max=memory_max,
+                                                                        run_time_max=run_time_max,
+                                                                        command=command)
         out = self._execute_command(commands=self._commands.submit_job_command + [queue_script_path],
                                     working_directory=working_directory, split_output=False)
         if out is not None:
@@ -238,6 +238,32 @@ class BasisQueueAdapter(SharedQueueAdapter):
                                           value_max=active_queue['memory_max'])
         return cores, run_time_max, memory_max
 
+    def _write_queue_script(self, queue=None, job_name=None, working_directory=None, cores=None, memory_max=None,
+                            run_time_max=None, command=None):
+        """
+
+        Args:
+            queue (str/None):
+            job_name (str/None):
+            working_directory (str/None):
+            cores (int/None):
+            memory_max (int/None):
+            run_time_max (int/None):
+            command (str/None):
+
+        """
+        if isinstance(command, list):
+            command = ''.join(command)
+        if working_directory is None:
+            working_directory = '.'
+        queue_script = self._job_submission_template(queue=queue, job_name=job_name,
+                                                     working_directory=working_directory, cores=cores,
+                                                     memory_max=memory_max, run_time_max=run_time_max, command=command)
+        queue_script_path = os.path.join(working_directory, 'run_queue.sh')
+        with open(queue_script_path, 'w') as f:
+            f.writelines(queue_script)
+        return working_directory, queue_script_path
+
     def _job_submission_template(self, queue=None, job_name='job.py', working_directory='.', cores=None,
                                  memory_max=None, run_time_max=None, command=None):
         """
@@ -272,3 +298,156 @@ class BasisQueueAdapter(SharedQueueAdapter):
                                memory_max=memory_max,
                                run_time_max=run_time_max,
                                command=command)
+
+    @staticmethod
+    def _get_user():
+        """
+
+        Returns:
+            str:
+        """
+        return getpass.getuser()
+
+    @staticmethod
+    def _execute_command(commands, working_directory=None, split_output=True):
+        """
+
+        Args:
+            commands (list/str):
+            working_directory (str):
+            split_output (bool):
+
+        Returns:
+            str:
+        """
+        try:
+            out = subprocess.check_output(commands, cwd=working_directory, stderr=subprocess.STDOUT,
+                                          universal_newlines=True, shell=not isinstance(commands, list))
+        except subprocess.CalledProcessError:
+            out = None
+        if out is not None and split_output:
+            return out.split('\n')
+        else:
+            return out
+
+    @staticmethod
+    def _fill_queue_dict(queue_lst_dict):
+        """
+
+        Args:
+            queue_lst_dict (dict):
+        """
+        queue_keys = ['cores_min', 'cores_max', 'run_time_max', 'memory_max']
+        for queue_dict in queue_lst_dict.values():
+            for key in set(queue_keys) - set(queue_dict.keys()):
+                queue_dict[key] = None
+
+    @staticmethod
+    def _load_templates(queue_lst_dict, directory='.'):
+        """
+
+        Args:
+            queue_lst_dict (dict):
+            directory (str):
+        """
+        for queue_dict in queue_lst_dict.values():
+            with open(os.path.join(directory, queue_dict['script']), 'r') as f:
+                queue_dict['template'] = Template(f.read())
+
+    @staticmethod
+    def _value_error_if_none(value):
+        """
+
+        Args:
+            value (str/None):
+        """
+        if value is None:
+            raise ValueError()
+        if not isinstance(value, str):
+            raise TypeError()
+
+    @classmethod
+    def _value_in_range(cls, value, value_min=None, value_max=None):
+        """
+
+        Args:
+            value (int/float/None):
+            value_min (int/float/None):
+            value_max (int/float/None):
+
+        Returns:
+            int/float/None:
+        """
+
+        if value is not None:
+            value_, value_min_, value_max_ = [cls._memory_spec_string_to_value(v)
+                                              if v is not None and isinstance(v, str) else v
+                                              for v in (value, value_min, value_max)]
+            # ATTENTION: '60000' is interpreted as '60000M' since default magnitude is 'M'
+            # ATTENTION: int('60000') is interpreted as '60000B' since _memory_spec_string_to_value return the size in
+            # ATTENTION: bytes, as target_magnitude = 'b'
+            # We want to compare the the actual (k,m,g)byte value if there is any
+            if value_min_ is not None and value_ < value_min_:
+                return value_min
+            if value_max_ is not None and value_ > value_max_:
+                return value_max
+            return value
+        else:
+            if value_min is not None:
+                return value_min
+            if value_max is not None:
+                return value_max
+            return value
+
+    @staticmethod
+    def _is_memory_string(value):
+        """
+        Tests a string if it specifies a certain amount of memory e.g.: '20G', '60b'. Also pure integer strings are
+        also valid.
+
+        Args:
+            value (str): the string to test
+
+        Returns:
+            (bool): A boolean value if the string matches a memory specification
+        """
+        memory_spec_pattern = r'[0-9]+[bBkKmMgGtT]?'
+        return re.findall(memory_spec_pattern, value)[0] == value
+
+    @classmethod
+    def _memory_spec_string_to_value(cls, value, default_magnitude='m', target_magnitude='b'):
+        """
+        Converts a valid memory string (tested by _is_memory_string) into an integer/float value of desired
+        magnitude `default_magnitude`. If it is a plain integer string (e.g.: '50000') it will be interpreted with
+        the magnitude passed in by the `default_magnitude`. The output will rescaled to `target_magnitude`
+
+        Args:
+            value (str): the string
+            default_magnitude (str): magnitude for interpreting plain integer strings [b, B, k, K, m, M, g, G, t, T]
+            target_magnitude (str): to which the output value should be converted [b, B, k, K, m, M, g, G, t, T]
+
+        Returns:
+            (float/int): the value of the string in `target_magnitude` units
+        """
+        magnitude_mapping = {
+            'b': 0,
+            'k': 1,
+            'm': 2,
+            'g': 3,
+            't': 4
+        }
+        if cls._is_memory_string(value):
+            integer_pattern = r'[0-9]+'
+            magnitude_pattern = r'[bBkKmMgGtT]+'
+            integer_value = int(re.findall(integer_pattern, value)[0])
+
+            magnitude = re.findall(magnitude_pattern, value)
+            if len(magnitude) > 0:
+                magnitude = magnitude[0].lower()
+            else:
+                magnitude = default_magnitude.lower()
+            # Convert it to default magnitude = megabytes
+            return (integer_value * 1024 ** magnitude_mapping[magnitude]) / (
+                    1024 ** magnitude_mapping[target_magnitude])
+        else:
+            return value
