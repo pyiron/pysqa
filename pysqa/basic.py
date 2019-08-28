@@ -363,17 +363,20 @@ class BasisQueueAdapter(object):
         return getpass.getuser()
 
     @staticmethod
-    def _execute_command(commands, working_directory=None, split_output=True):
+    def _execute_command(commands, working_directory=None, split_output=True, shell=True):
         """
 
         Args:
             commands (list/str):
             working_directory (str):
             split_output (bool):
+            shell (bool):
 
         Returns:
             str:
         """
+        if shell:
+            commands = " ".join(commands)
         try:
             out = subprocess.check_output(
                 commands,
