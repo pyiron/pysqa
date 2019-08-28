@@ -16,7 +16,7 @@ __date__ = "Feb 9, 2019"
 
 
 class QueueAdapter(object):
-  """
+    """
     The goal of the QueueAdapter class is to make submitting to a queue system as easy as starting another sub process
     locally.
 
