@@ -375,7 +375,7 @@ class BasisQueueAdapter(object):
         Returns:
             str:
         """
-        if shell:
+        if shell and isinstance(commands, list):
             commands = " ".join(commands)
         try:
             out = subprocess.check_output(
