@@ -38,25 +38,26 @@ class BasisQueueAdapter(object):
 
             Queues available for auto completion QueueAdapter().queues.<queue name> returns the queue name.
     """
-    def __init__(self, config, directory='~/.queues'):
+
+    def __init__(self, config, directory="~/.queues"):
         self._config = config
-        self._fill_queue_dict(queue_lst_dict=self._config['queues'])
-        self._load_templates(queue_lst_dict=self._config['queues'], directory=directory)
-        if self._config['queue_type'] == 'SGE':
-            class_name = 'SunGridEngineCommands'
-            module_name = 'pysqa.wrapper.sge'
-        elif self._config['queue_type'] == 'TORQUE':
-            class_name = 'TorqueCommands'
-            module_name = 'pysqa.wrapper.torque'
-        elif self._config['queue_type'] == 'SLURM':
-            class_name = 'SlurmCommands'
-            module_name = 'pysqa.wrapper.slurm'
-        elif self._config['queue_type'] == 'LSF':
-            class_name = 'LsfCommands'
-            module_name = 'pysqa.wrapper.lsf'
-        elif self._config['queue_type'] == 'MOAB':
-            class_name = 'MoabCommands'
-            module_name = 'pysqa.wrapper.moab'
+        self._fill_queue_dict(queue_lst_dict=self._config["queues"])
+        self._load_templates(queue_lst_dict=self._config["queues"], directory=directory)
+        if self._config["queue_type"] == "SGE":
+            class_name = "SunGridEngineCommands"
+            module_name = "pysqa.wrapper.sge"
+        elif self._config["queue_type"] == "TORQUE":
+            class_name = "TorqueCommands"
+            module_name = "pysqa.wrapper.torque"
+        elif self._config["queue_type"] == "SLURM":
+            class_name = "SlurmCommands"
+            module_name = "pysqa.wrapper.slurm"
+        elif self._config["queue_type"] == "LSF":
+            class_name = "LsfCommands"
+            module_name = "pysqa.wrapper.lsf"
+        elif self._config["queue_type"] == "MOAB":
+            class_name = "MoabCommands"
+            module_name = "pysqa.wrapper.moab"
         else:
             raise ValueError()
         self._commands = getattr(importlib.import_module(module_name), class_name)()
@@ -78,7 +79,7 @@ class BasisQueueAdapter(object):
         Returns:
             list:
         """
-        return list(self._config['queues'].keys())
+        return list(self._config["queues"].keys())
 
     @property
     def queue_view(self):
@@ -87,14 +88,24 @@ class BasisQueueAdapter(object):
         Returns:
             pandas.DataFrame:
         """
-        return pandas.DataFrame(self._config['queues']).T.drop(['script', 'template'], axis=1)
+        return pandas.DataFrame(self._config["queues"]).T.drop(
+            ["script", "template"], axis=1
+        )
 
     @property
     def queues(self):
         return self._queues
 
-    def submit_job(self, queue=None, job_name=None, working_directory=None, cores=None, memory_max=None,
-                   run_time_max=None, command=None):
+    def submit_job(
+        self,
+        queue=None,
+        job_name=None,
+        working_directory=None,
+        cores=None,
+        memory_max=None,
+        run_time_max=None,
+        command=None,
+    ):
         """
 
         Args:
@@ -109,15 +120,20 @@ class BasisQueueAdapter(object):
         Returns:
             int:
         """
-        working_directory, queue_script_path = self._write_queue_script(queue=queue,
-                                                                        job_name=job_name,
-                                                                        working_directory=working_directory,
-                                                                        cores=cores,
-                                                                        memory_max=memory_max,
-                                                                        run_time_max=run_time_max,
-                                                                        command=command)
-        out = self._execute_command(commands=self._commands.submit_job_command + [queue_script_path],
-                                    working_directory=working_directory, split_output=False)
+        working_directory, queue_script_path = self._write_queue_script(
+            queue=queue,
+            job_name=job_name,
+            working_directory=working_directory,
+            cores=cores,
+            memory_max=memory_max,
+            run_time_max=run_time_max,
+            command=command,
+        )
+        out = self._execute_command(
+            commands=self._commands.submit_job_command + [queue_script_path],
+            working_directory=working_directory,
+            split_output=False,
+        )
         if out is not None:
             return self._commands.get_job_id_from_output(out)
         else:
@@ -132,8 +148,10 @@ class BasisQueueAdapter(object):
         Returns:
             str:
         """
-        out = self._execute_command(commands=self._commands.enable_reservation_command + [str(process_id)],
-                                    split_output=True)
+        out = self._execute_command(
+            commands=self._commands.enable_reservation_command + [str(process_id)],
+            split_output=True,
+        )
         if out is not None:
             return out[0]
         else:
@@ -148,8 +166,10 @@ class BasisQueueAdapter(object):
         Returns:
             str:
         """
-        out = self._execute_command(commands=self._commands.delete_job_command + [str(process_id)],
-                                    split_output=True)
+        out = self._execute_command(
+            commands=self._commands.delete_job_command + [str(process_id)],
+            split_output=True,
+        )
         if out is not None:
             return out[0]
         else:
@@ -164,12 +184,14 @@ class BasisQueueAdapter(object):
         Returns:
             pandas.DataFrame:
         """
-        out = self._execute_command(commands=self._commands.get_queue_status_command, split_output=False)
+        out = self._execute_command(
+            commands=self._commands.get_queue_status_command, split_output=False
+        )
         df = self._commands.convert_queue_status(queue_status_output=out)
         if user is None:
             return df
         else:
-            return df[df['user'] == user]
+            return df[df["user"] == user]
 
     def get_status_of_my_jobs(self):
         """
@@ -189,7 +211,7 @@ class BasisQueueAdapter(object):
              str: ['running', 'pending', 'error']
         """
         df = self.get_queue_status()
-        df_selected = df[df['jobid'] == process_id]['status']
+        df_selected = df[df["jobid"] == process_id]["status"]
         if len(df_selected) != 0:
             return df_selected.values[0]
         else:
@@ -207,14 +229,16 @@ class BasisQueueAdapter(object):
         df = self.get_queue_status()
         results_lst = []
         for process_id in process_id_lst:
-            df_selected = df[df['jobid'] == process_id]['status']
+            df_selected = df[df["jobid"] == process_id]["status"]
             if len(df_selected) != 0:
                 results_lst.append(df_selected.values[0])
             else:
-                results_lst.append('finished')
+                results_lst.append("finished")
         return results_lst
 
-    def check_queue_parameters(self, queue, cores=1, run_time_max=None, memory_max=None, active_queue=None):
+    def check_queue_parameters(
+        self, queue, cores=1, run_time_max=None, memory_max=None, active_queue=None
+    ):
         """
 
         Args:
@@ -228,18 +252,30 @@ class BasisQueueAdapter(object):
             list: [cores, run_time_max, memory_max]
         """
         if active_queue is None:
-            active_queue = self._config['queues'][queue]
-        cores = self._value_in_range(value=cores,
-                                     value_min=active_queue['cores_min'],
-                                     value_max=active_queue['cores_max'])
-        run_time_max = self._value_in_range(value=run_time_max,
-                                            value_max=active_queue['run_time_max'])
-        memory_max = self._value_in_range(value=memory_max,
-                                          value_max=active_queue['memory_max'])
+            active_queue = self._config["queues"][queue]
+        cores = self._value_in_range(
+            value=cores,
+            value_min=active_queue["cores_min"],
+            value_max=active_queue["cores_max"],
+        )
+        run_time_max = self._value_in_range(
+            value=run_time_max, value_max=active_queue["run_time_max"]
+        )
+        memory_max = self._value_in_range(
+            value=memory_max, value_max=active_queue["memory_max"]
+        )
         return cores, run_time_max, memory_max
 
-    def _write_queue_script(self, queue=None, job_name=None, working_directory=None, cores=None, memory_max=None,
-                            run_time_max=None, command=None):
+    def _write_queue_script(
+        self,
+        queue=None,
+        job_name=None,
+        working_directory=None,
+        cores=None,
+        memory_max=None,
+        run_time_max=None,
+        command=None,
+    ):
         """
 
         Args:
@@ -253,19 +289,33 @@ class BasisQueueAdapter(object):
 
         """
         if isinstance(command, list):
-            command = ''.join(command)
+            command = "".join(command)
         if working_directory is None:
-            working_directory = '.'
-        queue_script = self._job_submission_template(queue=queue, job_name=job_name,
-                                                     working_directory=working_directory, cores=cores,
-                                                     memory_max=memory_max, run_time_max=run_time_max, command=command)
-        queue_script_path = os.path.join(working_directory, 'run_queue.sh')
-        with open(queue_script_path, 'w') as f:
+            working_directory = "."
+        queue_script = self._job_submission_template(
+            queue=queue,
+            job_name=job_name,
+            working_directory=working_directory,
+            cores=cores,
+            memory_max=memory_max,
+            run_time_max=run_time_max,
+            command=command,
+        )
+        queue_script_path = os.path.join(working_directory, "run_queue.sh")
+        with open(queue_script_path, "w") as f:
             f.writelines(queue_script)
         return working_directory, queue_script_path
 
-    def _job_submission_template(self, queue=None, job_name='job.py', working_directory='.', cores=None,
-                                 memory_max=None, run_time_max=None, command=None):
+    def _job_submission_template(
+        self,
+        queue=None,
+        job_name="job.py",
+        working_directory=".",
+        cores=None,
+        memory_max=None,
+        run_time_max=None,
+        command=None,
+    ):
         """
 
         Args:
@@ -281,23 +331,27 @@ class BasisQueueAdapter(object):
             str:
         """
         if queue is None:
-            queue = self._config['queue_primary']
+            queue = self._config["queue_primary"]
         self._value_error_if_none(value=command)
         if queue not in self.queue_list:
             raise ValueError()
-        active_queue = self._config['queues'][queue]
-        cores, run_time_max, memory_max = self.check_queue_parameters(queue=None,
-                                                                      cores=cores,
-                                                                      run_time_max=run_time_max,
-                                                                      memory_max=memory_max,
-                                                                      active_queue=active_queue)
-        template = active_queue['template']
-        return template.render(job_name=job_name,
-                               working_directory=working_directory,
-                               cores=cores,
-                               memory_max=memory_max,
-                               run_time_max=run_time_max,
-                               command=command)
+        active_queue = self._config["queues"][queue]
+        cores, run_time_max, memory_max = self.check_queue_parameters(
+            queue=None,
+            cores=cores,
+            run_time_max=run_time_max,
+            memory_max=memory_max,
+            active_queue=active_queue,
+        )
+        template = active_queue["template"]
+        return template.render(
+            job_name=job_name,
+            working_directory=working_directory,
+            cores=cores,
+            memory_max=memory_max,
+            run_time_max=run_time_max,
+            command=command,
+        )
 
     @staticmethod
     def _get_user():
@@ -321,12 +375,17 @@ class BasisQueueAdapter(object):
             str:
         """
         try:
-            out = subprocess.check_output(commands, cwd=working_directory, stderr=subprocess.STDOUT,
-                                          universal_newlines=True, shell=not isinstance(commands, list))
+            out = subprocess.check_output(
+                commands,
+                cwd=working_directory,
+                stderr=subprocess.STDOUT,
+                universal_newlines=True,
+                shell=not isinstance(commands, list),
+            )
         except subprocess.CalledProcessError:
             out = None
         if out is not None and split_output:
-            return out.split('\n')
+            return out.split("\n")
         else:
             return out
 
@@ -337,13 +396,13 @@ class BasisQueueAdapter(object):
         Args:
             queue_lst_dict (dict):
         """
-        queue_keys = ['cores_min', 'cores_max', 'run_time_max', 'memory_max']
+        queue_keys = ["cores_min", "cores_max", "run_time_max", "memory_max"]
         for queue_dict in queue_lst_dict.values():
             for key in set(queue_keys) - set(queue_dict.keys()):
                 queue_dict[key] = None
 
     @staticmethod
-    def _load_templates(queue_lst_dict, directory='.'):
+    def _load_templates(queue_lst_dict, directory="."):
         """
 
         Args:
@@ -351,8 +410,8 @@ class BasisQueueAdapter(object):
             directory (str):
         """
         for queue_dict in queue_lst_dict.values():
-            with open(os.path.join(directory, queue_dict['script']), 'r') as f:
-                queue_dict['template'] = Template(f.read())
+            with open(os.path.join(directory, queue_dict["script"]), "r") as f:
+                queue_dict["template"] = Template(f.read())
 
     @staticmethod
     def _value_error_if_none(value):
@@ -380,9 +439,12 @@ class BasisQueueAdapter(object):
         """
 
         if value is not None:
-            value_, value_min_, value_max_ = [cls._memory_spec_string_to_value(v)
-                                              if v is not None and isinstance(v, str) else v
-                                              for v in (value, value_min, value_max)]
+            value_, value_min_, value_max_ = [
+                cls._memory_spec_string_to_value(v)
+                if v is not None and isinstance(v, str)
+                else v
+                for v in (value, value_min, value_max)
+            ]
             # ATTENTION: '60000' is interpreted as '60000M' since default magnitude is 'M'
             # ATTENTION: int('60000') is interpreted as '60000B' since _memory_spec_string_to_value return the size in
             # ATTENTION: bytes, as target_magnitude = 'b'
@@ -411,11 +473,13 @@ class BasisQueueAdapter(object):
         Returns:
             (bool): A boolean value if the string matches a memory specification
         """
-        memory_spec_pattern = r'[0-9]+[bBkKmMgGtT]?'
+        memory_spec_pattern = r"[0-9]+[bBkKmMgGtT]?"
         return re.findall(memory_spec_pattern, value)[0] == value
 
     @classmethod
-    def _memory_spec_string_to_value(cls, value, default_magnitude='m', target_magnitude='b'):
+    def _memory_spec_string_to_value(
+        cls, value, default_magnitude="m", target_magnitude="b"
+    ):
         """
         Converts a valid memory string (tested by _is_memory_string) into an integer/float value of desired
         magnitude `default_magnitude`. If it is a plain integer string (e.g.: '50000') it will be interpreted with
@@ -429,16 +493,10 @@ class BasisQueueAdapter(object):
         Returns:
             (float/int): the value of the string in `target_magnitude` units
         """
-        magnitude_mapping = {
-            'b': 0,
-            'k': 1,
-            'm': 2,
-            'g': 3,
-            't': 4
-        }
+        magnitude_mapping = {"b": 0, "k": 1, "m": 2, "g": 3, "t": 4}
         if cls._is_memory_string(value):
-            integer_pattern = r'[0-9]+'
-            magnitude_pattern = r'[bBkKmMgGtT]+'
+            integer_pattern = r"[0-9]+"
+            magnitude_pattern = r"[bBkKmMgGtT]+"
             integer_value = int(re.findall(integer_pattern, value)[0])
 
             magnitude = re.findall(magnitude_pattern, value)
@@ -448,6 +506,7 @@ class BasisQueueAdapter(object):
                 magnitude = default_magnitude.lower()
             # Convert it to default magnitude = megabytes
             return (integer_value * 1024 ** magnitude_mapping[magnitude]) / (
-                    1024 ** magnitude_mapping[target_magnitude])
+                1024 ** magnitude_mapping[target_magnitude]
+            )
         else:
             return value

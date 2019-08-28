@@ -7,6 +7,7 @@ class Queues(object):
     Queues is an abstract class simply to make the list of queues available for auto completion. This is mainly used in
     interactive environments like jupyter.
     """
+
     def __init__(self, list_of_queues):
         self._list_of_queues = list_of_queues
 

@@ -16,11 +16,11 @@ __date__ = "Feb 9, 2019"
 
 
 class QueueAdapter(object):
-    def __init__(self, directory='~/.queues'):
-        config = self._read_config(file_name=os.path.join(directory, 'queue.yaml'))
-        if config['queue_type'] in ['SGE', 'TORQUE', 'SLURM', 'LSF', 'MOAB']:
+    def __init__(self, directory="~/.queues"):
+        config = self._read_config(file_name=os.path.join(directory, "queue.yaml"))
+        if config["queue_type"] in ["SGE", "TORQUE", "SLURM", "LSF", "MOAB"]:
             self._adapter = BasisQueueAdapter(config=config, directory=directory)
-        elif config['queue_type'] in ['GENT']:
+        elif config["queue_type"] in ["GENT"]:
             self._adapter = ModularQueueAdapter(config=config, directory=directory)
         else:
             raise ValueError
@@ -56,8 +56,16 @@ class QueueAdapter(object):
     def queues(self):
         return self._adapter.queues
 
-    def submit_job(self, queue=None, job_name=None, working_directory=None, cores=None, memory_max=None,
-                   run_time_max=None, command=None):
+    def submit_job(
+        self,
+        queue=None,
+        job_name=None,
+        working_directory=None,
+        cores=None,
+        memory_max=None,
+        run_time_max=None,
+        command=None,
+    ):
         """
 
         Args:
@@ -72,8 +80,15 @@ class QueueAdapter(object):
         Returns:
             int:
         """
-        return self._adapter.submit_job(queue=queue, job_name=job_name, working_directory=working_directory,
-                                        cores=cores, memory_max=memory_max, run_time_max=run_time_max, command=command)
+        return self._adapter.submit_job(
+            queue=queue,
+            job_name=job_name,
+            working_directory=working_directory,
+            cores=cores,
+            memory_max=memory_max,
+            run_time_max=run_time_max,
+            command=command,
+        )
 
     def enable_reservation(self, process_id):
         """
@@ -138,7 +153,9 @@ class QueueAdapter(object):
         """
         return self._adapter.get_status_of_jobs(process_id_lst=process_id_lst)
 
-    def check_queue_parameters(self, queue, cores=1, run_time_max=None, memory_max=None, active_queue=None):
+    def check_queue_parameters(
+        self, queue, cores=1, run_time_max=None, memory_max=None, active_queue=None
+    ):
         """
 
         Args:
@@ -151,11 +168,16 @@ class QueueAdapter(object):
         Returns:
             list: [cores, run_time_max, memory_max]
         """
-        return self._adapter.check_queue_parameters(queue=queue, cores=cores, run_time_max=run_time_max,
-                                                    memory_max=memory_max, active_queue=active_queue)
+        return self._adapter.check_queue_parameters(
+            queue=queue,
+            cores=cores,
+            run_time_max=run_time_max,
+            memory_max=memory_max,
+            active_queue=active_queue,
+        )
 
     @staticmethod
-    def _read_config(file_name='queue.yaml'):
+    def _read_config(file_name="queue.yaml"):
         """
 
         Args:
@@ -164,5 +186,5 @@ class QueueAdapter(object):
         Returns:
             dict:
         """
-        with open(file_name, 'r') as f:
+        with open(file_name, "r") as f:
             return yaml.load(f, Loader=yaml.FullLoader)
