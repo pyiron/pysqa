@@ -67,19 +67,19 @@ def command_line(argv):
                 sys.exit()
         qa = QueueAdapter(directory=directory)
         if mode_submit:
-            qa.submit_job(
-                queue=queue,
-                job_name=job_name,
-                working_directory=working_directory,
-                cores=cores,
-                memory_max=memory_max,
-                run_time_max=run_time_max,
-                command=command
-            )
+            print(qa.submit_job(
+                    queue=queue,
+                    job_name=job_name,
+                    working_directory=working_directory,
+                    cores=cores,
+                    memory_max=memory_max,
+                    run_time_max=run_time_max,
+                    command=command
+                ))
         elif mode_delete:
-            qa.delete_job(process_id=job_id)
+            print(qa.delete_job(process_id=job_id))
         elif mode_reservation:
-            qa.enable_reservation(process_id=job_id)
+            print(qa.enable_reservation(process_id=job_id))
         elif mode_status:
             print(json.dumps(qa.get_queue_status().to_dict(orient='list')))
         sys.exit()
