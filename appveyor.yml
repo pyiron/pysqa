@@ -39,7 +39,7 @@ install:
 - '"%CONDA%\Scripts\activate.bat"'
 - "conda config --set always_yes yes --set changeps1 no"
 - "conda update -q conda"
-- 'conda install -c conda-forge coverage defusedxml "pandas>=0.23" yaml json jinja2'
+- 'conda install -c conda-forge coverage defusedxml "pandas>=0.23" yaml jinja2'
 - "conda info -a"
 - "pip install --pre ."
 
