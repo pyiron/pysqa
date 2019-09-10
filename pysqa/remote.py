@@ -152,7 +152,6 @@ class RemoteQueueAdapter(BasisQueueAdapter):
                 command="rm -r " + remote_working_directory
             )
 
-
     def transfer_file(self, file, transfer_back=False):
         working_directory = os.path.abspath(os.path.expanduser(file))
         remote_working_directory = self._get_remote_working_dir(
