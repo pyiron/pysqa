@@ -158,6 +158,7 @@ class RemoteQueueAdapter(BasisQueueAdapter):
         remote_working_directory = self._get_remote_working_dir(
             working_directory=working_directory
         )
+        self._create_remote_dir(directory=os.path.dirname(remote_working_directory))
         self._transfer_files(file_dict={working_directory: remote_working_directory},
                              sftp=None,
                              transfer_back=transfer_back)
