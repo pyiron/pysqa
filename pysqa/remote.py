@@ -2,8 +2,10 @@
 # Copyright (c) Jan Janssen
 
 import json
+import os
 import pandas
 import paramiko
+from tqdm import tqdm
 from pysqa.basic import BasisQueueAdapter
 
 
@@ -15,6 +17,8 @@ class RemoteQueueAdapter(BasisQueueAdapter):
         self._ssh_known_hosts = config['known_hosts']
         self._ssh_key = config['ssh_key']
         self._ssh_remote_config_dir = config['ssh_remote_config_dir']
+        self._ssh_remote_path = config['ssh_remote_path']
+        self._ssh_local_path = os.path.abspath(os.path.expanduser(config['ssh_local_path']))
         if 'ssh_port' in config.keys():
             self._ssh_port = config['ssh_port']
         else:
@@ -87,6 +91,75 @@ class RemoteQueueAdapter(BasisQueueAdapter):
     def __del__(self):
         self._ssh_connection.close()
 
+    def _get_remote_working_dir(self, working_directory):
+        return os.path.join(
+            self._ssh_remote_path,
+            os.path.relpath(
+                working_directory,
+                self._ssh_local_path
+            )
+        )
+
+    def _create_remote_dir(self, directory):
+        if isinstance(directory, str):
+            self._execute_remote_command(
+                command="mkdir -p " + directory
+            )
+        elif isinstance(directory, list):
+            command = "mkdir -p "
+            for d in directory:
+                command += d + " "
+            self._execute_remote_command(
+                command=command
+            )
+        else:
+            raise TypeError()
+
+    def _transfer_files(self, file_dict, sftp=None, transfer_back=False):
+        if sftp is None:
+            if self._ssh_continous_connection:
+                ssh = self._ssh_connection
+            else:
+                ssh = self._open_ssh_connection()
+            sftp_client = ssh.open_sftp()
+        else:
+            sftp_client = sftp
+        for file_src, file_dst in tqdm(file_dict.items()):
+            if transfer_back:
+                sftp_client.get(file_dst, file_src)
+            else:
+                sftp_client.put(file_src, file_dst)
+        if sftp is None:
+            sftp_client.close()
+
+    @staticmethod
+    def _get_file_transfer(file, local_dir, remote_dir):
+        return os.path.join(remote_dir, os.path.relpath(file, local_dir))
+
+    def _transfer_data_to_remote(self, working_directory):
+        working_directory = os.path.abspath(os.path.expanduser(working_directory))
+        remote_working_directory = self._get_remote_working_dir(
+            working_directory=working_directory
+        )
+        file_dict = {}
+        new_dir_list = []
+        for p, folder, files in os.walk(working_directory):
+            new_dir_list.append(
+                self._get_file_transfer(
+                    file=p,
+                    local_dir=working_directory,
+                    remote_dir=remote_working_directory
+                )
+            )
+            for f in files:
+                file_path = os.path.join(p, f)
+                file_dict[file_path] = self._get_file_transfer(
+                    file=file_path,
+                    local_dir=working_directory,
+                    remote_dir=remote_working_directory)
+        self._create_remote_dir(directory=new_dir_list)
+        self._transfer_files(file_dict=file_dict, sftp=None, transfer_back=False)
+
     def submit_job(
         self,
         queue=None,
@@ -97,6 +170,7 @@ class RemoteQueueAdapter(BasisQueueAdapter):
         run_time_max=None,
         command=None,
     ):
+        self._transfer_data_to_remote(working_directory=working_directory)
         return int(
             self._execute_remote_command(
                 command=self._submit_command(
@@ -162,8 +236,27 @@ class RemoteQueueAdapter(BasisQueueAdapter):
         else:
             return df[df["user"] == user]
 
-    def get_job_from_remote(self):
+    def get_job_from_remote(self, working_directory):
         """
         Get the results of the calculation - this is necessary when the calculation was executed on a remote host.
         """
-        pass
+        working_directory = os.path.abspath(os.path.expanduser(working_directory))
+        remote_working_directory = self._get_remote_working_dir(
+            working_directory=working_directory
+        )
+        remote_dict = json.loads(
+            self._execute_remote_command(
+                command='python -m pysqa.cmd --list --working_directory ' + remote_working_directory
+            )
+        )
+        for d in remote_dict['dirs']:
+            os.makedirs(d, exist_ok=True)
+        file_dict = {}
+        for f in remote_dict['files']:
+            local_file = self._get_file_transfer(
+                file=f,
+                local_dir=remote_working_directory,
+                remote_dir=working_directory
+            )
+            file_dict[local_file] = f
+        self._transfer_files(file_dict=file_dict, sftp=None, transfer_back=True)
