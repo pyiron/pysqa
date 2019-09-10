@@ -64,6 +64,15 @@ class QueueAdapter(object):
         return self._adapter.config
 
     @property
+    def remote_flag(self):
+        """
+
+        Returns:
+            bool:
+        """
+        return self._adapter.remote_flag
+
+    @property
     def queue_list(self):
         """
 
@@ -133,8 +142,35 @@ class QueueAdapter(object):
     def get_job_from_remote(self, working_directory, delete_remote=False):
         """
         Get the results of the calculation - this is necessary when the calculation was executed on a remote host.
+
+        Args:
+            working_directory (str):
+            delete_remote (bool):
         """
         self._adapter.get_job_from_remote(working_directory=working_directory, delete_remote=delete_remote)
+
+    def transfer_file_to_remote(self, file, transfer_back=False):
+        """
+
+        Args:
+            file (str):
+            transfer_back (bool):
+
+        Returns:
+            str:
+        """
+        self._adapter.transfer_file(file=file, transfer_back=transfer_back)
+
+    def convert_path_to_remote(self, path):
+        """
+
+        Args:
+            path (str):
+
+        Returns:
+            str:
+        """
+        self._adapter.convert_path_to_remote(path=path)
 
     def delete_job(self, process_id):
         """

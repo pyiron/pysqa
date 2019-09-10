@@ -69,6 +69,11 @@ class BasisQueueAdapter(object):
         if self._config["queue_type"] != "REMOTE":
             self._commands = getattr(importlib.import_module(module_name), class_name)()
         self._queues = Queues(self.queue_list)
+        self._remote_flag = False
+
+    @property
+    def remote_flag(self):
+        return self._remote_flag
 
     @property
     def config(self):
@@ -247,6 +252,9 @@ class BasisQueueAdapter(object):
         """
         Get the results of the calculation - this is necessary when the calculation was executed on a remote host.
         """
+        pass
+
+    def convert_path_to_remote(self, path):
         pass
 
     def check_queue_parameters(

@@ -28,6 +28,7 @@ class RemoteQueueAdapter(BasisQueueAdapter):
             self._ssh_connection = self._open_ssh_connection()
         else:
             self._ssh_connection = None
+        self._remote_flag = True
 
     def _open_ssh_connection(self):
         ssh = paramiko.SSHClient()
@@ -115,6 +116,21 @@ class RemoteQueueAdapter(BasisQueueAdapter):
         else:
             raise TypeError()
 
+    def convert_path_to_remote(self, path):
+        working_directory = os.path.abspath(os.path.expanduser(path))
+        return self._get_remote_working_dir(
+            working_directory=working_directory
+        )
+
+    def transfer_file(self, file, transfer_back=False):
+        working_directory = os.path.abspath(os.path.expanduser(file))
+        remote_working_directory = self._get_remote_working_dir(
+            working_directory=working_directory
+        )
+        self._transfer_files(file_dict={working_directory: remote_working_directory},
+                             sftp=None,
+                             transfer_back=transfer_back)
+
     def _transfer_files(self, file_dict, sftp=None, transfer_back=False):
         if sftp is None:
             if self._ssh_continous_connection:
@@ -177,9 +193,9 @@ class RemoteQueueAdapter(BasisQueueAdapter):
                     queue=queue,
                     job_name=job_name,
                     working_directory=working_directory,
-                    cores=cores,
-                    memory_max=memory_max,
-                    run_time_max=run_time_max,
+                    cores=str(cores),
+                    memory_max=str(memory_max),
+                    run_time_max=str(run_time_max),
                     command_str=command
                 )
             )
