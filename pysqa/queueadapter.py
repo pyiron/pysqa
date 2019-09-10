@@ -170,7 +170,7 @@ class QueueAdapter(object):
         Returns:
             str:
         """
-        self._adapter.convert_path_to_remote(path=path)
+        return self._adapter.convert_path_to_remote(path=path)
 
     def delete_job(self, process_id):
         """
