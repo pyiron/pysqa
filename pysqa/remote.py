@@ -30,151 +30,11 @@ class RemoteQueueAdapter(BasisQueueAdapter):
             self._ssh_connection = None
         self._remote_flag = True
 
-    def _open_ssh_connection(self):
-        ssh = paramiko.SSHClient()
-        ssh.load_host_keys(self._ssh_known_hosts)
-        ssh.connect(hostname=self._ssh_host,
-                    port=self._ssh_port,
-                    username=self._ssh_username,
-                    key_filename=self._ssh_key)
-        return ssh
-
-    def _remote_command(self):
-        return 'python -m pysqa.cmd --config_directory ' + self._ssh_remote_config_dir + ' '
-
-    def _get_queue_status_command(self):
-        return self._remote_command() + '--status'
-
-    def _submit_command(
-            self,
-            queue=None,
-            job_name=None,
-            working_directory=None,
-            cores=None,
-            memory_max=None,
-            run_time_max=None,
-            command_str=None
-    ):
-        command = self._remote_command() + '--submit '
-        if queue is not None:
-            command += '--queue ' + queue + ' '
-        if job_name is not None:
-            command += '--job_name ' + job_name + ' '
-        if working_directory is not None:
-            command += '--working_directory ' + working_directory + ' '
-        if cores is not None:
-            command += '--cores ' + cores + ' '
-        if memory_max is not None:
-            command += '--memory ' + memory_max + ' '
-        if run_time_max is not None:
-            command += '--run_time ' + run_time_max + ' '
-        if command_str is not None:
-            command += '--command "' + command_str + '" '
-        return command
-
-    def _delete_command(self, job_id):
-        return self._remote_command() + '--delete --id ' + str(job_id)
-
-    def _reservation_command(self, job_id):
-        return self._remote_command() + '--reservation --id ' + str(job_id)
-
-    def _execute_remote_command(self, command):
-        if self._ssh_continous_connection:
-            ssh = self._ssh_connection
-        else:
-            ssh = self._open_ssh_connection()
-        stdin, stdout, stderr = ssh.exec_command(command)
-        output = stdout.read().decode()
-        if not self._ssh_continous_connection:
-            ssh.close()
-        return output
-
-    def __del__(self):
-        self._ssh_connection.close()
-
-    def _get_remote_working_dir(self, working_directory):
-        return os.path.join(
-            self._ssh_remote_path,
-            os.path.relpath(
-                working_directory,
-                self._ssh_local_path
-            )
-        )
-
-    def _create_remote_dir(self, directory):
-        if isinstance(directory, str):
-            self._execute_remote_command(
-                command="mkdir -p " + directory
-            )
-        elif isinstance(directory, list):
-            command = "mkdir -p "
-            for d in directory:
-                command += d + " "
-            self._execute_remote_command(
-                command=command
-            )
-        else:
-            raise TypeError()
-
     def convert_path_to_remote(self, path):
         working_directory = os.path.abspath(os.path.expanduser(path))
         return self._get_remote_working_dir(
             working_directory=working_directory
         )
-
-    def transfer_file(self, file, transfer_back=False):
-        working_directory = os.path.abspath(os.path.expanduser(file))
-        remote_working_directory = self._get_remote_working_dir(
-            working_directory=working_directory
-        )
-        self._transfer_files(file_dict={working_directory: remote_working_directory},
-                             sftp=None,
-                             transfer_back=transfer_back)
-
-    def _transfer_files(self, file_dict, sftp=None, transfer_back=False):
-        if sftp is None:
-            if self._ssh_continous_connection:
-                ssh = self._ssh_connection
-            else:
-                ssh = self._open_ssh_connection()
-            sftp_client = ssh.open_sftp()
-        else:
-            sftp_client = sftp
-        for file_src, file_dst in tqdm(file_dict.items()):
-            if transfer_back:
-                sftp_client.get(file_dst, file_src)
-            else:
-                sftp_client.put(file_src, file_dst)
-        if sftp is None:
-            sftp_client.close()
-
-    @staticmethod
-    def _get_file_transfer(file, local_dir, remote_dir):
-        return os.path.abspath(os.path.join(remote_dir, os.path.relpath(file, local_dir)))
-
-    def _transfer_data_to_remote(self, working_directory):
-        working_directory = os.path.abspath(os.path.expanduser(working_directory))
-        remote_working_directory = self._get_remote_working_dir(
-            working_directory=working_directory
-        )
-        file_dict = {}
-        new_dir_list = []
-        for p, folder, files in os.walk(working_directory):
-            new_dir_list.append(
-                self._get_file_transfer(
-                    file=p,
-                    local_dir=working_directory,
-                    remote_dir=remote_working_directory
-                )
-            )
-            for f in files:
-                file_path = os.path.join(p, f)
-                file_dict[file_path] = self._get_file_transfer(
-                    file=file_path,
-                    local_dir=working_directory,
-                    remote_dir=remote_working_directory)
-        self._create_remote_dir(directory=new_dir_list)
-        self._transfer_files(file_dict=file_dict, sftp=None, transfer_back=False)
 
     def submit_job(
         self,
@@ -187,15 +47,21 @@ class RemoteQueueAdapter(BasisQueueAdapter):
         command=None,
     ):
         self._transfer_data_to_remote(working_directory=working_directory)
+        if cores is not None:
+            cores = str(cores)
+        if memory_max is not None:
+            memory_max = str(memory_max)
+        if run_time_max is not None:
+            run_time_max = str(run_time_max)
         return int(
             self._execute_remote_command(
                 command=self._submit_command(
                     queue=queue,
                     job_name=job_name,
                     working_directory=working_directory,
-                    cores=str(cores),
-                    memory_max=str(memory_max),
-                    run_time_max=str(run_time_max),
+                    cores=cores,
+                    memory_max=memory_max,
+                    run_time_max=run_time_max,
                     command_str=command
                 )
             )
@@ -285,3 +151,144 @@ class RemoteQueueAdapter(BasisQueueAdapter):
             self._execute_remote_command(
                 command="rm -r " + remote_working_directory
             )
+
+
+    def transfer_file(self, file, transfer_back=False):
+        working_directory = os.path.abspath(os.path.expanduser(file))
+        remote_working_directory = self._get_remote_working_dir(
+            working_directory=working_directory
+        )
+        self._transfer_files(file_dict={working_directory: remote_working_directory},
+                             sftp=None,
+                             transfer_back=transfer_back)
+
+    def __del__(self):
+        self._ssh_connection.close()
+
+    def _transfer_files(self, file_dict, sftp=None, transfer_back=False):
+        if sftp is None:
+            if self._ssh_continous_connection:
+                ssh = self._ssh_connection
+            else:
+                ssh = self._open_ssh_connection()
+            sftp_client = ssh.open_sftp()
+        else:
+            sftp_client = sftp
+        for file_src, file_dst in tqdm(file_dict.items()):
+            if transfer_back:
+                sftp_client.get(file_dst, file_src)
+            else:
+                sftp_client.put(file_src, file_dst)
+        if sftp is None:
+            sftp_client.close()
+
+    def _open_ssh_connection(self):
+        ssh = paramiko.SSHClient()
+        ssh.load_host_keys(self._ssh_known_hosts)
+        ssh.connect(hostname=self._ssh_host,
+                    port=self._ssh_port,
+                    username=self._ssh_username,
+                    key_filename=self._ssh_key)
+        return ssh
+
+    def _remote_command(self):
+        return 'python -m pysqa.cmd --config_directory ' + self._ssh_remote_config_dir + ' '
+
+    def _get_queue_status_command(self):
+        return self._remote_command() + '--status'
+
+    def _submit_command(
+            self,
+            queue=None,
+            job_name=None,
+            working_directory=None,
+            cores=None,
+            memory_max=None,
+            run_time_max=None,
+            command_str=None
+    ):
+        command = self._remote_command() + '--submit '
+        if queue is not None:
+            command += '--queue ' + queue + ' '
+        if job_name is not None:
+            command += '--job_name ' + job_name + ' '
+        if working_directory is not None:
+            command += '--working_directory ' + working_directory + ' '
+        if cores is not None:
+            command += '--cores ' + cores + ' '
+        if memory_max is not None:
+            command += '--memory ' + memory_max + ' '
+        if run_time_max is not None:
+            command += '--run_time ' + run_time_max + ' '
+        if command_str is not None:
+            command += '--command "' + command_str + '" '
+        return command
+
+    def _delete_command(self, job_id):
+        return self._remote_command() + '--delete --id ' + str(job_id)
+
+    def _reservation_command(self, job_id):
+        return self._remote_command() + '--reservation --id ' + str(job_id)
+
+    def _execute_remote_command(self, command):
+        if self._ssh_continous_connection:
+            ssh = self._ssh_connection
+        else:
+            ssh = self._open_ssh_connection()
+        stdin, stdout, stderr = ssh.exec_command(command)
+        output = stdout.read().decode()
+        if not self._ssh_continous_connection:
+            ssh.close()
+        return output
+
+    def _get_remote_working_dir(self, working_directory):
+        return os.path.join(
+            self._ssh_remote_path,
+            os.path.relpath(
+                working_directory,
+                self._ssh_local_path
+            )
+        )
+
+    def _create_remote_dir(self, directory):
+        if isinstance(directory, str):
+            self._execute_remote_command(
+                command="mkdir -p " + directory
+            )
+        elif isinstance(directory, list):
+            command = "mkdir -p "
+            for d in directory:
+                command += d + " "
+            self._execute_remote_command(
+                command=command
+            )
+        else:
+            raise TypeError()
+
+    def _transfer_data_to_remote(self, working_directory):
+        working_directory = os.path.abspath(os.path.expanduser(working_directory))
+        remote_working_directory = self._get_remote_working_dir(
+            working_directory=working_directory
+        )
+        file_dict = {}
+        new_dir_list = []
+        for p, folder, files in os.walk(working_directory):
+            new_dir_list.append(
+                self._get_file_transfer(
+                    file=p,
+                    local_dir=working_directory,
+                    remote_dir=remote_working_directory
+                )
+            )
+            for f in files:
+                file_path = os.path.join(p, f)
+                file_dict[file_path] = self._get_file_transfer(
+                    file=file_path,
+                    local_dir=working_directory,
+                    remote_dir=remote_working_directory)
+        self._create_remote_dir(directory=new_dir_list)
+        self._transfer_files(file_dict=file_dict, sftp=None, transfer_back=False)
+
+    @staticmethod
+    def _get_file_transfer(file, local_dir, remote_dir):
+        return os.path.abspath(os.path.join(remote_dir, os.path.relpath(file, local_dir)))
