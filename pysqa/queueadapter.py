@@ -127,6 +127,12 @@ class QueueAdapter(object):
         """
         return self._adapter.enable_reservation(process_id=process_id)
 
+    def get_job_from_remote(self):
+        """
+        Get the results of the calculation - this is necessary when the calculation was executed on a remote host.
+        """
+        self._adapter.get_job_from_remote()
+
     def delete_job(self, process_id):
         """
 

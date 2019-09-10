@@ -239,6 +239,12 @@ class BasisQueueAdapter(object):
                 results_lst.append("finished")
         return results_lst
 
+    def get_job_from_remote(self):
+        """
+        Get the results of the calculation - this is necessary when the calculation was executed on a remote host.
+        """
+        pass
+
     def check_queue_parameters(
         self, queue, cores=1, run_time_max=None, memory_max=None, active_queue=None
     ):

@@ -161,3 +161,9 @@ class RemoteQueueAdapter(BasisQueueAdapter):
             return df
         else:
             return df[df["user"] == user]
+
+    def get_job_from_remote(self):
+        """
+        Get the results of the calculation - this is necessary when the calculation was executed on a remote host.
+        """
+        pass
