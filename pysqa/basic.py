@@ -257,6 +257,9 @@ class BasisQueueAdapter(object):
     def convert_path_to_remote(self, path):
         pass
 
+    def transfer_file(self, file, transfer_back=False, delete_remote=False):
+        pass
+
     def check_queue_parameters(
         self, queue, cores=1, run_time_max=None, memory_max=None, active_queue=None
     ):

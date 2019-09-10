@@ -149,17 +149,18 @@ class QueueAdapter(object):
         """
         self._adapter.get_job_from_remote(working_directory=working_directory, delete_remote=delete_remote)
 
-    def transfer_file_to_remote(self, file, transfer_back=False):
+    def transfer_file_to_remote(self, file, transfer_back=False, delete_remote=False):
         """
 
         Args:
             file (str):
             transfer_back (bool):
+            delete_remote (bool):
 
         Returns:
             str:
         """
-        self._adapter.transfer_file(file=file, transfer_back=transfer_back)
+        self._adapter.transfer_file(file=file, transfer_back=transfer_back, delete_remote=delete_remote)
 
     def convert_path_to_remote(self, path):
         """
