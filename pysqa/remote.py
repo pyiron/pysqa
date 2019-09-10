@@ -236,7 +236,7 @@ class RemoteQueueAdapter(BasisQueueAdapter):
         else:
             return df[df["user"] == user]
 
-    def get_job_from_remote(self, working_directory):
+    def get_job_from_remote(self, working_directory, delete_remote=False):
         """
         Get the results of the calculation - this is necessary when the calculation was executed on a remote host.
         """
@@ -265,3 +265,7 @@ class RemoteQueueAdapter(BasisQueueAdapter):
             )
             file_dict[local_file] = f
         self._transfer_files(file_dict=file_dict, sftp=None, transfer_back=True)
+        if delete_remote:
+            self._execute_remote_command(
+                command="rm -r " + remote_working_directory
+            )
