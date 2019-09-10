@@ -5,6 +5,7 @@ import os
 import yaml
 from pysqa.basic import BasisQueueAdapter
 from pysqa.modular import ModularQueueAdapter
+from pysqa.remote import RemoteQueueAdapter
 
 __author__ = "Jan Janssen"
 __copyright__ = "Copyright 2019, Jan Janssen"
@@ -48,6 +49,8 @@ class QueueAdapter(object):
             self._adapter = BasisQueueAdapter(config=config, directory=directory)
         elif config["queue_type"] in ["GENT"]:
             self._adapter = ModularQueueAdapter(config=config, directory=directory)
+        elif config["queue_type"] in ["REMOTE"]:
+            self._adapter = RemoteQueueAdapter(config=config, directory=directory)
         else:
             raise ValueError
 
