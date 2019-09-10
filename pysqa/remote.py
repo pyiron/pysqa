@@ -5,6 +5,7 @@ import json
 import os
 import pandas
 import paramiko
+import warnings
 from tqdm import tqdm
 from pysqa.basic import BasisQueueAdapter
 
@@ -236,6 +237,7 @@ class RemoteQueueAdapter(BasisQueueAdapter):
         else:
             ssh = self._open_ssh_connection()
         stdin, stdout, stderr = ssh.exec_command(command)
+        warnings.warn(stderr.read().decode())
         output = stdout.read().decode()
         if not self._ssh_continous_connection:
             ssh.close()
