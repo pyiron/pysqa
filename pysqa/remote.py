@@ -145,7 +145,7 @@ class RemoteQueueAdapter(BasisQueueAdapter):
         self._transfer_files(file_dict={working_directory: remote_working_directory},
                              sftp=None,
                              transfer_back=transfer_back)
-        if delete_remote:
+        if delete_remote and transfer_back:
             self._execute_remote_command(
                 command="rm " + remote_working_directory
             )
