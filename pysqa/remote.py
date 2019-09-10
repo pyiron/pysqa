@@ -48,25 +48,8 @@ class RemoteQueueAdapter(BasisQueueAdapter):
         command=None,
     ):
         self._transfer_data_to_remote(working_directory=working_directory)
-        if cores is not None:
-            cores = str(cores)
-        if memory_max is not None:
-            memory_max = str(memory_max)
-        if run_time_max is not None:
-            run_time_max = str(run_time_max)
-        return int(
-            self._execute_remote_command(
-                command=self._submit_command(
-                    queue=queue,
-                    job_name=job_name,
-                    working_directory=working_directory,
-                    cores=cores,
-                    memory_max=memory_max,
-                    run_time_max=run_time_max,
-                    command_str=command
-                )
-            )
-        )
+        output = self._execute_remote_command(command=command)
+        return int(output.split()[-1])
 
     def enable_reservation(self, process_id):
         """
