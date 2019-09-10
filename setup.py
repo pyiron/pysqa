@@ -32,6 +32,7 @@ setup(
     install_requires=['defusedxml',
                       'jinja2',
                       'pandas>=0.23',
+                      'paramiko',
                       'pyyaml'],
     data_files = [("", ["LICENSE"])],
     cmdclass=versioneer.get_cmdclass(),
