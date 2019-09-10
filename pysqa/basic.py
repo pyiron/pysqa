@@ -61,9 +61,13 @@ class BasisQueueAdapter(object):
         elif self._config["queue_type"] == "GENT":
             class_name = "GentCommands"
             module_name = "pysqa.wrapper.gent"
+        elif self._config["queue_type"] == "REMOTE":
+            class_name = None
+            module_name = None
         else:
             raise ValueError()
-        self._commands = getattr(importlib.import_module(module_name), class_name)()
+        if self._config["queue_type"] != "REMOTE":
+            self._commands = getattr(importlib.import_module(module_name), class_name)()
         self._queues = Queues(self.queue_list)
 
     @property
@@ -422,8 +426,9 @@ class BasisQueueAdapter(object):
             directory (str):
         """
         for queue_dict in queue_lst_dict.values():
-            with open(os.path.join(directory, queue_dict["script"]), "r") as f:
-                queue_dict["template"] = Template(f.read())
+            if "script" in queue_dict.keys():
+                with open(os.path.join(directory, queue_dict["script"]), "r") as f:
+                    queue_dict["template"] = Template(f.read())
 
     @staticmethod
     def _value_error_if_none(value):

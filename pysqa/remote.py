@@ -14,8 +14,8 @@ class RemoteQueueAdapter(BasisQueueAdapter):
         super(RemoteQueueAdapter, self).__init__(config=config, directory=directory)
         self._ssh_host = config['ssh_host']
         self._ssh_username = config['ssh_username']
-        self._ssh_known_hosts = config['known_hosts']
-        self._ssh_key = config['ssh_key']
+        self._ssh_known_hosts = os.path.abspath(os.path.expanduser(config['known_hosts']))
+        self._ssh_key = os.path.abspath(os.path.expanduser(config['ssh_key']))
         self._ssh_remote_config_dir = config['ssh_remote_config_dir']
         self._ssh_remote_path = config['ssh_remote_path']
         self._ssh_local_path = os.path.abspath(os.path.expanduser(config['ssh_local_path']))
@@ -134,7 +134,7 @@ class RemoteQueueAdapter(BasisQueueAdapter):
 
     @staticmethod
     def _get_file_transfer(file, local_dir, remote_dir):
-        return os.path.join(remote_dir, os.path.relpath(file, local_dir))
+        return os.path.abspath(os.path.join(remote_dir, os.path.relpath(file, local_dir)))
 
     def _transfer_data_to_remote(self, working_directory):
         working_directory = os.path.abspath(os.path.expanduser(working_directory))
@@ -250,7 +250,12 @@ class RemoteQueueAdapter(BasisQueueAdapter):
             )
         )
         for d in remote_dict['dirs']:
-            os.makedirs(d, exist_ok=True)
+            local_dir = self._get_file_transfer(
+                file=d,
+                local_dir=remote_working_directory,
+                remote_dir=working_directory
+            )
+            os.makedirs(local_dir, exist_ok=True)
         file_dict = {}
         for f in remote_dict['files']:
             local_file = self._get_file_transfer(
