@@ -33,7 +33,8 @@ setup(
                       'jinja2',
                       'pandas>=0.23',
                       'paramiko',
-                      'pyyaml'],
+                      'pyyaml',
+                      'tqdm'],
     data_files=[("", ["LICENSE"])],
     cmdclass=versioneer.get_cmdclass(),
     )
