@@ -5,6 +5,7 @@ import os
 import yaml
 from pysqa.basic import BasisQueueAdapter
 from pysqa.modular import ModularQueueAdapter
+from pysqa.remote import RemoteQueueAdapter
 
 __author__ = "Jan Janssen"
 __copyright__ = "Copyright 2019, Jan Janssen"
@@ -48,6 +49,8 @@ class QueueAdapter(object):
             self._adapter = BasisQueueAdapter(config=config, directory=directory)
         elif config["queue_type"] in ["GENT"]:
             self._adapter = ModularQueueAdapter(config=config, directory=directory)
+        elif config["queue_type"] in ["REMOTE"]:
+            self._adapter = RemoteQueueAdapter(config=config, directory=directory)
         else:
             raise ValueError
 
@@ -59,6 +62,15 @@ class QueueAdapter(object):
             dict:
         """
         return self._adapter.config
+
+    @property
+    def remote_flag(self):
+        """
+
+        Returns:
+            bool:
+        """
+        return self._adapter.remote_flag
 
     @property
     def queue_list(self):
@@ -126,6 +138,40 @@ class QueueAdapter(object):
             str:
         """
         return self._adapter.enable_reservation(process_id=process_id)
+
+    def get_job_from_remote(self, working_directory, delete_remote=False):
+        """
+        Get the results of the calculation - this is necessary when the calculation was executed on a remote host.
+
+        Args:
+            working_directory (str):
+            delete_remote (bool):
+        """
+        self._adapter.get_job_from_remote(working_directory=working_directory, delete_remote=delete_remote)
+
+    def transfer_file_to_remote(self, file, transfer_back=False, delete_remote=False):
+        """
+
+        Args:
+            file (str):
+            transfer_back (bool):
+            delete_remote (bool):
+
+        Returns:
+            str:
+        """
+        self._adapter.transfer_file(file=file, transfer_back=transfer_back, delete_remote=delete_remote)
+
+    def convert_path_to_remote(self, path):
+        """
+
+        Args:
+            path (str):
+
+        Returns:
+            str:
+        """
+        return self._adapter.convert_path_to_remote(path=path)
 
     def delete_job(self, process_id):
         """

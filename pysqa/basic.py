@@ -61,10 +61,19 @@ class BasisQueueAdapter(object):
         elif self._config["queue_type"] == "GENT":
             class_name = "GentCommands"
             module_name = "pysqa.wrapper.gent"
+        elif self._config["queue_type"] == "REMOTE":
+            class_name = None
+            module_name = None
         else:
             raise ValueError()
-        self._commands = getattr(importlib.import_module(module_name), class_name)()
+        if self._config["queue_type"] != "REMOTE":
+            self._commands = getattr(importlib.import_module(module_name), class_name)()
         self._queues = Queues(self.queue_list)
+        self._remote_flag = False
+
+    @property
+    def remote_flag(self):
+        return self._remote_flag
 
     @property
     def config(self):
@@ -238,6 +247,18 @@ class BasisQueueAdapter(object):
             else:
                 results_lst.append("finished")
         return results_lst
+
+    def get_job_from_remote(self, working_directory, delete_remote=False):
+        """
+        Get the results of the calculation - this is necessary when the calculation was executed on a remote host.
+        """
+        pass
+
+    def convert_path_to_remote(self, path):
+        pass
+
+    def transfer_file(self, file, transfer_back=False, delete_remote=False):
+        pass
 
     def check_queue_parameters(
         self, queue, cores=1, run_time_max=None, memory_max=None, active_queue=None
@@ -416,8 +437,9 @@ class BasisQueueAdapter(object):
             directory (str):
         """
         for queue_dict in queue_lst_dict.values():
-            with open(os.path.join(directory, queue_dict["script"]), "r") as f:
-                queue_dict["template"] = Template(f.read())
+            if "script" in queue_dict.keys():
+                with open(os.path.join(directory, queue_dict["script"]), "r") as f:
+                    queue_dict["template"] = Template(f.read())
 
     @staticmethod
     def _value_error_if_none(value):
