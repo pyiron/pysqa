@@ -24,7 +24,7 @@ jobs:
   - bash: echo "##vso[task.prependpath]/usr/share/miniconda/bin"
     displayName: Add conda to PATH
 
-  - bash: conda create -n pysqa -q --yes -c conda-forge python=$(python.version) coverage defusedxml pandas yaml jinja2 paramiko tqdm
+  - bash: conda create -n pysqa -q --yes -c conda-forge python=$(python.version) coverage "defusedxml>=0.5.0" "pandas>=0.24.2" "pyyaml>=5.1.2" "jinja2>=2.10.1" "paramiko>=2.4.2" "tqdm>=4.35.0"
     displayName: conda install
 
   - bash: |
@@ -55,7 +55,7 @@ jobs:
   - bash: sudo chown -R $USER $CONDA
     displayName: Take ownership of conda installation
 
-  - bash: conda create -n pysqa -q --yes -c conda-forge python=$(python.version) coverage defusedxml pandas yaml jinja2 paramiko tqdm
+  - bash: conda create -n pysqa -q --yes -c conda-forge python=$(python.version) coverage "defusedxml>=0.5.0" "pandas>=0.24.2" "pyyaml>=5.1.2" "jinja2>=2.10.1" "paramiko>=2.4.2" "tqdm>=4.35.0"
     displayName: conda install
 
   - bash: |
@@ -86,7 +86,7 @@ jobs:
   - bash: echo "##vso[task.prependpath]$CONDA/bin"
     displayName: Add conda to PATH
 
-  - script: conda create -n pysqa -q --yes -c conda-forge python=$(python.version) coverage defusedxml pandas yaml jinja2 paramiko tqdm
+  - script: conda create -n pysqa -q --yes -c conda-forge python=$(python.version) coverage "defusedxml>=0.5.0" "pandas>=0.24.2" "pyyaml>=5.1.2" "jinja2>=2.10.1" "paramiko>=2.4.2" "tqdm>=4.35.0"
     displayName: conda install
 
   - script: |
