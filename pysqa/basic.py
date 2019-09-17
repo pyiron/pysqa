@@ -132,6 +132,8 @@ class BasisQueueAdapter(object):
         Returns:
             int:
         """
+        if " " in working_directory: 
+            raise ValueError("Spaces in the working_directory are not supported!")
         working_directory, queue_script_path = self._write_queue_script(
             queue=queue,
             job_name=job_name,
