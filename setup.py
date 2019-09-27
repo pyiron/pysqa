@@ -35,6 +35,5 @@ setup(
                       'paramiko>=2.4.2',
                       'pyyaml>=5.1.2',
                       'tqdm>=4.35.0'],
-    data_files=[("", ["LICENSE"])],
     cmdclass=versioneer.get_cmdclass(),
     )
