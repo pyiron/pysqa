@@ -41,12 +41,15 @@ class SlurmCommands(object):
     @staticmethod
     def convert_queue_status(queue_status_output):
         line_split_lst = [line.split("|") for line in queue_status_output.splitlines()]
-        job_id_lst, user_lst, status_lst, job_name_lst = zip(
-            *[
-                (int(jobid), user, status.lower(), jobname)
-                for jobid, user, status, jobname in line_split_lst
-            ]
-        )
+        if len(line_split_lst) != 0:
+            job_id_lst, user_lst, status_lst, job_name_lst = zip(
+                *[
+                    (int(jobid), user, status.lower(), jobname)
+                    for jobid, user, status, jobname in line_split_lst
+                ]
+            )
+        else: 
+            job_id_lst, user_lst, status_lst, job_name_lst = [], [], [],[]
         return pandas.DataFrame(
             {
                 "jobid": job_id_lst,
