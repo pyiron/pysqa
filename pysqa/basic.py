@@ -327,6 +327,8 @@ class BasisQueueAdapter(object):
             run_time_max=run_time_max,
             command=command,
         )
+        if not os.path.exists(working_directory):
+            os.makedirs(working_directory)
         queue_script_path = os.path.join(working_directory, "run_queue.sh")
         with open(queue_script_path, "w") as f:
             f.writelines(queue_script)
