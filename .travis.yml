@@ -1,10 +1,10 @@
 matrix:
   include:
     - stage: test
-      name: test_linux_2_7
+      name: test_linux_3_8
       os: linux
       language: python
-      env: MINICONDA="https://repo.continuum.io/miniconda/Miniconda2-latest-Linux-x86_64.sh" PYTHONVER="2.7"
+      env: MINICONDA="https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh" PYTHONVER="3.8"
       install:
         - export PATH="$HOME/miniconda/bin:$PATH"
         - wget ${MINICONDA} -O miniconda.sh
@@ -12,7 +12,7 @@ matrix:
         - conda info -a
         - conda config --set always_yes yes --set changeps1 no
         - conda update -q conda
-        - conda install -y -c conda-forge python=${PYTHONVER} coverage defusedxml=0.5.0 pandas=0.24.2 pyyaml=5.1.2 jinja2=2.10.1 paramiko=2.4.2 tqdm=4.35.0
+        - conda install -y -c conda-forge python=${PYTHONVER} coverage "defusedxml>=0.5.0" "pandas>=0.24.2" "pyyaml>=5.1.2" "jinja2>=2.10.1" "paramiko>=2.4.2" "tqdm>=4.35.0"
         - pip install --pre .
       script:
         - coverage run -m unittest discover tests
@@ -52,10 +52,10 @@ matrix:
           on:
             tags: true
 
-    - name: test_osx_2_7
+    - name: test_osx_3_8
       os: osx
       language: generic
-      env: MINICONDA="https://repo.continuum.io/miniconda/Miniconda2-latest-MacOSX-x86_64.sh" PYTHONVER="2.7"
+      env: MINICONDA="https://repo.continuum.io/miniconda/Miniconda3-latest-MacOSX-x86_64.sh" PYTHONVER="3.8"
       install:
         - export PATH="$HOME/miniconda/bin:$PATH"
         - wget ${MINICONDA} -O miniconda.sh
@@ -63,7 +63,7 @@ matrix:
         - conda info -a
         - conda config --set always_yes yes --set changeps1 no
         - conda update -q conda
-        - conda install -y -c conda-forge python=${PYTHONVER} coverage defusedxml=0.5.0 pandas=0.24.2 pyyaml=5.1.2 jinja2=2.10.1 paramiko=2.4.2 tqdm=4.35.0
+        - conda install -y -c conda-forge python=${PYTHONVER} coverage "defusedxml>=0.5.0" "pandas>=0.24.2" "pyyaml>=5.1.2" "jinja2>=2.10.1" "paramiko>=2.4.2" "tqdm>=4.35.0"
         - pip install --pre .
       script:
         - coverage run -m unittest discover tests
