@@ -32,6 +32,10 @@ class RemoteQueueAdapter(BasisQueueAdapter):
             self._ssh_connection = None
         self._remote_flag = True
 
+    @property
+    def ssh_delete_file_on_remote(self):
+        return self._ssh_delete_file_on_remote
+        
     def convert_path_to_remote(self, path):
         working_directory = os.path.abspath(os.path.expanduser(path))
         return self._get_remote_working_dir(
