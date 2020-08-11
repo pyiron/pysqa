@@ -112,7 +112,7 @@ class QueueAdapter(object):
             job_name (str/None):  Name of the job for the underlying queuing system
             working_directory (str/None):  Directory to run the job in
             cores (int/None):  Number of hardware threads requested
-            memory_max (int/None):  Amount of memory requested per hardware thread in GiB
+            memory_max (int/None):  Amount of memory requested per node in GB
             run_time_max (int/None):  Maximum runtime in seconds
             command (str/None):  shell command to run in the job
 
