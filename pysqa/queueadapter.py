@@ -105,15 +105,16 @@ class QueueAdapter(object):
         command=None,
     ):
         """
+        Submits command to the given queue.
 
         Args:
-            queue (str/None):
-            job_name (str/None):
-            working_directory (str/None):
-            cores (int/None):
-            memory_max (int/None):
-            run_time_max (int/None):
-            command (str/None):
+            queue (str/None):  Name of the queue to submit to, must be one of the names configured for this adapter
+            job_name (str/None):  Name of the job for the underlying queuing system
+            working_directory (str/None):  Directory to run the job in
+            cores (int/None):  Number of hardware threads requested
+            memory_max (int/None):  Amount of memory requested per hardware thread in GiB
+            run_time_max (int/None):  Maximum runtime in seconds
+            command (str/None):  shell command to run in the job
 
         Returns:
             int:
