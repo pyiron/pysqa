@@ -59,7 +59,8 @@ def command_line(argv):
             elif opt in ("-r", "--reservation"):
                 mode_reservation = arg
             elif opt in ("-i", "--id"):
-                job_id = int(arg)
+                if arg != "":
+                    job_id = int(arg)
             elif opt in ("-d", "--delete"):
                 mode_delete = True
             elif opt in ("-d", "--status"):

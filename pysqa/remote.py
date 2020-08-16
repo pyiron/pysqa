@@ -169,7 +169,10 @@ class RemoteQueueAdapter(BasisQueueAdapter):
             sftp_client = sftp
         for file_src, file_dst in tqdm(file_dict.items()):
             if transfer_back:
-                sftp_client.get(file_dst, file_src)
+                try:
+                    sftp_client.get(file_dst, file_src)
+                except FileNotFoundError:
+                    pass
             else:
                 sftp_client.put(file_src, file_dst)
         if sftp is None:
