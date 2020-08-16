@@ -70,6 +70,11 @@ class BasisQueueAdapter(object):
             self._commands = getattr(importlib.import_module(module_name), class_name)()
         self._queues = Queues(self.queue_list)
         self._remote_flag = False
+        self._ssh_delete_file_on_remote = True
+
+    @property
+    def ssh_delete_file_on_remote(self):
+        return self._ssh_delete_file_on_remote
 
     @property
     def remote_flag(self):

@@ -20,7 +20,10 @@ class RemoteQueueAdapter(BasisQueueAdapter):
         self._ssh_remote_config_dir = config['ssh_remote_config_dir']
         self._ssh_remote_path = config['ssh_remote_path']
         self._ssh_local_path = os.path.abspath(os.path.expanduser(config['ssh_local_path']))
-        self._ssh_delete_file_on_remote = config['ssh_delete_file_on_remote']
+        if 'ssh_delete_file_on_remote' in config.keys():
+            self._ssh_delete_file_on_remote = config['ssh_delete_file_on_remote']
+        else:
+            self._ssh_delete_file_on_remote = True
         if 'ssh_port' in config.keys():
             self._ssh_port = config['ssh_port']
         else:
@@ -31,10 +34,6 @@ class RemoteQueueAdapter(BasisQueueAdapter):
         else:
             self._ssh_connection = None
         self._remote_flag = True
-
-    @property
-    def ssh_delete_file_on_remote(self):
-        return self._ssh_delete_file_on_remote
         
     def convert_path_to_remote(self, path):
         working_directory = os.path.abspath(os.path.expanduser(path))
