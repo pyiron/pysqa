@@ -64,6 +64,10 @@ class QueueAdapter(object):
         return self._adapter.config
 
     @property
+    def ssh_delete_file_on_remote(self):
+        return self._adapter.ssh_delete_file_on_remote
+
+    @property
     def remote_flag(self):
         """
 
