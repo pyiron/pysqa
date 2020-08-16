@@ -58,6 +58,6 @@ class SlurmCommands(object):
                 "status": status_lst,
             }
         )
-        df.status[df.status == "r"] = "running"
-        df.status[df.status == "pd"] = "pending"
+        df.loc[df.status == "r", 'status'] = "running"
+        df.loc[df.status == "pd", 'status'] = "pending"
         return df
