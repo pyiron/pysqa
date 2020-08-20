@@ -7,7 +7,7 @@ import pandas
 import paramiko
 import warnings
 from tqdm import tqdm
-from pysqa.basic import BasisQueueAdapter
+from pysqa.utils.basic import BasisQueueAdapter
 
 
 class RemoteQueueAdapter(BasisQueueAdapter):
