@@ -29,10 +29,7 @@ class RemoteQueueAdapter(BasisQueueAdapter):
         else:
             self._ssh_port = 22
         self._ssh_continous_connection = 'ssh_continous_connection' in config.keys()
-        if self._ssh_continous_connection:
-            self._ssh_connection = self._open_ssh_connection()
-        else:
-            self._ssh_connection = None
+        self._ssh_connection = None
         self._remote_flag = True
         
     def convert_path_to_remote(self, path):
@@ -155,11 +152,17 @@ class RemoteQueueAdapter(BasisQueueAdapter):
             )
 
     def __del__(self):
-        self._ssh_connection.close()
+        if self._ssh_connection is not None:
+            self._ssh_connection.close()
+
+    def _check_ssh_connection(self):
+        if self._ssh_connection is None:
+            self._ssh_connection = self._open_ssh_connection()
 
     def _transfer_files(self, file_dict, sftp=None, transfer_back=False):
         if sftp is None:
             if self._ssh_continous_connection:
+                self._check_ssh_connection()
                 ssh = self._ssh_connection
             else:
                 ssh = self._open_ssh_connection()
@@ -227,6 +230,7 @@ class RemoteQueueAdapter(BasisQueueAdapter):
 
     def _execute_remote_command(self, command):
         if self._ssh_continous_connection:
+            self._check_ssh_connection()
             ssh = self._ssh_connection
         else:
             ssh = self._open_ssh_connection()
