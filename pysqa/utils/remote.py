@@ -289,6 +289,14 @@ class RemoteQueueAdapter(BasisQueueAdapter):
         self._create_remote_dir(directory=new_dir_list)
         self._transfer_files(file_dict=file_dict, sftp=None, transfer_back=False)
 
+    def _get_user(self):
+        """
+
+        Returns:
+            str:
+        """
+        return self._ssh_username
+
     @staticmethod
     def _get_file_transfer(file, local_dir, remote_dir):
         return os.path.abspath(os.path.join(remote_dir, os.path.relpath(file, local_dir)))
