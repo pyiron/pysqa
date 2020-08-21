@@ -2,10 +2,9 @@
 # Copyright (c) Jan Janssen
 
 import os
-import yaml
-from pysqa.basic import BasisQueueAdapter
-from pysqa.modular import ModularQueueAdapter
-from pysqa.remote import RemoteQueueAdapter
+from pysqa.utils.basic import BasisQueueAdapter, read_config
+from pysqa.utils.modular import ModularQueueAdapter
+from pysqa.utils.remote import RemoteQueueAdapter
 
 __author__ = "Jan Janssen"
 __copyright__ = "Copyright 2019, Jan Janssen"
@@ -44,7 +43,7 @@ class QueueAdapter(object):
             Queues available for auto completion QueueAdapter().queues.<queue name> returns the queue name.
     """
     def __init__(self, directory="~/.queues"):
-        config = self._read_config(file_name=os.path.join(directory, "queue.yaml"))
+        config = read_config(file_name=os.path.join(directory, "queue.yaml"))
         if config["queue_type"] in ["SGE", "TORQUE", "SLURM", "LSF", "MOAB"]:
             self._adapter = BasisQueueAdapter(config=config, directory=directory)
         elif config["queue_type"] in ["GENT"]:
@@ -252,16 +251,3 @@ class QueueAdapter(object):
             memory_max=memory_max,
             active_queue=active_queue,
         )
-
-    @staticmethod
-    def _read_config(file_name="queue.yaml"):
-        """
-
-        Args:
-            file_name (str):
-
-        Returns:
-            dict:
-        """
-        with open(file_name, "r") as f:
-            return yaml.load(f, Loader=yaml.FullLoader)

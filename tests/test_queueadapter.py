@@ -6,7 +6,7 @@ import pandas
 import unittest
 import getpass
 from pysqa import QueueAdapter
-from pysqa.basic import BasisQueueAdapter
+from pysqa.utils.basic import BasisQueueAdapter
 
 __author__ = "Jan Janssen"
 __copyright__ = "Copyright 2019, Jan Janssen"

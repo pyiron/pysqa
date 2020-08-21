@@ -2,7 +2,7 @@
 # Copyright (c) Jan Janssen
 
 import pandas
-from pysqa.basic import BasisQueueAdapter
+from pysqa.utils.basic import BasisQueueAdapter
 
 
 class ModularQueueAdapter(BasisQueueAdapter):

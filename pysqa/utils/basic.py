@@ -8,7 +8,8 @@ import os
 import subprocess
 import re
 import pandas
-from pysqa.queues import Queues
+import yaml
+from pysqa.utils.queues import Queues
 
 
 class BasisQueueAdapter(object):
@@ -547,3 +548,16 @@ class BasisQueueAdapter(object):
             )
         else:
             return value
+
+
+def read_config(file_name="queue.yaml"):
+    """
+
+    Args:
+        file_name (str):
+
+    Returns:
+        dict:
+    """
+    with open(file_name, "r") as f:
+        return yaml.load(f, Loader=yaml.FullLoader)
