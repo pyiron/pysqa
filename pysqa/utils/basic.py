@@ -8,7 +8,6 @@ import os
 import subprocess
 import re
 import pandas
-import yaml
 from pysqa.utils.queues import Queues
 
 
@@ -39,7 +38,6 @@ class BasisQueueAdapter(object):
 
             Queues available for auto completion QueueAdapter().queues.<queue name> returns the queue name.
     """
-
     def __init__(self, config, directory="~/.queues"):
         self._config = config
         self._fill_queue_dict(queue_lst_dict=self._config["queues"])
@@ -548,16 +546,3 @@ class BasisQueueAdapter(object):
             )
         else:
             return value
-
-
-def read_config(file_name="queue.yaml"):
-    """
-
-    Args:
-        file_name (str):
-
-    Returns:
-        dict:
-    """
-    with open(file_name, "r") as f:
-        return yaml.load(f, Loader=yaml.FullLoader)
