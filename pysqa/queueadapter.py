@@ -2,9 +2,7 @@
 # Copyright (c) Jan Janssen
 
 import os
-from pysqa.utils.basic import BasisQueueAdapter, read_config
-from pysqa.utils.modular import ModularQueueAdapter
-from pysqa.utils.remote import RemoteQueueAdapter
+from pysqa.utils.functs import read_config, set_queue_adapter
 
 __author__ = "Jan Janssen"
 __copyright__ = "Copyright 2019, Jan Janssen"
@@ -43,15 +41,50 @@ class QueueAdapter(object):
             Queues available for auto completion QueueAdapter().queues.<queue name> returns the queue name.
     """
     def __init__(self, directory="~/.queues"):
-        config = read_config(file_name=os.path.join(directory, "queue.yaml"))
-        if config["queue_type"] in ["SGE", "TORQUE", "SLURM", "LSF", "MOAB"]:
-            self._adapter = BasisQueueAdapter(config=config, directory=directory)
-        elif config["queue_type"] in ["GENT"]:
-            self._adapter = ModularQueueAdapter(config=config, directory=directory)
-        elif config["queue_type"] in ["REMOTE"]:
-            self._adapter = RemoteQueueAdapter(config=config, directory=directory)
+        queue_yaml = os.path.join(directory, "queue.yaml")
+        clusters_yaml = os.path.join(directory, "clusters.yaml")
+        self._adapter = None
+        if os.path.exists(queue_yaml):
+            self._queue_dict = {
+                "default": set_queue_adapter(
+                    config=read_config(file_name=queue_yaml),
+                    directory=directory
+                )
+            }
+            primary_queue = "default"
+        elif os.path.exists(clusters_yaml):
+            config = read_config(file_name=clusters_yaml)
+            self._queue_dict = {
+                k: set_queue_adapter(
+                    config=read_config(
+                        file_name=os.path.join(directory, v)
+                    ),
+                    directory=directory
+                )
+                for k, v in config["cluster"].items()
+            }
+            primary_queue = config["cluster_primary"]
         else:
             raise ValueError
+        self._adapter = self._queue_dict[primary_queue]
+
+    def list_clusters(self):
+        """
+        List available computing clusters for remote submission
+
+        Returns:
+            list: List of computing clusters
+        """
+        return self._queue_dict.keys()
+
+    def switch_cluster(self, cluster_name):
+        """
+        Switch to a different computing cluster
+
+        Args:
+            cluster_name (str): name of the computing cluster
+        """
+        self._adapter = self._queue_dict[cluster_name]
 
     @property
     def config(self):
@@ -251,3 +284,5 @@ class QueueAdapter(object):
             memory_max=memory_max,
             active_queue=active_queue,
         )
+
+
