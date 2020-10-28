@@ -26,7 +26,7 @@ def command_line(argv):
         opts, args = getopt.getopt(
             argv, "f:pq:j:w:n:m:t:c:ri:dslh", ["config_directory=", "submit", "queue=", "job_name=",
                                                "working_directory=", "cores=", "memory=", "run_time=",
-                                               "command=", "reservation", "id", "delete", "status", "list", "help"]
+                                               "command=", "reservation", "id=", "delete", "status", "list", "help"]
         )
     except getopt.GetoptError:
         print("cmd.py help")
