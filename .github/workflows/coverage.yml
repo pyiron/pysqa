@@ -12,6 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     env: 
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      CODACY_PROJECT_TOKEN: ${{ secrets.CODACY_PROJECT_TOKEN }}
 
     steps:
     - uses: actions/checkout@v2
