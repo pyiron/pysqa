@@ -2,8 +2,7 @@
 Simple queue adapter for python 
 
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/9db80cb2477f46be870d1446540b4bf3)](https://www.codacy.com/app/pyiron-runner/pysqa?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=pyiron/pysqa&amp;utm_campaign=Badge_Grade_Dashboard)
-[![Build Status](https://travis-ci.org/pyiron/pysqa.svg?branch=master)](https://travis-ci.org/pyiron/pysqa)
-[![Build status](https://ci.appveyor.com/api/projects/status/9lpjai8rvt8324aj/branch/master?svg=true)](https://ci.appveyor.com/project/pyiron-runner/pysqa/branch/master)
+[![Python package](https://github.com/pyiron/pysqa/workflows/Python%20package/badge.svg)](https://github.com/pyiron/pysqa/actions)
 [![Coverage Status](https://coveralls.io/repos/github/pyiron/pysqa/badge.svg?branch=master)](https://coveralls.io/github/pyiron/pysqa?branch=master)
 
 The goal of pysqa is to make submitting to an HPC cluster as easy as starting another subprocess. This is based on the assumption that even though modern queuing systems allow for an wide range of different configuration, most users submit the majority of their jobs with very similar parameters. Therefore pysqa allows the users to store their submission scripts as jinja2 templates for quick access. After the submission pysqa allows the users to track the progress of their jobs, delete them or enable reservations using the built-in functionality of the queuing system. The currently supported queuing systems are: LFS, MOAB, SGE (tested), SLURM (tested), TORQUE. 
