@@ -27,7 +27,7 @@ jobs:
         pip install -e .
     - name: Test
       shell: bash -l {0}
-      run: coverage run --omit pyiron_contrib/_version.py -m unittest discover tests
+      run: coverage run --omit pysqa/_version.py -m unittest discover tests
     - name: Coverage
       shell: bash -l {0}
       run: |
