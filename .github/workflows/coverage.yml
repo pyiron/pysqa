@@ -24,7 +24,7 @@ jobs:
     - name: Setup
       shell: bash -l {0}
       run: |
-        pip install -e .
+        pip install --no-deps .
     - name: Test
       shell: bash -l {0}
       run: coverage run --omit pysqa/_version.py -m unittest discover tests
