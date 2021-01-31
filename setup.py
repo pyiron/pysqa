@@ -29,11 +29,11 @@ setup(
 
     keywords='pysqa',
     packages=find_packages(exclude=["*tests*"]),
-    install_requires=['defusedxml>=0.5.0',
-                      'jinja2>=2.10.1',
-                      'pandas>=0.24.2',
-                      'paramiko>=2.4.2',
-                      'pyyaml>=5.1.2',
-                      'tqdm>=4.35.0'],
+    install_requires=['defusedxml==0.5.0',
+                      'jinja2==2.10.1',
+                      'pandas==0.24.2',
+                      'paramiko==2.4.2',
+                      'pyyaml==5.1.2',
+                      'tqdm==4.35.0'],
     cmdclass=versioneer.get_cmdclass(),
     )
