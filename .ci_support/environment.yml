@@ -5,7 +5,7 @@ dependencies:
   - coveralls
   - coverage
   - codacy-coverage
-  - pandas >=0.24.2
+  - pandas >=1.2.1
   - pyyaml >=5.1.2
   - jinja2 >=2.10.1
   - paramiko >=2.4.2
