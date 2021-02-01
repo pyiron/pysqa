@@ -20,8 +20,7 @@ jobs:
         python -m pip install --user --upgrade setuptools wheel
     - name: Convert dependencies
       run: >-
-        sed -i 's/==/>=/g' setup.py
-        cat setup.py
+        sed -i 's/==/>=/g' setup.py; cat setup.py
     - name: Build
       run: >-
         python setup.py sdist bdist_wheel
