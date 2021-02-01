@@ -9,4 +9,4 @@ dependencies:
   - pyyaml >=5.1.2
   - jinja2 >=2.10.1
   - paramiko >=2.4.2
-  - tqdm >=4.35.0
+  - tqdm >=4.56.0
