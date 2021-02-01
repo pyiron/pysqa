@@ -1,12 +1,12 @@
 channels:
   - conda-forge
 dependencies:
-  - defusedxml >=0.5.0
+  - defusedxml >=0.6.0
   - coveralls
   - coverage
   - codacy-coverage
   - pandas >=0.24.2
-  - pyyaml >=5.1.2
-  - jinja2 >=2.10.1
+  - pyyaml >=5.4.1
+  - jinja2 >=2.11.2
   - paramiko >=2.4.2
   - tqdm >=4.56.0
