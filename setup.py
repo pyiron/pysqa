@@ -33,6 +33,6 @@ setup(
                       'pandas==1.2.2',
                       'paramiko==2.7.2',
                       'pyyaml==5.4.1',
-                      'tqdm==4.56.2'],
+                      'tqdm==4.57.0'],
     cmdclass=versioneer.get_cmdclass(),
     )
