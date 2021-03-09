@@ -1,7 +1,7 @@
 channels:
   - conda-forge
 dependencies:
-  - defusedxml =0.7.0
+  - defusedxml =0.7.1
   - coveralls
   - coverage
   - codacy-coverage
