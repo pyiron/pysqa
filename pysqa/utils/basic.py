@@ -38,6 +38,7 @@ class BasisQueueAdapter(object):
 
             Queues available for auto completion QueueAdapter().queues.<queue name> returns the queue name.
     """
+
     def __init__(self, config, directory="~/.queues"):
         self._config = config
         self._fill_queue_dict(queue_lst_dict=self._config["queues"])
@@ -136,8 +137,10 @@ class BasisQueueAdapter(object):
         Returns:
             int:
         """
-        if " " in working_directory: 
-            raise ValueError("Whitespaces in the working_directory name are not supported!")
+        if " " in working_directory:
+            raise ValueError(
+                "Whitespaces in the working_directory name are not supported!"
+            )
         working_directory, queue_script_path = self._write_queue_script(
             queue=queue,
             job_name=job_name,
@@ -395,7 +398,9 @@ class BasisQueueAdapter(object):
         return getpass.getuser()
 
     @staticmethod
-    def _execute_command(commands, working_directory=None, split_output=True, shell=False):
+    def _execute_command(
+        commands, working_directory=None, split_output=True, shell=False
+    ):
         """
 
         Args:
