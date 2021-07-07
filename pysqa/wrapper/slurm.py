@@ -48,7 +48,7 @@ class SlurmCommands(object):
                     for jobid, user, status, jobname in line_split_lst
                 ]
             )
-        else: 
+        else:
             job_id_lst, user_lst, status_lst, job_name_lst = [], [], [], []
         df = pandas.DataFrame(
             {
@@ -58,6 +58,6 @@ class SlurmCommands(object):
                 "status": status_lst,
             }
         )
-        df.loc[df.status == "r", 'status'] = "running"
-        df.loc[df.status == "pd", 'status'] = "pending"
+        df.loc[df.status == "r", "status"] = "running"
+        df.loc[df.status == "pd", "status"] = "pending"
         return df

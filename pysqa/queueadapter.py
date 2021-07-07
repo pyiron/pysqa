@@ -40,6 +40,7 @@ class QueueAdapter(object):
 
             Queues available for auto completion QueueAdapter().queues.<queue name> returns the queue name.
     """
+
     def __init__(self, directory="~/.queues"):
         queue_yaml = os.path.join(directory, "queue.yaml")
         clusters_yaml = os.path.join(directory, "clusters.yaml")
@@ -47,8 +48,7 @@ class QueueAdapter(object):
         if os.path.exists(queue_yaml):
             self._queue_dict = {
                 "default": set_queue_adapter(
-                    config=read_config(file_name=queue_yaml),
-                    directory=directory
+                    config=read_config(file_name=queue_yaml), directory=directory
                 )
             }
             primary_queue = "default"
@@ -56,10 +56,8 @@ class QueueAdapter(object):
             config = read_config(file_name=clusters_yaml)
             self._queue_dict = {
                 k: set_queue_adapter(
-                    config=read_config(
-                        file_name=os.path.join(directory, v)
-                    ),
-                    directory=directory
+                    config=read_config(file_name=os.path.join(directory, v)),
+                    directory=directory,
                 )
                 for k, v in config["cluster"].items()
             }
@@ -184,7 +182,9 @@ class QueueAdapter(object):
             working_directory (str):
             delete_remote (bool):
         """
-        self._adapter.get_job_from_remote(working_directory=working_directory, delete_remote=delete_remote)
+        self._adapter.get_job_from_remote(
+            working_directory=working_directory, delete_remote=delete_remote
+        )
 
     def transfer_file_to_remote(self, file, transfer_back=False, delete_remote=False):
         """
@@ -197,7 +197,9 @@ class QueueAdapter(object):
         Returns:
             str:
         """
-        self._adapter.transfer_file(file=file, transfer_back=transfer_back, delete_remote=delete_remote)
+        self._adapter.transfer_file(
+            file=file, transfer_back=transfer_back, delete_remote=delete_remote
+        )
 
     def convert_path_to_remote(self, path):
         """
@@ -284,5 +286,3 @@ class QueueAdapter(object):
             memory_max=memory_max,
             active_queue=active_queue,
         )
-
-
