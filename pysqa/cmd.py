@@ -14,13 +14,13 @@ def command_line(argv):
 
     """
     directory = "~/.queues"
-    queue = (None,)
-    job_name = (None,)
-    working_directory = (None,)
-    cores = (None,)
-    memory_max = (None,)
-    run_time_max = (None,)
-    command = (None,)
+    queue = None
+    job_name = None
+    working_directory = None
+    cores = None
+    memory_max = None
+    run_time_max = None
+    command = None
     job_id = None
     try:
         opts, args = getopt.getopt(
