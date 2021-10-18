@@ -32,7 +32,7 @@ setup(
                       'jinja2==3.0.2',
                       'pandas==1.3.3',
                       'paramiko==2.8.0',
-                      'pyyaml==5.4.1',
+                      'pyyaml==6.0',
                       'tqdm==4.62.3'],
     cmdclass=versioneer.get_cmdclass(),
     )
