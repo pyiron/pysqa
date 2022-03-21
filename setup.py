@@ -31,7 +31,7 @@ setup(
     install_requires=['defusedxml==0.7.1',
                       'jinja2==3.0.3',
                       'pandas==1.4.1',
-                      'paramiko==2.10.1',
+                      'paramiko==2.10.3',
                       'pyyaml==6.0',
                       'tqdm==4.63.0'],
     cmdclass=versioneer.get_cmdclass(),
