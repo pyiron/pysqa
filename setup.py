@@ -29,7 +29,7 @@ setup(
     keywords='pysqa',
     packages=find_packages(exclude=["*tests*"]),
     install_requires=['defusedxml==0.7.1',
-                      'jinja2==3.0.3',
+                      'jinja2==3.1.1',
                       'pandas==1.4.1',
                       'paramiko==2.10.3',
                       'pyyaml==6.0',
