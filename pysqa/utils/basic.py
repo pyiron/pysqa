@@ -422,7 +422,9 @@ class BasisQueueAdapter(object):
                 universal_newlines=True,
                 shell=not isinstance(commands, list),
             )
-        except subprocess.CalledProcessError:
+        except subprocess.CalledProcessError as e:
+            with open(os.path.join(working_directory, "pysqa.err"), "w") as f:
+                print(e.stdout, file=f)
             out = None
         if out is not None and split_output:
             return out.split("\n")
