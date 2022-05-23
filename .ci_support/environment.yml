@@ -10,4 +10,3 @@ dependencies:
   - jinja2 =3.1.2
   - paramiko =2.11.0
   - tqdm =4.64.0
-  - openssl <2
