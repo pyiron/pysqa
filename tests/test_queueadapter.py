@@ -137,7 +137,7 @@ class TestRunmode(unittest.TestCase):
         self.assertEqual(self.slurm._adapter._commands.delete_job_command, ["scancel"])
         self.assertEqual(
             self.slurm._adapter._commands.get_queue_status_command,
-            ["squeue", "--format", "%A|%u|%t|%j", "--noheader"],
+            ["squeue", "--format", "%A|%u|%t|%.15j", "--noheader"],
         )
         self.assertEqual(self.moab._adapter._commands.submit_job_command, ["msub"])
         self.assertEqual(
@@ -148,7 +148,7 @@ class TestRunmode(unittest.TestCase):
         )
         self.assertEqual(
             self.gent._adapter._commands.get_queue_status_command,
-            ["squeue", "--format", "%A|%u|%t|%j", "--noheader"],
+            ["squeue", "--format", "%A|%u|%t|%.15j", "--noheader"],
         )
 
     def test_convert_queue_status(self):

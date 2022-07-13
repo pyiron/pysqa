@@ -32,7 +32,7 @@ class SlurmCommands(object):
 
     @property
     def get_queue_status_command(self):
-        return ["squeue", "--format", "%A|%u|%t|%j", "--noheader"]
+        return ["squeue", "--format", "%A|%u|%t|%.15j", "--noheader"]
 
     @staticmethod
     def get_job_id_from_output(queue_submit_output):
