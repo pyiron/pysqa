@@ -257,7 +257,7 @@ class BasisQueueAdapter(object):
                 results_lst.append("finished")
         return results_lst
 
-    def get_job_from_remote(self, working_directory, delete_remote=False):
+    def get_job_from_remote(self, working_directory):
         """
         Get the results of the calculation - this is necessary when the calculation was executed on a remote host.
         """
@@ -266,7 +266,7 @@ class BasisQueueAdapter(object):
     def convert_path_to_remote(self, path):
         pass
 
-    def transfer_file(self, file, transfer_back=False, delete_remote=False):
+    def transfer_file(self, file, transfer_back=False):
         pass
 
     def check_queue_parameters(
