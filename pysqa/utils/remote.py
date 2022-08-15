@@ -52,7 +52,9 @@ class RemoteQueueAdapter(BasisQueueAdapter):
         command=None,
     ):
         if dependency_list is not None:
-            raise NotImplementedError('Submitting jobs with dependencies to a remote cluster is not yet supported.')
+            raise NotImplementedError(
+                "Submitting jobs with dependencies to a remote cluster is not yet supported."
+            )
         self._transfer_data_to_remote(working_directory=working_directory)
         output = self._execute_remote_command(command=command)
         return int(output.split()[-1])
