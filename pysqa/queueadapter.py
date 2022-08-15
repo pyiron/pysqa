@@ -155,16 +155,8 @@ class QueueAdapter(object):
         Returns:
             int:
         """
-        return self._adapter.submit_job(
-            queue=queue,
-            job_name=job_name,
-            working_directory=working_directory,
-            cores=cores,
-            memory_max=memory_max,
-            run_time_max=run_time_max,
-            dependency_list=dependency_list,
-            command=command,
-        )
+        return self._adapter.submit_job(queue=queue, job_name=job_name, working_directory=working_directory,
+                                        cores=cores, memory_max=memory_max, run_time_max=run_time_max, command=command)
 
     def enable_reservation(self, process_id):
         """
