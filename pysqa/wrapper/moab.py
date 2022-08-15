@@ -2,6 +2,8 @@
 # Copyright (c) Max-Planck-Institut für Eisenforschung GmbH - Computational Materials Design (CM) Department
 # Distributed under the terms of "New BSD License", see the LICENSE file.
 
+from pysqa.wrapper.generic import SchedulerCommands
+
 __author__ = "Jan Janssen"
 __copyright__ = (
     "Copyright 2019, Max-Planck-Institut für Eisenforschung GmbH - "
@@ -14,7 +16,7 @@ __status__ = "development"
 __date__ = "Feb 9, 2019"
 
 
-class MoabCommands(object):
+class MoabCommands(SchedulerCommands):
     @property
     def submit_job_command(self):
         return ["msub"]
@@ -24,24 +26,6 @@ class MoabCommands(object):
         return ["mjobctl", "-c"]
 
     @property
-    def enable_reservation_command(self):
-        raise NotImplementedError()
-
-    @property
     def get_queue_status_command(self):
         return ["mdiag", "-x"]
 
-    @staticmethod
-    def get_job_id_from_output(queue_submit_output):
-        raise NotImplementedError()
-
-    @staticmethod
-    def convert_queue_status(queue_status_output):
-        raise NotImplementedError()
-
-    @staticmethod
-    def dependencies(dependency_list) -> list:
-        if dependency_list is not None:
-            raise NotImplementedError()
-        else:
-            return []

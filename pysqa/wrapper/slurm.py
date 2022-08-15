@@ -3,6 +3,7 @@
 # Distributed under the terms of "New BSD License", see the LICENSE file.
 
 import pandas
+from pysqa.wrapper.generic import SchedulerCommands
 
 
 __author__ = "Jan Janssen"
@@ -17,7 +18,7 @@ __status__ = "development"
 __date__ = "Feb 9, 2019"
 
 
-class SlurmCommands(object):
+class SlurmCommands(SchedulerCommands):
     @property
     def submit_job_command(self):
         return ["sbatch", "--parsable"]
@@ -25,10 +26,6 @@ class SlurmCommands(object):
     @property
     def delete_job_command(self):
         return ["scancel"]
-
-    @property
-    def enable_reservation_command(self):
-        raise NotImplementedError()
 
     @property
     def get_queue_status_command(self):
@@ -65,6 +62,6 @@ class SlurmCommands(object):
     @staticmethod
     def dependencies(dependency_list) -> list:
         if dependency_list is not None:
-            return ['--dependency=afterok:' + ','.join(dependency_list)]
+            return ["--dependency=afterok:" + ",".join(dependency_list)]
         else:
             return []

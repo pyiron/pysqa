@@ -4,6 +4,7 @@
 
 import pandas
 import defusedxml.cElementTree as ETree
+from pysqa.wrapper.generic import SchedulerCommands
 
 __author__ = "Jan Janssen"
 __copyright__ = (
@@ -17,7 +18,7 @@ __status__ = "production"
 __date__ = "Feb 9, 2019"
 
 
-class SunGridEngineCommands(object):
+class SunGridEngineCommands(SchedulerCommands):
     @property
     def submit_job_command(self):
         return ["qsub", "-terse"]
@@ -33,10 +34,6 @@ class SunGridEngineCommands(object):
     @property
     def get_queue_status_command(self):
         return ["qstat", "-xml"]
-
-    @staticmethod
-    def get_job_id_from_output(queue_submit_output):
-        return int(queue_submit_output)
 
     @staticmethod
     def convert_queue_status(queue_status_output):
@@ -61,9 +58,3 @@ class SunGridEngineCommands(object):
             }
         )
 
-    @staticmethod
-    def dependencies(dependency_list) -> list:
-        if dependency_list is not None:
-            raise NotImplementedError()
-        else:
-            return []
