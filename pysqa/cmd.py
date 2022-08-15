@@ -79,7 +79,7 @@ def command_line(argv):
                     job_id = int(arg)
             elif opt in ("-d", "--delete"):
                 mode_delete = True
-            elif opt in ("-d", "--status"):
+            elif opt in ("-s", "--status"):
                 mode_status = True
             elif opt in ("-l", "--list"):
                 mode_list = True
