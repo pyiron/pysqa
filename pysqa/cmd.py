@@ -25,7 +25,7 @@ def command_line(argv):
     try:
         opts, args = getopt.getopt(
             argv,
-            "f:pq:j:w:n:m:t:c:ri:dslh",
+            "f:pq:j:w:n:m:t:b:c:ri:dslh",
             [
                 "config_directory=",
                 "submit",
@@ -35,6 +35,7 @@ def command_line(argv):
                 "cores=",
                 "memory=",
                 "run_time=",
+                "dependency=",
                 "command=",
                 "reservation",
                 "id=",
@@ -53,6 +54,7 @@ def command_line(argv):
         mode_reservation = False
         mode_status = False
         mode_list = False
+        dependency_list = None
         for opt, arg in opts:
             if opt in ("-f", "--config_directory"):
                 directory = arg
@@ -83,6 +85,11 @@ def command_line(argv):
                 mode_status = True
             elif opt in ("-l", "--list"):
                 mode_list = True
+            elif opt in ("-b", "--dependency"):
+                if dependency_list is None:
+                    dependency_list = [arg]
+                else:
+                    dependency_list.append(arg)
             elif opt in ("-h", "--help"):
                 print("cmd.py help ... coming soon.")
                 sys.exit()
@@ -97,6 +104,7 @@ def command_line(argv):
                         cores=cores,
                         memory_max=memory_max,
                         run_time_max=run_time_max,
+                        dependency_list=dependency_list,
                         command=command,
                     )
                 )

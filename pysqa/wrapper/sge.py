@@ -60,3 +60,10 @@ class SunGridEngineCommands(object):
                 "status": df_merge.state,
             }
         )
+
+    @staticmethod
+    def dependencies(dependency_list) -> list:
+        if dependency_list is not None:
+            raise NotImplementedError()
+        else:
+            return []

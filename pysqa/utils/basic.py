@@ -121,6 +121,7 @@ class BasisQueueAdapter(object):
         cores=None,
         memory_max=None,
         run_time_max=None,
+        dependency_list=None,
         command=None,
     ):
         """
@@ -132,6 +133,7 @@ class BasisQueueAdapter(object):
             cores (int/None):
             memory_max (int/None):
             run_time_max (int/None):
+            dependency_list (list[str]/None:
             command (str/None):
 
         Returns:
@@ -151,7 +153,9 @@ class BasisQueueAdapter(object):
             command=command,
         )
         out = self._execute_command(
-            commands=self._commands.submit_job_command + [queue_script_path],
+            commands=self._commands.submit_job_command
+            + self._commands.dependencies(dependency_list)
+            + [queue_script_path],
             working_directory=working_directory,
             split_output=False,
         )

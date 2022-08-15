@@ -38,3 +38,10 @@ class MoabCommands(object):
     @staticmethod
     def convert_queue_status(queue_status_output):
         raise NotImplementedError()
+
+    @staticmethod
+    def dependencies(dependency_list) -> list:
+        if dependency_list is not None:
+            raise NotImplementedError()
+        else:
+            return []

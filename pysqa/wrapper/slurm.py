@@ -61,3 +61,10 @@ class SlurmCommands(object):
         df.loc[df.status == "r", "status"] = "running"
         df.loc[df.status == "pd", "status"] = "pending"
         return df
+
+    @staticmethod
+    def dependencies(dependency_list) -> list:
+        if dependency_list is not None:
+            return ['--dependency=afterok:' + ','.join(dependency_list)]
+        else:
+            return []
