@@ -65,6 +65,6 @@ class SlurmCommands(object):
     @staticmethod
     def dependencies(dependency_list) -> list:
         if dependency_list is not None:
-            return ['--dependency=afterok:' + ','.join(dependency_list)]
+            return ["--dependency=afterok:" + ",".join(dependency_list)]
         else:
             return []
