@@ -153,9 +153,9 @@ class BasisQueueAdapter(object):
             command=command,
         )
         out = self._execute_command(
-            commands=self._commands.submit_job_command
-            + self._commands.dependencies(dependency_list)
-            + [queue_script_path],
+            commands=self._list_command_to_be_executed(
+                dependency_list, queue_script_path
+            ),
             working_directory=working_directory,
             split_output=False,
         )
@@ -163,6 +163,13 @@ class BasisQueueAdapter(object):
             return self._commands.get_job_id_from_output(out)
         else:
             return None
+
+    def _list_command_to_be_executed(self, dependency_list, queue_script_path) -> list:
+        return (
+            self._commands.submit_job_command
+            + self._commands.dependencies(dependency_list)
+            + [queue_script_path]
+        )
 
     def enable_reservation(self, process_id):
         """
