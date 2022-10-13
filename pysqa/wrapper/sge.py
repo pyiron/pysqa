@@ -57,4 +57,3 @@ class SunGridEngineCommands(SchedulerCommands):
                 "status": df_merge.state,
             }
         )
-

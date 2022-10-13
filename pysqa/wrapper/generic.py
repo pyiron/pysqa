@@ -17,7 +17,6 @@ __date__ = "Aug 15, 2022"
 
 
 class SchedulerCommands(ABC):
-
     @property
     @abstractmethod
     def submit_job_command(self):

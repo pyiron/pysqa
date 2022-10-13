@@ -28,4 +28,3 @@ class MoabCommands(SchedulerCommands):
     @property
     def get_queue_status_command(self):
         return ["mdiag", "-x"]
-

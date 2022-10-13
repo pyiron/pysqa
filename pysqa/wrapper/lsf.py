@@ -28,4 +28,3 @@ class LsfCommands(SchedulerCommands):
     @property
     def get_queue_status_command(self):
         return ["qstat", "-x"]
-
