@@ -130,7 +130,7 @@ class RemoteQueueAdapter(BasisQueueAdapter):
         #     self._execute_remote_command(command="rm -r " + remote_working_directory)
 
     def transfer_file(self, file, transfer_back=False, delete_remote=False):
-        pass 
+        pass
         # working_directory = os.path.abspath(os.path.expanduser(file))
         # remote_working_directory = self._get_remote_working_dir(
         #     working_directory=working_directory
