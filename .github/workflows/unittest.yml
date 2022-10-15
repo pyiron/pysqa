@@ -9,6 +9,10 @@ on:
   pull_request:
     branches: [ master ]
 
+env: 
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      CODACY_PROJECT_TOKEN: ${{ secrets.CODACY_PROJECT_TOKEN }}
+
 jobs:
   build:
 
