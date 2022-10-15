@@ -66,18 +66,18 @@ jobs:
       - name: Update environment
         run: mamba env update -n my-env -f environment.yml
         if: steps.cache.outputs.cache-hit != 'true'
-    - name: Setup
-      shell: bash -l {0}
-      run: |
-        pip install --no-deps .
-    - name: Test
-      shell: bash -l {0}
-      run: coverage run --omit pysqa/_version.py -m unittest discover tests
-    - name: Coverage
-      if: matrix.label == 'linux-64-py-3-10'
-      shell: bash -l {0}
-      run: |
-        coverage combine
-        coveralls
-        coverage xml
-        python-codacy-coverage -r coverage.xml
+      - name: Setup
+        shell: bash -l {0}
+        run: |
+          pip install --no-deps .
+      - name: Test
+        shell: bash -l {0}
+        run: coverage run --omit pysqa/_version.py -m unittest discover tests
+      - name: Coverage
+        if: matrix.label == 'linux-64-py-3-10'
+        shell: bash -l {0}
+        run: |
+          coverage combine
+          coveralls
+          coverage xml
+          python-codacy-coverage -r coverage.xml
