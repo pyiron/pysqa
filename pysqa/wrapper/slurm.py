@@ -29,7 +29,7 @@ class SlurmCommands(SchedulerCommands):
 
     @property
     def get_queue_status_command(self):
-        return ["squeue", "--format", "%A|%u|%t|%.15j", "--noheader"]
+        return ["squeue", "--format", "%A|%u|%t|%.15j|%Z", "--noheader"]
 
     @staticmethod
     def get_job_id_from_output(queue_submit_output):
@@ -39,20 +39,21 @@ class SlurmCommands(SchedulerCommands):
     def convert_queue_status(queue_status_output):
         line_split_lst = [line.split("|") for line in queue_status_output.splitlines()]
         if len(line_split_lst) != 0:
-            job_id_lst, user_lst, status_lst, job_name_lst = zip(
+            job_id_lst, user_lst, status_lst, job_name_lst, working_directory_lst = zip(
                 *[
-                    (int(jobid), user, status.lower(), jobname)
-                    for jobid, user, status, jobname in line_split_lst
+                    (int(jobid), user, status.lower(), jobname, working_directory)
+                    for jobid, user, status, jobname, working_directory in line_split_lst
                 ]
             )
         else:
-            job_id_lst, user_lst, status_lst, job_name_lst = [], [], [], []
+            job_id_lst, user_lst, status_lst, job_name_lst, working_directory_lst = [], [], [], [], []
         df = pandas.DataFrame(
             {
                 "jobid": job_id_lst,
                 "user": user_lst,
                 "jobname": job_name_lst,
                 "status": status_lst,
+                "working_directory": working_directory_lst,
             }
         )
         df.loc[df.status == "r", "status"] = "running"

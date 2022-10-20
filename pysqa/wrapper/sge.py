@@ -55,5 +55,6 @@ class SunGridEngineCommands(SchedulerCommands):
                 "user": df_merge.JB_owner,
                 "jobname": df_merge.JB_name,
                 "status": df_merge.state,
+                "working_directory": [""] * len(df_merge),
             }
         )
