@@ -46,7 +46,13 @@ class SlurmCommands(SchedulerCommands):
                 ]
             )
         else:
-            job_id_lst, user_lst, status_lst, job_name_lst, working_directory_lst = [], [], [], [], []
+            job_id_lst, user_lst, status_lst, job_name_lst, working_directory_lst = (
+                [],
+                [],
+                [],
+                [],
+                [],
+            )
         df = pandas.DataFrame(
             {
                 "jobid": job_id_lst,
