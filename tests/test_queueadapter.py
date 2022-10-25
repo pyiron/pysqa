@@ -137,7 +137,7 @@ class TestRunmode(unittest.TestCase):
         self.assertEqual(self.slurm._adapter._commands.delete_job_command, ["scancel"])
         self.assertEqual(
             self.slurm._adapter._commands.get_queue_status_command,
-            ["squeue", "--format", "%A|%u|%t|%.15j", "--noheader"],
+            ["squeue", "--format", "%A|%u|%t|%.15j|%Z", "--noheader"],
         )
         self.assertEqual(self.moab._adapter._commands.submit_job_command, ["msub"])
         self.assertEqual(
@@ -148,7 +148,7 @@ class TestRunmode(unittest.TestCase):
         )
         self.assertEqual(
             self.gent._adapter._commands.get_queue_status_command,
-            ["squeue", "--format", "%A|%u|%t|%.15j", "--noheader"],
+            ["squeue", "--format", "%A|%u|%t|%.15j|%Z", "--noheader"],
         )
 
     def test__list_command_to_be_executed(self):
@@ -254,6 +254,7 @@ class TestRunmode(unittest.TestCase):
                 "user": df_merge.user,
                 "jobname": df_merge.jobname,
                 "status": df_merge.status,
+                "working_directory": [""] * len(df_merge),
             }
         )
         self.assertTrue(
