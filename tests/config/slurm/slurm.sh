@@ -8,7 +8,7 @@
 #SBATCH --time={{ [1, run_time_max // 60]|max }}
 {%- endif %}
 {%- if memory_max %}
-#SBATCH --mem={{memory_max}}
+#SBATCH --mem={{memory_max}}G
 {%- endif %}
 #SBATCH --cpus-per-task={{cores}}
 

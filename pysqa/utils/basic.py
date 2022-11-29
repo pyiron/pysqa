@@ -121,6 +121,7 @@ class BasisQueueAdapter(object):
         cores=None,
         memory_max=None,
         run_time_max=None,
+        dependency_list=None,
         command=None,
     ):
         """
@@ -132,6 +133,7 @@ class BasisQueueAdapter(object):
             cores (int/None):
             memory_max (int/None):
             run_time_max (int/None):
+            dependency_list (list[str]/None:
             command (str/None):
 
         Returns:
@@ -151,7 +153,9 @@ class BasisQueueAdapter(object):
             command=command,
         )
         out = self._execute_command(
-            commands=self._commands.submit_job_command + [queue_script_path],
+            commands=self._list_command_to_be_executed(
+                dependency_list, queue_script_path
+            ),
             working_directory=working_directory,
             split_output=False,
         )
@@ -159,6 +163,13 @@ class BasisQueueAdapter(object):
             return self._commands.get_job_id_from_output(out)
         else:
             return None
+
+    def _list_command_to_be_executed(self, dependency_list, queue_script_path) -> list:
+        return (
+            self._commands.submit_job_command
+            + self._commands.dependencies(dependency_list)
+            + [queue_script_path]
+        )
 
     def enable_reservation(self, process_id):
         """
@@ -422,7 +433,9 @@ class BasisQueueAdapter(object):
                 universal_newlines=True,
                 shell=not isinstance(commands, list),
             )
-        except subprocess.CalledProcessError:
+        except subprocess.CalledProcessError as e:
+            with open(os.path.join(working_directory, "pysqa.err"), "w") as f:
+                print(e.stdout, file=f)
             out = None
         if out is not None and split_output:
             return out.split("\n")
