@@ -136,6 +136,7 @@ class QueueAdapter(object):
         cores=None,
         memory_max=None,
         run_time_max=None,
+        dependency_list=None,
         command=None,
     ):
         """
@@ -148,6 +149,7 @@ class QueueAdapter(object):
             cores (int/None):  Number of hardware threads requested
             memory_max (int/None):  Amount of memory requested per node in GB
             run_time_max (int/None):  Maximum runtime in seconds
+            dependency_list(list[str]/None: Job ids of jobs to be completed before starting
             command (str/None):  shell command to run in the job
 
         Returns:

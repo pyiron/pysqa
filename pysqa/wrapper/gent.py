@@ -50,3 +50,10 @@ class GentCommands(SlurmCommands):
                 "status": status_lst,
             }
         )
+
+    @staticmethod
+    def dependencies(dependency_list) -> list:
+        if dependency_list is not None:
+            raise NotImplementedError()
+        else:
+            return []

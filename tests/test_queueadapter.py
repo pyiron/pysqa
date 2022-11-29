@@ -137,7 +137,7 @@ class TestRunmode(unittest.TestCase):
         self.assertEqual(self.slurm._adapter._commands.delete_job_command, ["scancel"])
         self.assertEqual(
             self.slurm._adapter._commands.get_queue_status_command,
-            ["squeue", "--format", "%A|%u|%t|%j", "--noheader"],
+            ["squeue", "--format", "%A|%u|%t|%.15j|%Z", "--noheader"],
         )
         self.assertEqual(self.moab._adapter._commands.submit_job_command, ["msub"])
         self.assertEqual(
@@ -148,8 +148,85 @@ class TestRunmode(unittest.TestCase):
         )
         self.assertEqual(
             self.gent._adapter._commands.get_queue_status_command,
-            ["squeue", "--format", "%A|%u|%t|%j", "--noheader"],
+            ["squeue", "--format", "%A|%u|%t|%.15j|%Z", "--noheader"],
         )
+
+    def test__list_command_to_be_executed(self):
+        with self.subTest("slurm"):
+            self.assertEqual(
+                self.slurm._adapter._list_command_to_be_executed(None, "here"),
+                ["sbatch", "--parsable", "here"],
+            )
+        with self.subTest("slurm with one dependency"):
+            self.assertEqual(
+                self.slurm._adapter._list_command_to_be_executed(["2"], "here"),
+                ["sbatch", "--parsable", "--dependency=afterok:2", "here"],
+            )
+        with self.subTest("slurm with two dependencies"):
+            self.assertEqual(
+                self.slurm._adapter._list_command_to_be_executed(["2", "34"], "here"),
+                ["sbatch", "--parsable", "--dependency=afterok:2,34", "here"],
+            )
+        with self.subTest("torque"):
+            self.assertEqual(
+                self.torque._adapter._list_command_to_be_executed(None, "here"),
+                ["qsub", "-terse", "here"],
+            )
+        with self.subTest("torque with dependency"):
+            self.assertRaises(
+                NotImplementedError,
+                self.torque._adapter._list_command_to_be_executed,
+                [],
+                "here",
+            )
+        with self.subTest("moab with dependency"):
+            self.assertRaises(
+                NotImplementedError,
+                self.moab._adapter._list_command_to_be_executed,
+                [],
+                "here",
+            )
+        with self.subTest("moab"):
+            self.assertEqual(
+                self.moab._adapter._list_command_to_be_executed(None, "here"),
+                ["msub", "here"],
+            )
+        with self.subTest("gent"):
+            self.assertEqual(
+                self.gent._adapter._list_command_to_be_executed(None, "here"),
+                ["sbatch", "--parsable", "here"],
+            )
+        with self.subTest("gent with dependency"):
+            self.assertRaises(
+                NotImplementedError,
+                self.gent._adapter._list_command_to_be_executed,
+                [],
+                "here",
+            )
+        with self.subTest("sge"):
+            self.assertEqual(
+                self.sge._adapter._list_command_to_be_executed(None, "here"),
+                ["qsub", "-terse", "here"],
+            )
+        with self.subTest("sge with dependency"):
+            self.assertRaises(
+                NotImplementedError,
+                self.sge._adapter._list_command_to_be_executed,
+                [],
+                "here",
+            )
+        with self.subTest("lsf"):
+            self.assertEqual(
+                self.lsf._adapter._list_command_to_be_executed(None, "here"),
+                ["bsub", "-terse", "here"],
+            )
+        with self.subTest("lsf with dependency"):
+            self.assertRaises(
+                NotImplementedError,
+                self.lsf._adapter._list_command_to_be_executed,
+                [],
+                "here",
+            )
 
     def test_convert_queue_status(self):
         with open(os.path.join(self.path, "config/sge", "qstat.xml"), "r") as f:
@@ -177,6 +254,7 @@ class TestRunmode(unittest.TestCase):
                 "user": df_merge.user,
                 "jobname": df_merge.jobname,
                 "status": df_merge.status,
+                "working_directory": [""] * len(df_merge),
             }
         )
         self.assertTrue(
