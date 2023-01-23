@@ -31,7 +31,7 @@ setup(
     packages=find_packages(exclude=["*tests*"]),
     install_requires=['defusedxml==0.7.1',
                       'jinja2==3.1.2',
-                      'pandas==1.5.2',
+                      'pandas==1.5.3',
                       'paramiko==2.12.0',
                       'pyyaml==6.0',
                       'tqdm==4.64.1'],
