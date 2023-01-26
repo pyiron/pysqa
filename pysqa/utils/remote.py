@@ -163,6 +163,10 @@ class RemoteQueueAdapter(BasisQueueAdapter):
             else:
                 ssh = self._open_ssh_connection()
             sftp_client = ssh.open_sftp()
+            sftp_client.sock.in_window_size = 8388608
+            # sftp_client.sock.out_window_size = 8388608
+            sftp_client.sock.in_max_packet_size = 131072
+            # sftp_client.sock.out_max_packet_size = 131072
         else:
             sftp_client = sftp
         for file_src, file_dst in tqdm(file_dict.items()):
