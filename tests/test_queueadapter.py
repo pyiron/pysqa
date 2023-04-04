@@ -247,7 +247,7 @@ class TestRunmode(unittest.TestCase):
                 "status": ["pending", "error"],
             }
         )
-        df_merge = df_running.append(df_pending, sort=True)
+        df_merge = pandas.concat([df_running, df_pending], sort=True)
         df = pandas.DataFrame(
             {
                 "jobid": pandas.to_numeric(df_merge.jobid),
