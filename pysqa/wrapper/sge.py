@@ -45,7 +45,7 @@ class SunGridEngineCommands(SchedulerCommands):
         tree = ETree.fromstring(queue_status_output)
         df_running_jobs = pandas.DataFrame(leaf_to_dict(leaf=tree[0]))
         df_pending_jobs = pandas.DataFrame(leaf_to_dict(leaf=tree[1]))
-        df_merge = df_running_jobs.append(df_pending_jobs, sort=True)
+        df_merge = pandas.concat([df_running_jobs, df_pending_jobs], sort=True)
         df_merge.loc[df_merge.state == "r", "state"] = "running"
         df_merge.loc[df_merge.state == "qw", "state"] = "pending"
         df_merge.loc[df_merge.state == "Eqw", "state"] = "error"
