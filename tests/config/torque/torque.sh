@@ -1,5 +1,5 @@
 #!/bin/bash
-#PBS -q normal
+#PBS -q normal # Insert the queue that you want to use here
 #PBS -l ncpus={{cores}}
 #PBS -N {{job_name}}
 {%- if memory_max %}
