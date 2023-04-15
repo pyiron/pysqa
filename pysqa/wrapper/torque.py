@@ -19,7 +19,7 @@ __date__ = "Feb 9, 2019"
 class TorqueCommands(SchedulerCommands):
     @property
     def submit_job_command(self):
-        return ["qsub", "-terse"]
+        return ["qsub"]
 
     @property
     def delete_job_command(self):
