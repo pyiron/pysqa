@@ -122,7 +122,7 @@ class TestRunmode(unittest.TestCase):
         )
         self.assertEqual(self.torque._adapter._commands.delete_job_command, ["qdel"])
         self.assertEqual(
-            self.torque._adapter._commands.get_queue_status_command, ["qstat", "-x"]
+            self.torque._adapter._commands.get_queue_status_command, ["qstat", "-f"]
         )
         self.assertEqual(
             self.lsf._adapter._commands.submit_job_command, ["bsub", "-terse"]
