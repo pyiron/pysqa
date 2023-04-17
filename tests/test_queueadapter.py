@@ -118,7 +118,7 @@ class TestRunmode(unittest.TestCase):
             self.sge._adapter._commands.get_queue_status_command, ["qstat", "-xml"]
         )
         self.assertEqual(
-            self.torque._adapter._commands.submit_job_command, ["qsub", "-terse"]
+            self.torque._adapter._commands.submit_job_command, ["qsub"]
         )
         self.assertEqual(self.torque._adapter._commands.delete_job_command, ["qdel"])
         self.assertEqual(
@@ -170,7 +170,7 @@ class TestRunmode(unittest.TestCase):
         with self.subTest("torque"):
             self.assertEqual(
                 self.torque._adapter._list_command_to_be_executed(None, "here"),
-                ["qsub", "-terse", "here"],
+                ["qsub", "here"],
             )
         with self.subTest("torque with dependency"):
             self.assertRaises(
