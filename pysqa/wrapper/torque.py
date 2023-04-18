@@ -3,7 +3,7 @@
 # Distributed under the terms of "New BSD License", see the LICENSE file.
 
 from pysqa.wrapper.generic import SchedulerCommands
-import subprocess
+import re
 import pandas as pd
 
 __author__ = "Jan Janssen"
@@ -44,63 +44,44 @@ class TorqueCommands(SchedulerCommands):
     @staticmethod
     def convert_queue_status(queue_status_output):
         # # Run the qstat -f command and capture its output
-        # output = subprocess.check_output(["qstat", "-f"])
-
+        # output = subprocess.check_output(["qstat", "-f"]) -> output is the queue_status_output that goes into this function
+        
         # Split the output into lines
-        lines = queue_status_output.decode().split("\n")
-
+        lines = queue_status_output.split("\n") #.decode().split("\n")
+        
+        # concatenate all lines into a single string
+        input_string = ''.join(lines)
+        # remove all whitespaces
+        input_string = ''.join(input_string.split())
+        
         # Extract the job ID, user, job name, status, and working directory for each running job
-        job_id = None
-        user = None
-        job_name = None
-        status = None
-        working_dir = None
-        job_id_lst = []
-        user_lst = []
-        job_name_lst = []
-        status_lst = []
-        working_directory_lst = []
+        regex_pattern_job_id = r"JobId:(.*?)Job_Name"
+        job_id_lst = re.findall(regex_pattern_job_id, input_string)
+        job_id_lst = [job_id_str.split(sep=".")[0] for job_id_str in job_id_lst]
+        
+        regex_pattern_user = r"Job_Owner=(.*?)job_state"
+        user_lst = re.findall(regex_pattern_user, input_string)
+        user_lst = [user_str.split("@")[0] for user_str in user_lst]
+        
+        regex_pattern_job_name = r"Job_Name=(.*?)Job_Owner"
+        job_name_lst = re.findall(regex_pattern_job_name, input_string)
+        
+        regex_pattern_status = r"job_state=(.*?)queue"
+        status_lst = re.findall(regex_pattern_status, input_string)
 
-        for line in lines:
-            if line.startswith("Job Id:"):
-                # Start a new job entry
-                job_id = line.split()[-1].split(sep=".")[0]
-            elif line.startswith("    Job_Name ="):
-                job_name = line.split("=")[-1].strip()
-            elif line.startswith("    Job_Owner ="):
-                user = line.split("=")[-1].split("@")[0]
-            elif line.startswith("    job_state ="):
-                status = line.split("=")[-1].strip()
-            elif "PBS_O_WORKDIR" in line:
-                working_dir = line.split()[-1].split(sep="WORKDIR=")[-1]
-            elif line.strip() == "":
-                # End of job entry - add to lists
-                # This if is necessary to avoid the final row containing None values...
-                if all(
-                    var is not None
-                    for var in (job_id, user, job_name, status, working_dir)
-                ):
-                    job_id_lst.append(job_id)
-                    user_lst.append(user)
-                    job_name_lst.append(job_name)
-                    status_lst.append(status)
-                    working_directory_lst.append(working_dir)
-                # Reset variables for next job
-                job_id = None
-                user = None
-                job_name = None
-                status = None
-                working_dir = None
-        # Create a DataFrame from the lists
+        regex_pattern_working_directory = r"PBS_O_WORKDIR=(.*?),PBS"
+        working_directory_lst = re.findall(regex_pattern_working_directory, input_string)
+        
         df = pd.DataFrame(
-            {
-                "jobid": job_id_lst,
-                "user": user_lst,
-                "jobname": job_name_lst,
-                "status": status_lst,
-                "working_directory": working_directory_lst,
-            }
+        {
+            "jobid": job_id_lst,
+            "user": user_lst,
+            "jobname": job_name_lst,
+            "status": status_lst,
+            "working_directory": working_directory_lst,
+        }
         )
+        
         df["status"] = df["status"].apply(
             lambda x: "running" if x == "R" else "pending"
         )
