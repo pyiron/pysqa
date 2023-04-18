@@ -43,10 +43,9 @@ class TorqueCommands(SchedulerCommands):
 
     @staticmethod
     def convert_queue_status(queue_status_output):
-
         # # Run the qstat -f command and capture its output
         # output = subprocess.check_output(["qstat", "-f"])
-        
+
         # Split the output into lines
         lines = queue_status_output.decode().split("\n")
 
@@ -75,9 +74,12 @@ class TorqueCommands(SchedulerCommands):
             elif "PBS_O_WORKDIR" in line:
                 working_dir = line.split()[-1].split(sep="WORKDIR=")[-1]
             elif line.strip() == "":
-                # End of job entry - add to lists 
+                # End of job entry - add to lists
                 # This if is necessary to avoid the final row containing None values...
-                if all(var is not None for var in (job_id, user, job_name, status, working_dir)):
+                if all(
+                    var is not None
+                    for var in (job_id, user, job_name, status, working_dir)
+                ):
                     job_id_lst.append(job_id)
                     user_lst.append(user)
                     job_name_lst.append(job_name)
@@ -99,6 +101,8 @@ class TorqueCommands(SchedulerCommands):
                 "working_directory": working_directory_lst,
             }
         )
-        df["status"] = df["status"].apply(lambda x: "running" if x == "R" else "pending")
+        df["status"] = df["status"].apply(
+            lambda x: "running" if x == "R" else "pending"
+        )
 
         return df
