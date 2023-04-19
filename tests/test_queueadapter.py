@@ -228,6 +228,32 @@ class TestRunmode(unittest.TestCase):
                 "here",
             )
 
+    def test_convert_queue_status_slurm(self):
+        with open(os.path.join(self.path, "config/slurm", "squeue_output"), "r") as f:
+            content = f.read()
+        df_verify = pandas.DataFrame(
+            {
+                "jobid": [5322019, 5322016, 5322017, 5322018, 5322013],
+                "user": ["janj", "janj", "janj", "janj", "janj"],
+                "jobname": ["pi_19576488", "pi_19576485", "pi_19576486", "pi_19576487", "pi_19576482"],
+                "status": ["running", "running", "running", "running", "running"],
+                "working_directory": [
+                    "/cmmc/u/janj/pyiron/projects/2023/2023-04-19-dft-test/job_1",
+                    "/cmmc/u/janj/pyiron/projects/2023/2023-04-19-dft-test/job_2",
+                    "/cmmc/u/janj/pyiron/projects/2023/2023-04-19-dft-test/job_3",
+                    "/cmmc/u/janj/pyiron/projects/2023/2023-04-19-dft-test/job_4",
+                    "/cmmc/u/janj/pyiron/projects/2023/2023-04-19-dft-test/job_5",
+                ]
+            }
+        )
+        self.assertTrue(
+            df_verify.equals(
+                self.slurm._adapter._commands.convert_queue_status(
+                    queue_status_output=content
+                )
+            )
+        )
+
     def test_convert_queue_status(self):
         with open(os.path.join(self.path, "config/sge", "qstat.xml"), "r") as f:
             content = f.read()
