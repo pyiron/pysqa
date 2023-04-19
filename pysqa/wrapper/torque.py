@@ -57,7 +57,7 @@ class TorqueCommands(SchedulerCommands):
         # Extract the job ID, user, job name, status, and working directory for each running job
         regex_pattern_job_id = r"JobId:(.*?)Job_Name"
         job_id_lst = re.findall(regex_pattern_job_id, input_string)
-        job_id_lst = [job_id_str.split(sep=".")[0] for job_id_str in job_id_lst]
+        job_id_lst = [int(job_id_str.split(sep=".")[0]) for job_id_str in job_id_lst]
 
         regex_pattern_user = r"Job_Owner=(.*?)job_state"
         user_lst = re.findall(regex_pattern_user, input_string)
