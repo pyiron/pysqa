@@ -228,7 +228,7 @@ class TestRunmode(unittest.TestCase):
                 "here",
             )
 
-    def test_convert_queue_status(self):
+    def test_convert_queue_status_sge(self):
         with open(os.path.join(self.path, "config/sge", "qstat.xml"), "r") as f:
             content = f.read()
         df_running = pandas.DataFrame(
@@ -264,7 +264,29 @@ class TestRunmode(unittest.TestCase):
                 )
             )
         )
-
+    
+    def test_convert_queue_status_torque(self):
+        with open(os.path.join(self.path, "config/torque", "PBSPro_qsub_output"), "r") as f:
+            content = f.read()
+        df_verify = pandas.DataFrame(
+            {
+                "jobid": ["80005196", "80005197", "80005198"],
+                "user": ["hlm562", "hlm562", "cxc562"],
+                "jobname": ["test1", "test2", "test_asdfasdfasdfasdfasdfasdfasdfasdfasdfasdf"],
+                "status": ["running", "pending", "pending"],
+                "working_directory": ["/scratch/v43/hlm562/VASP/test/test1",\
+                                      "/scratch/v43/hlm562/VASP/test/test2",\
+                                      "/scratch/v43/hlm562/VASP/test/test_asdfasdfasdfasdfasdfasdfasdfasdfasdfasdf"]
+            }
+        )
+        self.assertTrue(
+            df_verify.equals(
+                self.torque._adapter._commands.convert_queue_status(
+                    queue_status_output=content
+                )
+            )
+        )
+        
     def test_queue_list(self):
         self.assertEqual(
             sorted(self.sge.queue_list),
