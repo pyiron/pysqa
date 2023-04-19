@@ -271,12 +271,12 @@ class TestRunmode(unittest.TestCase):
         df_verify = pandas.DataFrame(
             {
                 "jobid": ["80005196", "80005197", "80005198"],
-                "user": ["hlm562", "hlm562", "cxc562"],
+                "user": ["asd562", "asd562", "fgh562"],
                 "jobname": ["test1", "test2", "test_asdfasdfasdfasdfasdfasdfasdfasdfasdfasdf"],
                 "status": ["running", "pending", "pending"],
-                "working_directory": ["/scratch/v43/hlm562/VASP/test/test1",\
-                                      "/scratch/v43/hlm562/VASP/test/test2",\
-                                      "/scratch/v43/hlm562/VASP/test/test_asdfasdfasdfasdfasdfasdfasdfasdfasdfasdf"]
+                "working_directory": ["/scratch/a01/asd562/VASP/test/test1",\
+                                      "/scratch/a01/asd562/VASP/test/test2",\
+                                      "/scratch/a01/fgh562/VASP/test/test_asdfasdfasdfasdfasdfasdfasdfasdfasdfasdf"]
             }
         )
         self.assertTrue(
