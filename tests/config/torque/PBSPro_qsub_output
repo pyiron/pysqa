@@ -1,20 +1,20 @@
 Job Id: 80005196.gadi-pbs
     Job_Name = test1
-    Job_Owner = hlm562@gadi-login-07.gadi.nci.org.au
+    Job_Owner = asd562@gadi-login-07.gadi.nci.org.au
     job_state = R
     queue = normal-exec
     server = gadi-pbs-01.gadi.nci.org.au
     Checkpoint = u
     ctime = Wed Apr 19 09:23:37 2023
-    Error_Path = gadi.nci.org.au:/scratch/v43/hlm562/VASP/test/test1/test1.e800
+    Error_Path = gadi.nci.org.au:/scratch/a01/asd562/VASP/test/test1/test1.e800
         05196
-    group_list = v43
+    group_list = a01
     Hold_Types = n
     Join_Path = n
     Keep_Files = n
     Mail_Points = a
     mtime = Wed Apr 19 09:23:37 2023
-    Output_Path = gadi.nci.org.au:/scratch/v43/hlm562/VASP/test/test1/test1.o80
+    Output_Path = gadi.nci.org.au:/scratch/a01/asd562/VASP/test/test1/test1.o80
         005196
     Priority = 0
     qtime = Wed Apr 19 09:23:37 2023
@@ -28,18 +28,18 @@ Job Id: 80005196.gadi-pbs
     Resource_List.select = 2:ncpus=48:mpiprocs=48:mem=34359738368:job_tags=norm
         al:jobfs=104857600
     Resource_List.software = vasp
-    Resource_List.storage = scratch/v43
+    Resource_List.storage = scratch/a01
     Resource_List.walltime = 16:00:00
     Resource_List.wd = 1
     substate = 10
-    Variable_List = PBS_O_HOME=/home/562/hlm562,PBS_O_LOGNAME=hlm562,
-        PBS_O_PATH=/g/data/v43/Han/mambaforge/envs/pyiron/bin:/g/data/v43/Han/
-        mambaforge/condabin:/home/562/hlm562/.local/bin:/home/562/hlm562/bin:/o
+    Variable_List = PBS_O_HOME=/home/562/asd562,PBS_O_LOGNAME=asd562,
+        PBS_O_PATH=/g/data/a01/random_user/mambaforge/envs/pyiron/bin:/g/data/a01/random_user/
+        mambaforge/condabin:/home/562/asd562/.local/bin:/home/562/asd562/bin:/o
         pt/pbs/default/bin:/opt/nci/bin:/opt/bin:/opt/Modules/v4.3.0/bin:/bin:/
-        usr/bin:/usr/local/sbin:/usr/sbin,PBS_O_MAIL=/var/spool/mail/hlm562,
+        usr/bin:/usr/local/sbin:/usr/sbin,PBS_O_MAIL=/var/spool/mail/asd562,
         PBS_O_SHELL=/bin/bash,PBS_O_TZ=:/etc/localtime,
-        PBS_O_WORKDIR=/scratch/v43/hlm562/VASP/test/test1,PBS_O_SYSTEM=Linux,
-        PROJECT=v43,PBS_NCI_HT=0,PBS_NCI_STORAGE=scratch/v43,PBS_NCI_IMAGE=,
+        PBS_O_WORKDIR=/scratch/a01/asd562/VASP/test/test1,PBS_O_SYSTEM=Linux,
+        PROJECT=a01,PBS_NCI_HT=0,PBS_NCI_STORAGE=scratch/a01,PBS_NCI_IMAGE=,
         PBS_NCPUS=96,PBS_NGPUS=0,PBS_NNODES=2,PBS_NCI_NCPUS_PER_NODE=48,
         PBS_NCI_NUMA_PER_NODE=4,PBS_NCI_NCPUS_PER_NUMA=12,PBS_VMEM=68719476736,
         PBS_NCI_WD=1,PBS_NCI_JOBFS=209715200b,PBS_NCI_LAUNCH_COMPATIBILITY=0,
@@ -48,26 +48,26 @@ Job Id: 80005196.gadi-pbs
         PBS_O_QUEUE=normal,PBS_O_HOST=gadi-login-07.gadi.nci.org.au
     etime = Wed Apr 19 09:23:37 2023
     Submit_arguments = test1
-    project = v43
+    project = a01
     Submit_Host = gadi-login-07.gadi.nci.org.au
 
 Job Id: 80005197.gadi-pbs
     Job_Name = test2
-    Job_Owner = hlm562@gadi-login-07.gadi.nci.org.au
+    Job_Owner = asd562@gadi-login-07.gadi.nci.org.au
     job_state = Q
     queue = normal-exec
     server = gadi-pbs-01.gadi.nci.org.au
     Checkpoint = u
     ctime = Wed Apr 19 09:23:37 2023
-    Error_Path = gadi.nci.org.au:/scratch/v43/hlm562/VASP/test/test2/test2.e800
+    Error_Path = gadi.nci.org.au:/scratch/a01/asd562/VASP/test/test2/test2.e800
         05197
-    group_list = v43
+    group_list = a01
     Hold_Types = n
     Join_Path = n
     Keep_Files = n
     Mail_Points = a
     mtime = Wed Apr 19 09:23:37 2023
-    Output_Path = gadi.nci.org.au:/scratch/v43/hlm562/VASP/test/test2/test2.o80
+    Output_Path = gadi.nci.org.au:/scratch/a01/asd562/VASP/test/test2/test2.o80
         005197
     Priority = 0
     qtime = Wed Apr 19 09:23:37 2023
@@ -81,18 +81,18 @@ Job Id: 80005197.gadi-pbs
     Resource_List.select = 2:ncpus=48:mpiprocs=48:mem=34359738368:job_tags=norm
         al:jobfs=104857600
     Resource_List.software = vasp
-    Resource_List.storage = scratch/v43
+    Resource_List.storage = scratch/a01
     Resource_List.walltime = 16:00:00
     Resource_List.wd = 1
     substate = 10
-    Variable_List = PBS_O_HOME=/home/562/hlm562,PBS_O_LOGNAME=hlm562,
-        PBS_O_PATH=/g/data/v43/Han/mambaforge/envs/pyiron/bin:/g/data/v43/Han/
-        mambaforge/condabin:/home/562/hlm562/.local/bin:/home/562/hlm562/bin:/o
+    Variable_List = PBS_O_HOME=/home/562/asd562,PBS_O_LOGNAME=asd562,
+        PBS_O_PATH=/g/data/a01/random_user/mambaforge/envs/pyiron/bin:/g/data/a01/random_user/
+        mambaforge/condabin:/home/562/asd562/.local/bin:/home/562/asd562/bin:/o
         pt/pbs/default/bin:/opt/nci/bin:/opt/bin:/opt/Modules/v4.3.0/bin:/bin:/
-        usr/bin:/usr/local/sbin:/usr/sbin,PBS_O_MAIL=/var/spool/mail/hlm562,
+        usr/bin:/usr/local/sbin:/usr/sbin,PBS_O_MAIL=/var/spool/mail/asd562,
         PBS_O_SHELL=/bin/bash,PBS_O_TZ=:/etc/localtime,
-        PBS_O_WORKDIR=/scratch/v43/hlm562/VASP/test/test2,PBS_O_SYSTEM=Linux,
-        PROJECT=v43,PBS_NCI_HT=0,PBS_NCI_STORAGE=scratch/v43,PBS_NCI_IMAGE=,
+        PBS_O_WORKDIR=/scratch/a01/asd562/VASP/test/test2,PBS_O_SYSTEM=Linux,
+        PROJECT=a01,PBS_NCI_HT=0,PBS_NCI_STORAGE=scratch/a01,PBS_NCI_IMAGE=,
         PBS_NCPUS=96,PBS_NGPUS=0,PBS_NNODES=2,PBS_NCI_NCPUS_PER_NODE=48,
         PBS_NCI_NUMA_PER_NODE=4,PBS_NCI_NCPUS_PER_NUMA=12,PBS_VMEM=68719476736,
         PBS_NCI_WD=1,PBS_NCI_JOBFS=209715200b,PBS_NCI_LAUNCH_COMPATIBILITY=0,
@@ -101,27 +101,27 @@ Job Id: 80005197.gadi-pbs
         PBS_O_QUEUE=normal,PBS_O_HOST=gadi-login-07.gadi.nci.org.au
     etime = Wed Apr 19 09:23:37 2023
     Submit_arguments = test2
-    project = v43
+    project = a01
     Submit_Host = gadi-login-07.gadi.nci.org.au
 
 Job Id: 80005198.gadi-pbs
     Job_Name = test_asdfasdfasdfasdfasdfasdfasdfasdfasdfasdf
-    Job_Owner = cxc562@gadi-login-07.gadi.nci.org.au
+    Job_Owner = fgh562@gadi-login-07.gadi.nci.org.au
     job_state = Q
     queue = normal-exec
     server = gadi-pbs-01.gadi.nci.org.au
     Checkpoint = u
     ctime = Wed Apr 19 09:23:38 2023
-    Error_Path = gadi.nci.org.au:/scratch/v43/hlm562/VASP/test/test_asdfasdfasd
+    Error_Path = gadi.nci.org.au:/scratch/a01/fgh562/VASP/test/test_asdfasdfasd
         fasdfasdfasdfasdfasdfasdfasdf/test_asdfasdfasdfasdfasdfasdfasdfasdfasdf
         asdf.e80005198
-    group_list = v43
+    group_list = a01
     Hold_Types = n
     Join_Path = n
     Keep_Files = n
     Mail_Points = a
     mtime = Wed Apr 19 09:23:38 2023
-    Output_Path = gadi.nci.org.au:/scratch/v43/hlm562/VASP/test/test_asdfasdfas
+    Output_Path = gadi.nci.org.au:/scratch/a01/fgh562/VASP/test/test_asdfasdfas
         dfasdfasdfasdfasdfasdfasdfasdf/test_asdfasdfasdfasdfasdfasdfasdfasdfasd
         fasdf.o80005198
     Priority = 0
@@ -136,19 +136,19 @@ Job Id: 80005198.gadi-pbs
     Resource_List.select = 2:ncpus=48:mpiprocs=48:mem=34359738368:job_tags=norm
         al:jobfs=104857600
     Resource_List.software = vasp
-    Resource_List.storage = scratch/v43
+    Resource_List.storage = scratch/a01
     Resource_List.walltime = 16:00:00
     Resource_List.wd = 1
     substate = 10
-    Variable_List = PBS_O_HOME=/home/562/hlm562,PBS_O_LOGNAME=hlm562,
-        PBS_O_PATH=/g/data/v43/Han/mambaforge/envs/pyiron/bin:/g/data/v43/Han/
-        mambaforge/condabin:/home/562/hlm562/.local/bin:/home/562/hlm562/bin:/o
+    Variable_List = PBS_O_HOME=/home/562/fgh562,PBS_O_LOGNAME=fgh562,
+        PBS_O_PATH=/g/data/a01/random_user/mambaforge/envs/pyiron/bin:/g/data/a01/random_user/
+        mambaforge/condabin:/home/562/fgh562/.local/bin:/home/562/fgh562/bin:/o
         pt/pbs/default/bin:/opt/nci/bin:/opt/bin:/opt/Modules/v4.3.0/bin:/bin:/
-        usr/bin:/usr/local/sbin:/usr/sbin,PBS_O_MAIL=/var/spool/mail/hlm562,
+        usr/bin:/usr/local/sbin:/usr/sbin,PBS_O_MAIL=/var/spool/mail/fgh562,
         PBS_O_SHELL=/bin/bash,PBS_O_TZ=:/etc/localtime,
-        PBS_O_WORKDIR=/scratch/v43/hlm562/VASP/test/test_asdfasdfasdfasdfasdfa
-        sdfasdfasdfasdfasdf,PBS_O_SYSTEM=Linux,PROJECT=v43,PBS_NCI_HT=0,
-        PBS_NCI_STORAGE=scratch/v43,PBS_NCI_IMAGE=,PBS_NCPUS=96,PBS_NGPUS=0,
+        PBS_O_WORKDIR=/scratch/a01/fgh562/VASP/test/test_asdfasdfasdfasdfasdfa
+        sdfasdfasdfasdfasdf,PBS_O_SYSTEM=Linux,PROJECT=a01,PBS_NCI_HT=0,
+        PBS_NCI_STORAGE=scratch/a01,PBS_NCI_IMAGE=,PBS_NCPUS=96,PBS_NGPUS=0,
         PBS_NNODES=2,PBS_NCI_NCPUS_PER_NODE=48,PBS_NCI_NUMA_PER_NODE=4,
         PBS_NCI_NCPUS_PER_NUMA=12,PBS_VMEM=68719476736,PBS_NCI_WD=1,
         PBS_NCI_JOBFS=209715200b,PBS_NCI_LAUNCH_COMPATIBILITY=0,
@@ -157,6 +157,6 @@ Job Id: 80005198.gadi-pbs
         PBS_O_QUEUE=normal,PBS_O_HOST=gadi-login-07.gadi.nci.org.au
     etime = Wed Apr 19 09:23:38 2023
     Submit_arguments = test_asdfasdfasdfasdfasdfasdfasdfasdfasdfasdf
-    project = v43
+    project = a01
     Submit_Host = gadi-login-07.gadi.nci.org.au
 
