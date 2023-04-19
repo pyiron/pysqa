@@ -296,7 +296,7 @@ class TestRunmode(unittest.TestCase):
             content = f.read()
         df_verify = pandas.DataFrame(
             {
-                "jobid": ["80005196", "80005197", "80005198"],
+                "jobid": [80005196, 80005197, 80005198],
                 "user": ["asd562", "asd562", "fgh562"],
                 "jobname": ["test1", "test2", "test_asdfasdfasdfasdfasdfasdfasdfasdfasdfasdf"],
                 "status": ["running", "pending", "pending"],
