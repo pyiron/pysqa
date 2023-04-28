@@ -1,7 +1,7 @@
 #!/bin/bash
 #SBATCH --output=time.out
 #SBATCH --job-name={{job_name}}
-#SBATCH --workdir={{working_directory}}
+#SBATCH --chdir={{working_directory}}
 #SBATCH --get-user-env=L
 #SBATCH --partition=slurm
 {%- if run_time_max %}
