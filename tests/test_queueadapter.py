@@ -61,7 +61,7 @@ class TestRunmode(unittest.TestCase):
         self.assertEqual(self.torque.list_clusters(), ['default'])
         self.assertEqual(self.gent.list_clusters(), ['default'])
         self.assertEqual(self.remote.list_clusters(), ['default'])
-        self.assertEqual(self.multi.list_clusters(), ['local_slurm'])
+        self.assertEqual(self.multi.list_clusters(), ['local_slurm', 'remote_slurm'])
 
     def test_ssh_delete_file_on_remote(self):
         self.assertEqual(self.torque.ssh_delete_file_on_remote, True)
