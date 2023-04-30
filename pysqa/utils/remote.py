@@ -55,7 +55,7 @@ class RemoteQueueAdapter(BasisQueueAdapter):
             raise NotImplementedError(
                 "Submitting jobs with dependencies to a remote cluster is not yet supported."
             )
-        self._transfer_data_to_remote(working_directory=working_directory)
+        # self._transfer_data_to_remote(working_directory=working_directory)
         output = self._execute_remote_command(command=command)
         return int(output.split()[-1])
 
@@ -108,44 +108,46 @@ class RemoteQueueAdapter(BasisQueueAdapter):
         """
         Get the results of the calculation - this is necessary when the calculation was executed on a remote host.
         """
-        working_directory = os.path.abspath(os.path.expanduser(working_directory))
-        remote_working_directory = self._get_remote_working_dir(
-            working_directory=working_directory
-        )
-        remote_dict = json.loads(
-            self._execute_remote_command(
-                command="python -m pysqa.cmd --list --working_directory "
-                + remote_working_directory
-            )
-        )
-        for d in remote_dict["dirs"]:
-            local_dir = self._get_file_transfer(
-                file=d, local_dir=remote_working_directory, remote_dir=working_directory
-            )
-            os.makedirs(local_dir, exist_ok=True)
-        file_dict = {}
-        for f in remote_dict["files"]:
-            local_file = self._get_file_transfer(
-                file=f, local_dir=remote_working_directory, remote_dir=working_directory
-            )
-            file_dict[local_file] = f
-        self._transfer_files(file_dict=file_dict, sftp=None, transfer_back=True)
-        if delete_remote:
-            self._execute_remote_command(command="rm -r " + remote_working_directory)
+        pass
+        # working_directory = os.path.abspath(os.path.expanduser(working_directory))
+        # remote_working_directory = self._get_remote_working_dir(
+        #     working_directory=working_directory
+        # )
+        # remote_dict = json.loads(
+        #     self._execute_remote_command(
+        #         command="python -m pysqa.cmd --list --working_directory "
+        #         + remote_working_directory
+        #     )
+        # )
+        # for d in remote_dict["dirs"]:
+        #     local_dir = self._get_file_transfer(
+        #         file=d, local_dir=remote_working_directory, remote_dir=working_directory
+        #     )
+        #     os.makedirs(local_dir, exist_ok=True)
+        # file_dict = {}
+        # for f in remote_dict["files"]:
+        #     local_file = self._get_file_transfer(
+        #         file=f, local_dir=remote_working_directory, remote_dir=working_directory
+        #     )
+        #     file_dict[local_file] = f
+        # self._transfer_files(file_dict=file_dict, sftp=None, transfer_back=True)
+        # if delete_remote:
+        #     self._execute_remote_command(command="rm -r " + remote_working_directory)
 
     def transfer_file(self, file, transfer_back=False, delete_remote=False):
-        working_directory = os.path.abspath(os.path.expanduser(file))
-        remote_working_directory = self._get_remote_working_dir(
-            working_directory=working_directory
-        )
-        self._create_remote_dir(directory=os.path.dirname(remote_working_directory))
-        self._transfer_files(
-            file_dict={working_directory: remote_working_directory},
-            sftp=None,
-            transfer_back=transfer_back,
-        )
-        if delete_remote and transfer_back:
-            self._execute_remote_command(command="rm " + remote_working_directory)
+        pass
+        # working_directory = os.path.abspath(os.path.expanduser(file))
+        # remote_working_directory = self._get_remote_working_dir(
+        #     working_directory=working_directory
+        # )
+        # self._create_remote_dir(directory=os.path.dirname(remote_working_directory))
+        # self._transfer_files(
+        #     file_dict={working_directory: remote_working_directory},
+        #     sftp=None,
+        #     transfer_back=transfer_back,
+        # )
+        # if delete_remote and transfer_back:
+        #     self._execute_remote_command(command="rm " + remote_working_directory)
 
     def __del__(self):
         if self._ssh_connection is not None:
