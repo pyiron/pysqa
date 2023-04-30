@@ -40,6 +40,7 @@ class TestRunmode(unittest.TestCase):
         self.assertEqual(self.lsf.config["queue_type"], "LSF")
         self.assertEqual(self.sge.config["queue_type"], "SGE")
         self.assertEqual(self.moab.config["queue_type"], "MOAB")
+        self.assertEqual(self.remote.config["queue_type"], "REMOTE")
         self.assertEqual(self.torque.config["queue_primary"], "torque")
         self.assertEqual(self.slurm.config["queue_primary"], "slurm")
         self.assertEqual(self.lsf.config["queue_primary"], "lsf")
@@ -47,6 +48,14 @@ class TestRunmode(unittest.TestCase):
         self.assertEqual(self.moab.config["queue_primary"], "moab")
         self.assertEqual(self.gent.config["queue_primary"], "slurm")
         self.assertEqual(self.remote.config["queue_primary"], "remote")
+
+    def test_ssh_delete_file_on_remote(self):
+        self.assertEqual(self.torque.ssh_delete_file_on_remote, True)
+        self.assertEqual(self.slurm.ssh_delete_file_on_remote, True)
+        self.assertEqual(self.lsf.ssh_delete_file_on_remote, True)
+        self.assertEqual(self.moab.ssh_delete_file_on_remote, True)
+        self.assertEqual(self.torque.ssh_delete_file_on_remote, True)
+        self.assertEqual(self.remote.ssh_delete_file_on_remote, False)
 
     def test_value_in_range(self):
         self.assertEqual(
