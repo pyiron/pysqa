@@ -1,0 +1,5 @@
+cluster_primary: local_slurm
+cluster: {
+    local_slurm: local_slurm_queues.yaml,
+    remote_slurm: remote_queues.yaml
+}

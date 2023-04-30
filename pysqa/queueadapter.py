@@ -73,7 +73,7 @@ class QueueAdapter(object):
         Returns:
             list: List of computing clusters
         """
-        return self._queue_dict.keys()
+        return list(self._queue_dict.keys())
 
     def switch_cluster(self, cluster_name):
         """
