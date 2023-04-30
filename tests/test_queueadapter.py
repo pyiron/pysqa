@@ -27,6 +27,7 @@ class TestRunmode(unittest.TestCase):
         cls.sge = QueueAdapter(directory=os.path.join(cls.path, "config/sge"))
         cls.moab = QueueAdapter(directory=os.path.join(cls.path, "config/moab"))
         cls.gent = QueueAdapter(directory=os.path.join(cls.path, "config/gent"))
+        cls.remote = QueueAdapter(directory=os.path.join(cls.path, "config/remote"))
 
     def test_missing_config(self):
         self.assertRaises(
@@ -45,6 +46,7 @@ class TestRunmode(unittest.TestCase):
         self.assertEqual(self.sge.config["queue_primary"], "impi_hydra_small")
         self.assertEqual(self.moab.config["queue_primary"], "moab")
         self.assertEqual(self.gent.config["queue_primary"], "slurm")
+        self.assertEqual(self.remote.config["queue_primary"], "remote")
 
     def test_value_in_range(self):
         self.assertEqual(
