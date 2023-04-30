@@ -27,6 +27,8 @@ class TestRunmode(unittest.TestCase):
         cls.sge = QueueAdapter(directory=os.path.join(cls.path, "config/sge"))
         cls.moab = QueueAdapter(directory=os.path.join(cls.path, "config/moab"))
         cls.gent = QueueAdapter(directory=os.path.join(cls.path, "config/gent"))
+        cls.remote = QueueAdapter(directory=os.path.join(cls.path, "config/remote"))
+        cls.multi = QueueAdapter(directory=os.path.join(cls.path, "config/multicluster"))
 
     def test_missing_config(self):
         self.assertRaises(
@@ -39,12 +41,36 @@ class TestRunmode(unittest.TestCase):
         self.assertEqual(self.lsf.config["queue_type"], "LSF")
         self.assertEqual(self.sge.config["queue_type"], "SGE")
         self.assertEqual(self.moab.config["queue_type"], "MOAB")
+        self.assertEqual(self.gent.config["queue_type"], "GENT")
+        self.assertEqual(self.remote.config["queue_type"], "REMOTE")
+        self.assertEqual(self.multi.config["queue_type"], "SLURM")
         self.assertEqual(self.torque.config["queue_primary"], "torque")
         self.assertEqual(self.slurm.config["queue_primary"], "slurm")
         self.assertEqual(self.lsf.config["queue_primary"], "lsf")
         self.assertEqual(self.sge.config["queue_primary"], "impi_hydra_small")
         self.assertEqual(self.moab.config["queue_primary"], "moab")
         self.assertEqual(self.gent.config["queue_primary"], "slurm")
+        self.assertEqual(self.remote.config["queue_primary"], "remote")
+        self.assertEqual(self.multi.config["queue_primary"], "slurm")
+
+    def test_list_clusters(self):
+        self.assertEqual(self.torque.list_clusters(), ['default'])
+        self.assertEqual(self.slurm.list_clusters(), ['default'])
+        self.assertEqual(self.lsf.list_clusters(), ['default'])
+        self.assertEqual(self.moab.list_clusters(), ['default'])
+        self.assertEqual(self.torque.list_clusters(), ['default'])
+        self.assertEqual(self.gent.list_clusters(), ['default'])
+        self.assertEqual(self.remote.list_clusters(), ['default'])
+        self.assertEqual(self.multi.list_clusters(), ['local_slurm', 'remote_slurm'])
+
+    def test_ssh_delete_file_on_remote(self):
+        self.assertEqual(self.torque.ssh_delete_file_on_remote, True)
+        self.assertEqual(self.slurm.ssh_delete_file_on_remote, True)
+        self.assertEqual(self.lsf.ssh_delete_file_on_remote, True)
+        self.assertEqual(self.moab.ssh_delete_file_on_remote, True)
+        self.assertEqual(self.torque.ssh_delete_file_on_remote, True)
+        self.assertEqual(self.gent.ssh_delete_file_on_remote, True)
+        self.assertEqual(self.remote.ssh_delete_file_on_remote, False)
 
     def test_value_in_range(self):
         self.assertEqual(
