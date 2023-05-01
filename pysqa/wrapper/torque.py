@@ -2,9 +2,9 @@
 # Copyright (c) Max-Planck-Institut für Eisenforschung GmbH - Computational Materials Design (CM) Department
 # Distributed under the terms of "New BSD License", see the LICENSE file.
 
-from pysqa.wrapper.generic import SchedulerCommands
 import re
 import pandas as pd
+from pysqa.wrapper.generic import SchedulerCommands
 
 __author__ = "Jan Janssen"
 __copyright__ = (
@@ -33,7 +33,8 @@ class TorqueCommands(SchedulerCommands):
 
     @staticmethod
     def get_job_id_from_output(queue_submit_output):
-        # strip last line from output, leading and trailing whitespaces, and separates the queue id from the stuff after "."
+        # strip last line from output, leading and trailing whitespaces,
+        # and separates the queue id from the stuff after "."
         # Adjust if your system doesn't have output like below!
         # e.g. qsub run_queue.sh -> "12347673.gadi-pbs", the below returns 12347673
         # It must return an integer for it to not raise an exception later.
@@ -44,7 +45,8 @@ class TorqueCommands(SchedulerCommands):
     @staticmethod
     def convert_queue_status(queue_status_output):
         # # Run the qstat -f command and capture its output
-        # output = subprocess.check_output(["qstat", "-f"]) -> output is the queue_status_output that goes into this function
+        # output = subprocess.check_output(["qstat", "-f"]) -> output is the
+        # queue_status_output that goes into this function
 
         # Split the output into lines
         lines = queue_status_output.split("\n")  # .decode().split("\n")

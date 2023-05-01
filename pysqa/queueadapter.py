@@ -2,7 +2,10 @@
 # Copyright (c) Jan Janssen
 
 import os
-from pysqa.utils.functs import read_config, set_queue_adapter
+from pysqa.utils.basic import BasisQueueAdapter
+from pysqa.ext.modular import ModularQueueAdapter
+from pysqa.ext.remote import RemoteQueueAdapter
+from pysqa.utils.config import read_config
 
 __author__ = "Jan Janssen"
 __copyright__ = "Copyright 2019, Jan Janssen"
@@ -288,3 +291,21 @@ class QueueAdapter(object):
             memory_max=memory_max,
             active_queue=active_queue,
         )
+
+
+def set_queue_adapter(config, directory):
+    """
+    Initialize the queue adapter
+
+    Args:
+        config (dict): configuration for one cluster
+        directory (str): directory which contains the queue configurations
+    """
+    if config["queue_type"] in ["SGE", "TORQUE", "SLURM", "LSF", "MOAB"]:
+        return BasisQueueAdapter(config=config, directory=directory)
+    elif config["queue_type"] in ["GENT"]:
+        return ModularQueueAdapter(config=config, directory=directory)
+    elif config["queue_type"] in ["REMOTE"]:
+        return RemoteQueueAdapter(config=config, directory=directory)
+    else:
+        raise ValueError
