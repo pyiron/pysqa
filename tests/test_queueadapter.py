@@ -369,6 +369,10 @@ class TestRunmode(unittest.TestCase):
         with self.assertRaises(NotImplementedError):
             self.remote.submit_job(queue="remote", dependency_list=[])
 
+    def test_submit_job_empty_working_directory(self):
+        with self.assertRaises(ValueError):
+            self.slurm.submit_job(working_directory=" ")
+
     def test_memory_string_comparison(self):
         self.assertEqual(BasisQueueAdapter._value_in_range(1023, value_min="1K"), "1K")
         self.assertEqual(BasisQueueAdapter._value_in_range(1035, value_min="1K"), 1035)
@@ -412,3 +416,38 @@ class TestRunmode(unittest.TestCase):
             ),
             "60G",
         )
+
+    def test_write_queue(self):
+        with self.assertRaises(ValueError):
+            self.slurm._adapter._write_queue_script(
+                queue=None,
+                job_name=None,
+                working_directory=None,
+                cores=None,
+                memory_max=None,
+                run_time_max=None,
+                command=None
+            )
+        self.slurm._adapter._write_queue_script(
+            queue="slurm",
+            job_name=None,
+            working_directory=None,
+            cores=None,
+            memory_max=None,
+            run_time_max=None,
+            command="echo \"hello\""
+        )
+        with open("run_queue.sh", "r") as f:
+            content = f.read()
+        output = """\
+#!/bin/bash
+#SBATCH --output=time.out
+#SBATCH --job-name=None
+#SBATCH --chdir=.
+#SBATCH --get-user-env=L
+#SBATCH --partition=slurm
+#SBATCH --time=4320
+#SBATCH --cpus-per-task=10
+
+echo \"hello\""""
+        self.assertEqual(content, output)
