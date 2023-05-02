@@ -165,6 +165,7 @@ class QueueAdapter(object):
             cores=cores,
             memory_max=memory_max,
             run_time_max=run_time_max,
+            dependency_list=dependency_list,
             command=command,
         )
 
