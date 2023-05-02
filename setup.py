@@ -36,4 +36,9 @@ setup(
                       'pyyaml==6.0',
                       'tqdm==4.65.0'],
     cmdclass=versioneer.get_cmdclass(),
+    entry_points={
+            "console_scripts": [
+                'pysqa=pysqa:main'
+            ]
+    }
     )
