@@ -451,3 +451,4 @@ class TestRunmode(unittest.TestCase):
 
 echo \"hello\""""
         self.assertEqual(content, output)
+        os.remove("run_queue.sh")
