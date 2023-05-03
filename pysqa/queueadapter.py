@@ -141,6 +141,7 @@ class QueueAdapter(object):
         run_time_max=None,
         dependency_list=None,
         command=None,
+        **kwargs
     ):
         """
         Submits command to the given queue.
@@ -167,6 +168,7 @@ class QueueAdapter(object):
             run_time_max=run_time_max,
             dependency_list=dependency_list,
             command=command,
+            **kwargs
         )
 
     def enable_reservation(self, process_id):
