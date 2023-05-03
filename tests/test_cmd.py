@@ -55,3 +55,47 @@ class TestCMD(unittest.TestCase):
         ]
         self.assertEqual(output, content)
         os.remove("run_queue.sh")
+
+    def test_delete(self):
+        def execute_command(
+            commands,
+            working_directory=None,
+            split_output=True,
+            shell=False,
+            error_filename="pysqa.err",
+        ):
+            return "Success\n"
+
+        test_dir = os.path.abspath(os.path.dirname(__file__))
+        with self.assertRaises(SystemExit):
+            command_line(
+                [
+                    "--config_directory", os.path.join(test_dir, "config", "slurm"),
+                    "--delete",
+                    "--id", "1",
+                ],
+                execute_command=execute_command
+            )
+
+    def test_status(self):
+        test_dir = os.path.abspath(os.path.dirname(__file__))
+
+        def execute_command(
+            commands,
+            working_directory=None,
+            split_output=True,
+            shell=False,
+            error_filename="pysqa.err",
+        ):
+            with open(os.path.join(test_dir, "config", "slurm", "squeue_output")) as f:
+                return f.read()
+
+        with self.assertRaises(SystemExit):
+            command_line(
+                [
+                    "--config_directory", os.path.join(test_dir, "config", "slurm"),
+                    "--status",
+                    "--list"
+                ],
+                execute_command=execute_command
+            )
