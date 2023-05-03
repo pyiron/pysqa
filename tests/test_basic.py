@@ -15,7 +15,7 @@ __status__ = "production"
 __date__ = "Feb 9, 2019"
 
 
-class TestRunmode(unittest.TestCase):
+class TestQueueAdapter(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.path = os.path.dirname(os.path.abspath(__file__))
@@ -25,6 +25,8 @@ class TestRunmode(unittest.TestCase):
             ValueError, QueueAdapter, directory=os.path.join(self.path, "config/error")
         )
 
+
+class TestBasisQueueAdapter(unittest.TestCase):
     def test_memory_string_comparison(self):
         self.assertEqual(BasisQueueAdapter._value_in_range(1023, value_min="1K"), "1K")
         self.assertEqual(BasisQueueAdapter._value_in_range(1035, value_min="1K"), 1035)
