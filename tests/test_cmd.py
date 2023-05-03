@@ -4,6 +4,10 @@ from pysqa.cmd import command_line
 
 
 class TestCMD(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.test_dir = os.path.abspath(os.path.dirname(__file__))
+
     def test_help(self):
         with self.assertRaises(SystemExit):
             command_line(["--help"])
@@ -22,11 +26,10 @@ class TestCMD(unittest.TestCase):
         ):
             return "1\n"
 
-        test_dir = os.path.abspath(os.path.dirname(__file__))
         with self.assertRaises(SystemExit):
             command_line(
                 [
-                    "--config_directory", os.path.join(test_dir, "config", "slurm"),
+                    "--config_directory", os.path.join(self.test_dir, "config", "slurm"),
                     "--submit",
                     "--queue", "slurm",
                     "--job_name", "test",
@@ -66,11 +69,10 @@ class TestCMD(unittest.TestCase):
         ):
             return "Success\n"
 
-        test_dir = os.path.abspath(os.path.dirname(__file__))
         with self.assertRaises(SystemExit):
             command_line(
                 [
-                    "--config_directory", os.path.join(test_dir, "config", "slurm"),
+                    "--config_directory", os.path.join(self.test_dir, "config", "slurm"),
                     "--delete",
                     "--id", "1",
                 ],
@@ -78,7 +80,6 @@ class TestCMD(unittest.TestCase):
             )
 
     def test_status(self):
-        test_dir = os.path.abspath(os.path.dirname(__file__))
 
         def execute_command(
             commands,
@@ -87,15 +88,35 @@ class TestCMD(unittest.TestCase):
             shell=False,
             error_filename="pysqa.err",
         ):
-            with open(os.path.join(test_dir, "config", "slurm", "squeue_output")) as f:
+            with open(os.path.join(self.test_dir, "config", "slurm", "squeue_output")) as f:
                 return f.read()
 
         with self.assertRaises(SystemExit):
             command_line(
                 [
-                    "--config_directory", os.path.join(test_dir, "config", "slurm"),
-                    "--status",
-                    "--list"
+                    "--config_directory", os.path.join(self.test_dir, "config", "slurm"),
+                    "--status"
+                ],
+                execute_command=execute_command
+            )
+
+    def test_list(self):
+        def execute_command(
+            commands,
+            working_directory=None,
+            split_output=True,
+            shell=False,
+            error_filename="pysqa.err",
+        ):
+            pass
+
+        with self.assertRaises(SystemExit):
+            command_line(
+                [
+                    "--config_directory", os.path.join(self.test_dir, "config", "slurm"),
+                    "--list",
+                    "--working_directory", os.path.join(self.test_dir, "config", "slurm"),
+
                 ],
                 execute_command=execute_command
             )
