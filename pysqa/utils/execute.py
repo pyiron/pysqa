@@ -10,7 +10,7 @@ def execute_command(
 
     Args:
         commands (list/str): These commands are executed on the command line
-        working_directory (str): The directory where the command is executed
+        working_directory (str/None): The directory where the command is executed
         split_output (bool): Boolean flag to split newlines in the output
         shell (bool): Additional switch to convert list of commands to one string
         error_filename (str): In case the execution fails the output is written to this file
