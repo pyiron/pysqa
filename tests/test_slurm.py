@@ -208,4 +208,29 @@ echo \"hello\""""
             df_queue_status[df_queue_status.user=="janj"].equals(slurm_tmp.get_queue_status(user="janj"))
         )
         self.assertEqual(slurm_tmp.get_status_of_job(process_id=5322019), "running")
-        self.assertEqual(slurm_tmp.get_status_of_jobs(process_id_lst=[5322019]), ["running"])
+        self.assertIsNone(slurm_tmp.get_status_of_job(process_id=0))
+        self.assertEqual(slurm_tmp.get_status_of_jobs(process_id_lst=[5322019, 0]), ["running", "finished"])
+
+    def test_not_implemented_functions(self):
+        def execute_command(
+                commands,
+                working_directory=None,
+                split_output=True,
+                shell=False,
+                error_filename="pysqa.err",
+        ):
+            pass
+
+        slurm_tmp = QueueAdapter(
+            directory=os.path.join(self.path, "config/slurm"),
+            execute_command=execute_command
+        )
+
+        with self.assertRaises(NotImplementedError):
+            slurm_tmp._adapter.convert_path_to_remote(path="test")
+
+        with self.assertRaises(NotImplementedError):
+            slurm_tmp._adapter.transfer_file(file="test", transfer_back=False)
+
+        with self.assertRaises(NotImplementedError):
+            slurm_tmp._adapter.get_job_from_remote(working_directory=".")
