@@ -16,6 +16,22 @@ __status__ = "production"
 __date__ = "Feb 9, 2019"
 
 
+df_queue_status = pandas.DataFrame(
+    {
+        "jobid": [5322019, 5322016, 5322017, 5322018, 5322013],
+        "user": ["janj", "janj", "janj", "janj", "maxi"],
+        "jobname": ["pi_19576488", "pi_19576485", "pi_19576486", "pi_19576487", "pi_19576482"],
+        "status": ["running", "running", "running", "running", "running"],
+        "working_directory": [
+            "/cmmc/u/janj/pyiron/projects/2023/2023-04-19-dft-test/job_1",
+            "/cmmc/u/janj/pyiron/projects/2023/2023-04-19-dft-test/job_2",
+            "/cmmc/u/janj/pyiron/projects/2023/2023-04-19-dft-test/job_3",
+            "/cmmc/u/janj/pyiron/projects/2023/2023-04-19-dft-test/job_4",
+            "/cmmc/u/janj/pyiron/projects/2023/2023-04-19-dft-test/job_5",
+        ]
+    }
+)
+
 class TestSlurmQueueAdapter(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
@@ -28,6 +44,9 @@ class TestSlurmQueueAdapter(unittest.TestCase):
 
     def test_list_clusters(self):
         self.assertEqual(self.slurm.list_clusters(), ['default'])
+
+    def test_remote_flag(self):
+        self.assertFalse(self.slurm._adapter.remote_flag)
 
     def test_ssh_delete_file_on_remote(self):
         self.assertEqual(self.slurm.ssh_delete_file_on_remote, True)
@@ -62,23 +81,8 @@ class TestSlurmQueueAdapter(unittest.TestCase):
     def test_convert_queue_status_slurm(self):
         with open(os.path.join(self.path, "config/slurm", "squeue_output"), "r") as f:
             content = f.read()
-        df_verify = pandas.DataFrame(
-            {
-                "jobid": [5322019, 5322016, 5322017, 5322018, 5322013],
-                "user": ["janj", "janj", "janj", "janj", "janj"],
-                "jobname": ["pi_19576488", "pi_19576485", "pi_19576486", "pi_19576487", "pi_19576482"],
-                "status": ["running", "running", "running", "running", "running"],
-                "working_directory": [
-                    "/cmmc/u/janj/pyiron/projects/2023/2023-04-19-dft-test/job_1",
-                    "/cmmc/u/janj/pyiron/projects/2023/2023-04-19-dft-test/job_2",
-                    "/cmmc/u/janj/pyiron/projects/2023/2023-04-19-dft-test/job_3",
-                    "/cmmc/u/janj/pyiron/projects/2023/2023-04-19-dft-test/job_4",
-                    "/cmmc/u/janj/pyiron/projects/2023/2023-04-19-dft-test/job_5",
-                ]
-            }
-        )
         self.assertTrue(
-            df_verify.equals(
+            df_queue_status.equals(
                 self.slurm._adapter._commands.convert_queue_status(
                     queue_status_output=content
                 )
@@ -158,3 +162,47 @@ echo \"hello\""""
 echo \"hello\""""
         self.assertEqual(content, output)
         os.remove("run_queue.sh")
+
+    def test_no_queue_id_returned(self):
+        def execute_command(
+                commands,
+                working_directory=None,
+                split_output=True,
+                shell=False,
+                error_filename="pysqa.err",
+        ):
+            pass
+
+        slurm_tmp = QueueAdapter(
+            directory=os.path.join(self.path, "config/slurm"),
+            execute_command=execute_command
+        )
+        self.assertIsNone(slurm_tmp.submit_job(
+            queue="slurm",
+            job_name="test",
+            working_directory=".",
+            command="echo hello"
+        ))
+        self.assertIsNone(slurm_tmp.delete_job(process_id=123))
+
+    def test_queue_status(self):
+        def execute_command(
+            commands,
+            working_directory=None,
+            split_output=True,
+            shell=False,
+            error_filename="pysqa.err",
+        ):
+            with open(os.path.join(self.path, "config", "slurm", "squeue_output")) as f:
+                return f.read()
+
+        slurm_tmp = QueueAdapter(
+            directory=os.path.join(self.path, "config/slurm"),
+            execute_command=execute_command
+        )
+        self.assertTrue(
+            df_queue_status.equals(slurm_tmp.get_queue_status())
+        )
+        self.assertTrue(
+            df_queue_status[df_queue_status.user=="janj"].equals(slurm_tmp.get_queue_status(user="janj"))
+        )
