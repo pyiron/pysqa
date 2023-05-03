@@ -452,3 +452,31 @@ class TestRunmode(unittest.TestCase):
 echo \"hello\""""
         self.assertEqual(content, output)
         os.remove("run_queue.sh")
+
+    def test_write_queue_extra_keywords(self):
+        self.slurm._adapter._write_queue_script(
+            queue="slurm_extra",
+            job_name=None,
+            working_directory=None,
+            cores=None,
+            memory_max=None,
+            run_time_max=None,
+            command="echo \"hello\"",
+            account="123456"
+        )
+        with open("run_queue.sh", "r") as f:
+            content = f.read()
+        output = """\
+#!/bin/bash
+#SBATCH --output=time.out
+#SBATCH --job-name=None
+#SBATCH --chdir=.
+#SBATCH --get-user-env=L
+#SBATCH --partition=slurm
+#SBATCH --account=123456
+#SBATCH --time=4320
+#SBATCH --cpus-per-task=10
+
+echo \"hello\""""
+        self.assertEqual(content, output)
+        os.remove("run_queue.sh")

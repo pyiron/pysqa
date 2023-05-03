@@ -25,6 +25,7 @@ class ModularQueueAdapter(BasisQueueAdapter):
         run_time_max=None,
         dependency_list=None,
         command=None,
+        **kwargs
     ):
         """
 
@@ -49,6 +50,7 @@ class ModularQueueAdapter(BasisQueueAdapter):
             memory_max=memory_max,
             run_time_max=run_time_max,
             command=command,
+            **kwargs
         )
         cluster_module = self._queue_to_cluster_dict[queue]
         commands = self._switch_cluster_command(

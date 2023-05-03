@@ -123,6 +123,7 @@ class BasisQueueAdapter(object):
         run_time_max=None,
         dependency_list=None,
         command=None,
+        **kwargs
     ):
         """
 
@@ -151,6 +152,7 @@ class BasisQueueAdapter(object):
             memory_max=memory_max,
             run_time_max=run_time_max,
             command=command,
+            **kwargs
         )
         out = self._execute_command(
             commands=self._list_command_to_be_executed(
@@ -319,6 +321,7 @@ class BasisQueueAdapter(object):
         memory_max=None,
         run_time_max=None,
         command=None,
+        **kwargs
     ):
         """
 
@@ -344,6 +347,7 @@ class BasisQueueAdapter(object):
             memory_max=memory_max,
             run_time_max=run_time_max,
             command=command,
+            **kwargs
         )
         if not os.path.exists(working_directory):
             os.makedirs(working_directory)
@@ -361,6 +365,7 @@ class BasisQueueAdapter(object):
         memory_max=None,
         run_time_max=None,
         command=None,
+        **kwargs
     ):
         """
 
@@ -397,6 +402,7 @@ class BasisQueueAdapter(object):
             memory_max=memory_max,
             run_time_max=run_time_max,
             command=command,
+            **kwargs
         )
 
     @staticmethod
