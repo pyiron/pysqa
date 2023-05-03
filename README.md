@@ -3,7 +3,7 @@ Simple queue adapter for python
 
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/9db80cb2477f46be870d1446540b4bf3)](https://www.codacy.com/app/pyiron-runner/pysqa?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=pyiron/pysqa&amp;utm_campaign=Badge_Grade_Dashboard)
 [![Python package](https://github.com/pyiron/pysqa/workflows/Python%20package/badge.svg)](https://github.com/pyiron/pysqa/actions)
-[![Coverage Status](https://coveralls.io/repos/github/pyiron/pysqa/badge.svg?branch=master)](https://coveralls.io/github/pyiron/pysqa?branch=master)
+[![Coverage Status](https://coveralls.io/repos/github/pyiron/pysqa/badge.svg?branch=main)](https://coveralls.io/github/pyiron/pysqa?branch=main)
 
 The goal of pysqa is to make submitting to an HPC cluster as easy as starting another subprocess. This is based on the assumption that even though modern queuing systems allow for an wide range of different configuration, most users submit the majority of their jobs with very similar parameters. Therefore pysqa allows the users to store their submission scripts as jinja2 templates for quick access. After the submission pysqa allows the users to track the progress of their jobs, delete them or enable reservations using the built-in functionality of the queuing system. The currently supported queuing systems are: LFS, MOAB, SGE (tested), SLURM (tested), TORQUE. 
 
@@ -19,7 +19,7 @@ Or via anaconda from the conda-forge channel
 
 # Usage 
 pysqa requires the user to configure the type of queuing system as well as the available templates. Example configuration are available at:
-https://github.com/pyiron/pysqa/tree/master/tests/config
+https://github.com/pyiron/pysqa/tree/main/tests/config
 By default pysqa is searching for the queue configuration in `~/.queues/queue.yaml` and the corresponding jinja2 templates in the same folder.
 
 Import pysqa:
@@ -53,14 +53,14 @@ Delete a job from the queuing sytem:
 
 Sample configurations for the specific queuing systems are availabe in the tests: 
 
-* lsf - https://github.com/pyiron/pysqa/tree/master/tests/config/lsf
-* moab - https://github.com/pyiron/pysqa/tree/master/tests/config/moab
-* SGE - https://github.com/pyiron/pysqa/tree/master/tests/config/sge
-* slurm - https://github.com/pyiron/pysqa/tree/master/tests/config/slurm
-* torque - https://github.com/pyiron/pysqa/tree/master/tests/config/torque
+* lsf - https://github.com/pyiron/pysqa/tree/main/tests/config/lsf
+* moab - https://github.com/pyiron/pysqa/tree/main/tests/config/moab
+* SGE - https://github.com/pyiron/pysqa/tree/main/tests/config/sge
+* slurm - https://github.com/pyiron/pysqa/tree/main/tests/config/slurm
+* torque - https://github.com/pyiron/pysqa/tree/main/tests/config/torque
 
 # License
-pysqa is released under the BSD license https://github.com/pyiron/pysqa/blob/master/LICENSE . It is a spin-off of the pyiron project https://github.com/pyiron/pyiron therefore if you use pysqa for your publication, please cite: 
+pysqa is released under the BSD license https://github.com/pyiron/pysqa/blob/main/LICENSE . It is a spin-off of the pyiron project https://github.com/pyiron/pyiron therefore if you use pysqa for your publication, please cite: 
 
     @article{pyiron-paper,
       title = {pyiron: An integrated development environment for computational materials science},

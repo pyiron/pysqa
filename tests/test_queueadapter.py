@@ -27,6 +27,8 @@ class TestRunmode(unittest.TestCase):
         cls.sge = QueueAdapter(directory=os.path.join(cls.path, "config/sge"))
         cls.moab = QueueAdapter(directory=os.path.join(cls.path, "config/moab"))
         cls.gent = QueueAdapter(directory=os.path.join(cls.path, "config/gent"))
+        cls.remote = QueueAdapter(directory=os.path.join(cls.path, "config/remote"))
+        cls.multi = QueueAdapter(directory=os.path.join(cls.path, "config/multicluster"))
 
     def test_missing_config(self):
         self.assertRaises(
@@ -39,12 +41,36 @@ class TestRunmode(unittest.TestCase):
         self.assertEqual(self.lsf.config["queue_type"], "LSF")
         self.assertEqual(self.sge.config["queue_type"], "SGE")
         self.assertEqual(self.moab.config["queue_type"], "MOAB")
+        self.assertEqual(self.gent.config["queue_type"], "GENT")
+        self.assertEqual(self.remote.config["queue_type"], "REMOTE")
+        self.assertEqual(self.multi.config["queue_type"], "SLURM")
         self.assertEqual(self.torque.config["queue_primary"], "torque")
         self.assertEqual(self.slurm.config["queue_primary"], "slurm")
         self.assertEqual(self.lsf.config["queue_primary"], "lsf")
         self.assertEqual(self.sge.config["queue_primary"], "impi_hydra_small")
         self.assertEqual(self.moab.config["queue_primary"], "moab")
         self.assertEqual(self.gent.config["queue_primary"], "slurm")
+        self.assertEqual(self.remote.config["queue_primary"], "remote")
+        self.assertEqual(self.multi.config["queue_primary"], "slurm")
+
+    def test_list_clusters(self):
+        self.assertEqual(self.torque.list_clusters(), ['default'])
+        self.assertEqual(self.slurm.list_clusters(), ['default'])
+        self.assertEqual(self.lsf.list_clusters(), ['default'])
+        self.assertEqual(self.moab.list_clusters(), ['default'])
+        self.assertEqual(self.torque.list_clusters(), ['default'])
+        self.assertEqual(self.gent.list_clusters(), ['default'])
+        self.assertEqual(self.remote.list_clusters(), ['default'])
+        self.assertEqual(self.multi.list_clusters(), ['local_slurm', 'remote_slurm'])
+
+    def test_ssh_delete_file_on_remote(self):
+        self.assertEqual(self.torque.ssh_delete_file_on_remote, True)
+        self.assertEqual(self.slurm.ssh_delete_file_on_remote, True)
+        self.assertEqual(self.lsf.ssh_delete_file_on_remote, True)
+        self.assertEqual(self.moab.ssh_delete_file_on_remote, True)
+        self.assertEqual(self.torque.ssh_delete_file_on_remote, True)
+        self.assertEqual(self.gent.ssh_delete_file_on_remote, True)
+        self.assertEqual(self.remote.ssh_delete_file_on_remote, False)
 
     def test_value_in_range(self):
         self.assertEqual(
@@ -118,11 +144,11 @@ class TestRunmode(unittest.TestCase):
             self.sge._adapter._commands.get_queue_status_command, ["qstat", "-xml"]
         )
         self.assertEqual(
-            self.torque._adapter._commands.submit_job_command, ["qsub", "-terse"]
+            self.torque._adapter._commands.submit_job_command, ["qsub"]
         )
         self.assertEqual(self.torque._adapter._commands.delete_job_command, ["qdel"])
         self.assertEqual(
-            self.torque._adapter._commands.get_queue_status_command, ["qstat", "-x"]
+            self.torque._adapter._commands.get_queue_status_command, ["qstat", "-f"]
         )
         self.assertEqual(
             self.lsf._adapter._commands.submit_job_command, ["bsub", "-terse"]
@@ -137,7 +163,7 @@ class TestRunmode(unittest.TestCase):
         self.assertEqual(self.slurm._adapter._commands.delete_job_command, ["scancel"])
         self.assertEqual(
             self.slurm._adapter._commands.get_queue_status_command,
-            ["squeue", "--format", "%A|%u|%t|%.15j", "--noheader"],
+            ["squeue", "--format", "%A|%u|%t|%.15j|%Z", "--noheader"],
         )
         self.assertEqual(self.moab._adapter._commands.submit_job_command, ["msub"])
         self.assertEqual(
@@ -148,10 +174,113 @@ class TestRunmode(unittest.TestCase):
         )
         self.assertEqual(
             self.gent._adapter._commands.get_queue_status_command,
-            ["squeue", "--format", "%A|%u|%t|%.15j", "--noheader"],
+            ["squeue", "--format", "%A|%u|%t|%.15j|%Z", "--noheader"],
         )
 
-    def test_convert_queue_status(self):
+    def test__list_command_to_be_executed(self):
+        with self.subTest("slurm"):
+            self.assertEqual(
+                self.slurm._adapter._list_command_to_be_executed(None, "here"),
+                ["sbatch", "--parsable", "here"],
+            )
+        with self.subTest("slurm with one dependency"):
+            self.assertEqual(
+                self.slurm._adapter._list_command_to_be_executed(["2"], "here"),
+                ["sbatch", "--parsable", "--dependency=afterok:2", "here"],
+            )
+        with self.subTest("slurm with two dependencies"):
+            self.assertEqual(
+                self.slurm._adapter._list_command_to_be_executed(["2", "34"], "here"),
+                ["sbatch", "--parsable", "--dependency=afterok:2,34", "here"],
+            )
+        with self.subTest("torque"):
+            self.assertEqual(
+                self.torque._adapter._list_command_to_be_executed(None, "here"),
+                ["qsub", "here"],
+            )
+        with self.subTest("torque with dependency"):
+            self.assertRaises(
+                NotImplementedError,
+                self.torque._adapter._list_command_to_be_executed,
+                [],
+                "here",
+            )
+        with self.subTest("moab with dependency"):
+            self.assertRaises(
+                NotImplementedError,
+                self.moab._adapter._list_command_to_be_executed,
+                [],
+                "here",
+            )
+        with self.subTest("moab"):
+            self.assertEqual(
+                self.moab._adapter._list_command_to_be_executed(None, "here"),
+                ["msub", "here"],
+            )
+        with self.subTest("gent"):
+            self.assertEqual(
+                self.gent._adapter._list_command_to_be_executed(None, "here"),
+                ["sbatch", "--parsable", "here"],
+            )
+        with self.subTest("gent with dependency"):
+            self.assertRaises(
+                NotImplementedError,
+                self.gent._adapter._list_command_to_be_executed,
+                [],
+                "here",
+            )
+        with self.subTest("sge"):
+            self.assertEqual(
+                self.sge._adapter._list_command_to_be_executed(None, "here"),
+                ["qsub", "-terse", "here"],
+            )
+        with self.subTest("sge with dependency"):
+            self.assertRaises(
+                NotImplementedError,
+                self.sge._adapter._list_command_to_be_executed,
+                [],
+                "here",
+            )
+        with self.subTest("lsf"):
+            self.assertEqual(
+                self.lsf._adapter._list_command_to_be_executed(None, "here"),
+                ["bsub", "-terse", "here"],
+            )
+        with self.subTest("lsf with dependency"):
+            self.assertRaises(
+                NotImplementedError,
+                self.lsf._adapter._list_command_to_be_executed,
+                [],
+                "here",
+            )
+
+    def test_convert_queue_status_slurm(self):
+        with open(os.path.join(self.path, "config/slurm", "squeue_output"), "r") as f:
+            content = f.read()
+        df_verify = pandas.DataFrame(
+            {
+                "jobid": [5322019, 5322016, 5322017, 5322018, 5322013],
+                "user": ["janj", "janj", "janj", "janj", "janj"],
+                "jobname": ["pi_19576488", "pi_19576485", "pi_19576486", "pi_19576487", "pi_19576482"],
+                "status": ["running", "running", "running", "running", "running"],
+                "working_directory": [
+                    "/cmmc/u/janj/pyiron/projects/2023/2023-04-19-dft-test/job_1",
+                    "/cmmc/u/janj/pyiron/projects/2023/2023-04-19-dft-test/job_2",
+                    "/cmmc/u/janj/pyiron/projects/2023/2023-04-19-dft-test/job_3",
+                    "/cmmc/u/janj/pyiron/projects/2023/2023-04-19-dft-test/job_4",
+                    "/cmmc/u/janj/pyiron/projects/2023/2023-04-19-dft-test/job_5",
+                ]
+            }
+        )
+        self.assertTrue(
+            df_verify.equals(
+                self.slurm._adapter._commands.convert_queue_status(
+                    queue_status_output=content
+                )
+            )
+        )
+
+    def test_convert_queue_status_sge(self):
         with open(os.path.join(self.path, "config/sge", "qstat.xml"), "r") as f:
             content = f.read()
         df_running = pandas.DataFrame(
@@ -170,13 +299,14 @@ class TestRunmode(unittest.TestCase):
                 "status": ["pending", "error"],
             }
         )
-        df_merge = df_running.append(df_pending, sort=True)
+        df_merge = pandas.concat([df_running, df_pending], sort=True)
         df = pandas.DataFrame(
             {
                 "jobid": pandas.to_numeric(df_merge.jobid),
                 "user": df_merge.user,
                 "jobname": df_merge.jobname,
                 "status": df_merge.status,
+                "working_directory": [""] * len(df_merge),
             }
         )
         self.assertTrue(
@@ -186,7 +316,29 @@ class TestRunmode(unittest.TestCase):
                 )
             )
         )
-
+    
+    def test_convert_queue_status_torque(self):
+        with open(os.path.join(self.path, "config/torque", "PBSPro_qsub_output"), "r") as f:
+            content = f.read()
+        df_verify = pandas.DataFrame(
+            {
+                "jobid": [80005196, 80005197, 80005198],
+                "user": ["asd562", "asd562", "fgh562"],
+                "jobname": ["test1", "test2", "test_asdfasdfasdfasdfasdfasdfasdfasdfasdfasdf"],
+                "status": ["running", "pending", "pending"],
+                "working_directory": ["/scratch/a01/asd562/VASP/test/test1",\
+                                      "/scratch/a01/asd562/VASP/test/test2",\
+                                      "/scratch/a01/fgh562/VASP/test/test_asdfasdfasdfasdfasdfasdfasdfasdfasdfasdf"]
+            }
+        )
+        self.assertTrue(
+            df_verify.equals(
+                self.torque._adapter._commands.convert_queue_status(
+                    queue_status_output=content
+                )
+            )
+        )
+        
     def test_queue_list(self):
         self.assertEqual(
             sorted(self.sge.queue_list),
@@ -212,6 +364,14 @@ class TestRunmode(unittest.TestCase):
 
     def test_queue_view(self):
         self.assertIsInstance(self.slurm.queue_view, pandas.DataFrame)
+
+    def test_submit_job_remote(self):
+        with self.assertRaises(NotImplementedError):
+            self.remote.submit_job(queue="remote", dependency_list=[])
+
+    def test_submit_job_empty_working_directory(self):
+        with self.assertRaises(ValueError):
+            self.slurm.submit_job(working_directory=" ")
 
     def test_memory_string_comparison(self):
         self.assertEqual(BasisQueueAdapter._value_in_range(1023, value_min="1K"), "1K")
@@ -256,3 +416,67 @@ class TestRunmode(unittest.TestCase):
             ),
             "60G",
         )
+
+    def test_write_queue(self):
+        with self.assertRaises(ValueError):
+            self.slurm._adapter._write_queue_script(
+                queue=None,
+                job_name=None,
+                working_directory=None,
+                cores=None,
+                memory_max=None,
+                run_time_max=None,
+                command=None
+            )
+        self.slurm._adapter._write_queue_script(
+            queue="slurm",
+            job_name=None,
+            working_directory=None,
+            cores=None,
+            memory_max=None,
+            run_time_max=None,
+            command="echo \"hello\""
+        )
+        with open("run_queue.sh", "r") as f:
+            content = f.read()
+        output = """\
+#!/bin/bash
+#SBATCH --output=time.out
+#SBATCH --job-name=None
+#SBATCH --chdir=.
+#SBATCH --get-user-env=L
+#SBATCH --partition=slurm
+#SBATCH --time=4320
+#SBATCH --cpus-per-task=10
+
+echo \"hello\""""
+        self.assertEqual(content, output)
+        os.remove("run_queue.sh")
+
+    def test_write_queue_extra_keywords(self):
+        self.slurm._adapter._write_queue_script(
+            queue="slurm_extra",
+            job_name=None,
+            working_directory=None,
+            cores=None,
+            memory_max=None,
+            run_time_max=None,
+            command="echo \"hello\"",
+            account="123456"
+        )
+        with open("run_queue.sh", "r") as f:
+            content = f.read()
+        output = """\
+#!/bin/bash
+#SBATCH --output=time.out
+#SBATCH --job-name=None
+#SBATCH --chdir=.
+#SBATCH --get-user-env=L
+#SBATCH --partition=slurm
+#SBATCH --account=123456
+#SBATCH --time=4320
+#SBATCH --cpus-per-task=10
+
+echo \"hello\""""
+        self.assertEqual(content, output)
+        os.remove("run_queue.sh")

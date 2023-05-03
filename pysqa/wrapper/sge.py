@@ -4,6 +4,7 @@
 
 import pandas
 import defusedxml.cElementTree as ETree
+from pysqa.wrapper.generic import SchedulerCommands
 
 __author__ = "Jan Janssen"
 __copyright__ = (
@@ -17,7 +18,7 @@ __status__ = "production"
 __date__ = "Feb 9, 2019"
 
 
-class SunGridEngineCommands(object):
+class SunGridEngineCommands(SchedulerCommands):
     @property
     def submit_job_command(self):
         return ["qsub", "-terse"]
@@ -35,10 +36,6 @@ class SunGridEngineCommands(object):
         return ["qstat", "-xml"]
 
     @staticmethod
-    def get_job_id_from_output(queue_submit_output):
-        return int(queue_submit_output)
-
-    @staticmethod
     def convert_queue_status(queue_status_output):
         def leaf_to_dict(leaf):
             return [
@@ -48,7 +45,7 @@ class SunGridEngineCommands(object):
         tree = ETree.fromstring(queue_status_output)
         df_running_jobs = pandas.DataFrame(leaf_to_dict(leaf=tree[0]))
         df_pending_jobs = pandas.DataFrame(leaf_to_dict(leaf=tree[1]))
-        df_merge = df_running_jobs.append(df_pending_jobs, sort=True)
+        df_merge = pandas.concat([df_running_jobs, df_pending_jobs], sort=True)
         df_merge.loc[df_merge.state == "r", "state"] = "running"
         df_merge.loc[df_merge.state == "qw", "state"] = "pending"
         df_merge.loc[df_merge.state == "Eqw", "state"] = "error"
@@ -58,5 +55,6 @@ class SunGridEngineCommands(object):
                 "user": df_merge.JB_owner,
                 "jobname": df_merge.JB_name,
                 "status": df_merge.state,
+                "working_directory": [""] * len(df_merge),
             }
         )

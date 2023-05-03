@@ -4,6 +4,12 @@
 #SBATCH --chdir={{working_directory}}
 #SBATCH --get-user-env=L
 #SBATCH --partition=slurm
+{%- if account %}
+#SBATCH --account={{account}}
+{%- endif %}
+{%- if exclude %}
+#SBATCH --exclude={{exclude}}
+{%- endif %}
 {%- if run_time_max %}
 #SBATCH --time={{ [1, run_time_max // 60]|max }}
 {%- endif %}

@@ -2,7 +2,10 @@
 # Copyright (c) Jan Janssen
 
 import os
-from pysqa.utils.functs import read_config, set_queue_adapter
+from pysqa.utils.basic import BasisQueueAdapter
+from pysqa.ext.modular import ModularQueueAdapter
+from pysqa.ext.remote import RemoteQueueAdapter
+from pysqa.utils.config import read_config
 
 __author__ = "Jan Janssen"
 __copyright__ = "Copyright 2019, Jan Janssen"
@@ -73,7 +76,7 @@ class QueueAdapter(object):
         Returns:
             list: List of computing clusters
         """
-        return self._queue_dict.keys()
+        return list(self._queue_dict.keys())
 
     def switch_cluster(self, cluster_name):
         """
@@ -136,6 +139,7 @@ class QueueAdapter(object):
         cores=None,
         memory_max=None,
         run_time_max=None,
+        dependency_list=None,
         command=None,
     ):
         """
@@ -148,6 +152,7 @@ class QueueAdapter(object):
             cores (int/None):  Number of hardware threads requested
             memory_max (int/None):  Amount of memory requested per node in GB
             run_time_max (int/None):  Maximum runtime in seconds
+            dependency_list(list[str]/None: Job ids of jobs to be completed before starting
             command (str/None):  shell command to run in the job
 
         Returns:
@@ -160,6 +165,7 @@ class QueueAdapter(object):
             cores=cores,
             memory_max=memory_max,
             run_time_max=run_time_max,
+            dependency_list=dependency_list,
             command=command,
         )
 
@@ -286,3 +292,21 @@ class QueueAdapter(object):
             memory_max=memory_max,
             active_queue=active_queue,
         )
+
+
+def set_queue_adapter(config, directory):
+    """
+    Initialize the queue adapter
+
+    Args:
+        config (dict): configuration for one cluster
+        directory (str): directory which contains the queue configurations
+    """
+    if config["queue_type"] in ["SGE", "TORQUE", "SLURM", "LSF", "MOAB"]:
+        return BasisQueueAdapter(config=config, directory=directory)
+    elif config["queue_type"] in ["GENT"]:
+        return ModularQueueAdapter(config=config, directory=directory)
+    elif config["queue_type"] in ["REMOTE"]:
+        return RemoteQueueAdapter(config=config, directory=directory)
+    else:
+        raise ValueError

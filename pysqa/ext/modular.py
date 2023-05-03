@@ -23,7 +23,9 @@ class ModularQueueAdapter(BasisQueueAdapter):
         cores=None,
         memory_max=None,
         run_time_max=None,
+        dependency_list=None,
         command=None,
+        **kwargs
     ):
         """
 
@@ -34,6 +36,7 @@ class ModularQueueAdapter(BasisQueueAdapter):
             cores (int/None):
             memory_max (int/None):
             run_time_max (int/None):
+            dependency_list (list/None):
             command (str/None):
 
         Returns:
@@ -47,13 +50,12 @@ class ModularQueueAdapter(BasisQueueAdapter):
             memory_max=memory_max,
             run_time_max=run_time_max,
             command=command,
+            **kwargs
         )
         cluster_module = self._queue_to_cluster_dict[queue]
-        commands = (
-            self._switch_cluster_command(cluster_module=cluster_module)
-            + self._commands.submit_job_command
-            + [queue_script_path]
-        )
+        commands = self._switch_cluster_command(
+            cluster_module=cluster_module
+        ) + self._list_command_to_be_executed(dependency_list, queue_script_path)
         out = self._execute_command(
             commands=commands,
             working_directory=working_directory,
