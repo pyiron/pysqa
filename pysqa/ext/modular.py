@@ -142,7 +142,7 @@ class ModularQueueAdapter(BasisQueueAdapter):
             )
             df = self._commands.convert_queue_status(queue_status_output=out)
             df_lst.append(df)
-        df = pandas.concat(df_lst, axis=1, sort=False).reset_index(drop=True)
+        df = pandas.concat(df_lst, axis=0, sort=False).reset_index(drop=True)
         if user is None:
             return df
         else:

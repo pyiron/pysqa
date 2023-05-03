@@ -277,13 +277,13 @@ class BasisQueueAdapter(object):
         """
         Get the results of the calculation - this is necessary when the calculation was executed on a remote host.
         """
-        pass
+        raise NotImplementedError
 
     def convert_path_to_remote(self, path):
-        pass
+        raise NotImplementedError
 
     def transfer_file(self, file, transfer_back=False):
-        pass
+        raise NotImplementedError
 
     def check_queue_parameters(
         self, queue, cores=1, run_time_max=None, memory_max=None, active_queue=None

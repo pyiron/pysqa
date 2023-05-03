@@ -19,6 +19,7 @@ class TestRemoteQueueAdapter(unittest.TestCase):
     def setUpClass(cls):
         cls.path = os.path.dirname(os.path.abspath(__file__))
         cls.remote = QueueAdapter(directory=os.path.join(cls.path, "config/remote"))
+        cls.remote_alternative = QueueAdapter(directory=os.path.join(cls.path, "config/remote_alternative"))
 
     def test_config(self):
         self.assertEqual(self.remote.config["queue_type"], "REMOTE")
@@ -36,3 +37,27 @@ class TestRemoteQueueAdapter(unittest.TestCase):
     def test_submit_job_remote(self):
         with self.assertRaises(NotImplementedError):
             self.remote.submit_job(queue="remote", dependency_list=[])
+
+    def test_convert_path_to_remote(self):
+        self.assertEqual(self.remote.convert_path_to_remote("/home/localuser/projects/test"), "/u/hpcuser/remote/test")
+
+    def test_delete_command(self):
+        self.assertEqual(
+            "python -m pysqa.cmd --config_directory /u/share/pysqa/resources/queues/ --delete --id 123",
+            self.remote._adapter._delete_command(job_id=123)
+        )
+
+    def test_reservation_command(self):
+        self.assertEqual(
+            "python -m pysqa.cmd --config_directory /u/share/pysqa/resources/queues/ --reservation --id 123",
+            self.remote._adapter._reservation_command(job_id=123)
+        )
+
+    def test_get_ssh_user(self):
+        self.assertEqual(self.remote._adapter._get_user(), "hpcuser")
+
+    def test_get_file_transfer(self):
+        self.assertEqual(
+            self.remote._adapter._get_file_transfer(file="abc.txt", local_dir="local", remote_dir="test"),
+            os.path.abspath("abc.txt")
+        )
