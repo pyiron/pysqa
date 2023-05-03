@@ -409,7 +409,12 @@ class BasisQueueAdapter(object):
         )
 
     def _execute_command(
-        self, commands, working_directory=None, split_output=True, shell=False, error_filename="pysqa.err"
+        self,
+        commands,
+        working_directory=None,
+        split_output=True,
+        shell=False,
+        error_filename="pysqa.err",
     ):
         """
 
@@ -428,7 +433,7 @@ class BasisQueueAdapter(object):
             working_directory=working_directory,
             split_output=split_output,
             shell=shell,
-            error_filename=error_filename
+            error_filename=error_filename,
         )
 
     @staticmethod

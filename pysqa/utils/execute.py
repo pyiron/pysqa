@@ -3,7 +3,11 @@ import subprocess
 
 
 def execute_command(
-    commands, working_directory=None, split_output=True, shell=False, error_filename="pysqa.err"
+    commands,
+    working_directory=None,
+    split_output=True,
+    shell=False,
+    error_filename="pysqa.err",
 ):
     """
     A wrapper around the subprocess.check_output function.
