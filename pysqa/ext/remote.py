@@ -13,7 +13,9 @@ from pysqa.utils.execute import execute_command
 
 class RemoteQueueAdapter(BasisQueueAdapter):
     def __init__(self, config, directory="~/.queues", execute_command=execute_command):
-        super(RemoteQueueAdapter, self).__init__(config=config, directory=directory, execute_command=execute_command)
+        super(RemoteQueueAdapter, self).__init__(
+            config=config, directory=directory, execute_command=execute_command
+        )
         self._ssh_host = config["ssh_host"]
         self._ssh_username = config["ssh_username"]
         self._ssh_known_hosts = os.path.abspath(
