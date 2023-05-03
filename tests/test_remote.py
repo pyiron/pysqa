@@ -57,11 +57,7 @@ class TestRemoteQueueAdapter(unittest.TestCase):
         self.assertEqual(self.remote._adapter._get_user(), "hpcuser")
 
     def test_get_file_transfer(self):
-        if "tests" in self.path:
-            file = os.path.join(self.path, "abc.txt")
-        else:
-            file = os.path.join(self.path, "tests", "abc.txt")
         self.assertEqual(
             self.remote._adapter._get_file_transfer(file="abc.txt", local_dir="local", remote_dir="test"),
-            file
+            os.path.abspath("abc.txt")
         )
