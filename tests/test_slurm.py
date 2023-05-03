@@ -29,6 +29,9 @@ class TestSlurmQueueAdapter(unittest.TestCase):
     def test_list_clusters(self):
         self.assertEqual(self.slurm.list_clusters(), ['default'])
 
+    def test_remote_flag(self):
+        self.assertFalse(self.slurm._adapter.remote_flag)
+
     def test_ssh_delete_file_on_remote(self):
         self.assertEqual(self.slurm.ssh_delete_file_on_remote, True)
 
