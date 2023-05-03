@@ -207,3 +207,5 @@ echo \"hello\""""
         self.assertTrue(
             df_queue_status[df_queue_status.user=="janj"].equals(slurm_tmp.get_queue_status(user="janj"))
         )
+        self.assertEqual(slurm_tmp.get_status_of_job(process_id=5322019), "running")
+        self.assertEqual(slurm_tmp.get_status_of_jobs(process_id_lst=[5322019]), ["running"])
