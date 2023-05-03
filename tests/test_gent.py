@@ -76,3 +76,15 @@ class TestGentQueueAdapter(unittest.TestCase):
                 )
             )
         )
+
+    def test_switch_cluster_command(self):
+        self.assertEqual(
+            self.gent._adapter._switch_cluster_command(cluster_module="module1"),
+            ['module', '--quiet', 'swap', 'cluster/module1;']
+        )
+
+    def test_resolve_queue_id(self):
+        self.assertEqual(
+            self.gent._adapter._resolve_queue_id(process_id=20120, cluster_dict={0: "cluster1"}),
+            ("cluster1", 2012)
+        )
