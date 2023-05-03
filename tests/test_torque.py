@@ -15,7 +15,7 @@ __status__ = "production"
 __date__ = "Feb 9, 2019"
 
 
-class TestRunmode(unittest.TestCase):
+class TestTorqueQueueAdapter(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.path = os.path.dirname(os.path.abspath(__file__))
