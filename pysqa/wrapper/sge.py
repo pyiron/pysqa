@@ -3,7 +3,7 @@
 # Distributed under the terms of "New BSD License", see the LICENSE file.
 
 import pandas
-import defusedxml.cElementTree as ETree
+import defusedxml.ElementTree as ETree
 from pysqa.wrapper.generic import SchedulerCommands
 
 __author__ = "Jan Janssen"
