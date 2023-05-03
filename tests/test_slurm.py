@@ -32,6 +32,7 @@ df_queue_status = pandas.DataFrame(
     }
 )
 
+
 class TestSlurmQueueAdapter(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
