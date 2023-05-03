@@ -3,11 +3,12 @@
 
 import pandas
 from pysqa.utils.basic import BasisQueueAdapter
+from pysqa.utils.execute import execute_command
 
 
 class ModularQueueAdapter(BasisQueueAdapter):
-    def __init__(self, config, directory="~/.queues"):
-        super(ModularQueueAdapter, self).__init__(config=config, directory=directory)
+    def __init__(self, config, directory="~/.queues", execute_command=execute_command):
+        super(ModularQueueAdapter, self).__init__(config=config, directory=directory, execute_command=execute_command)
         self._queue_to_cluster_dict = {
             k: v["cluster"] for k, v in self._config["queues"].items()
         }
