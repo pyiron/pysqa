@@ -49,7 +49,6 @@ def command_line(argv, execute_command=execute_command):
         )
     except getopt.GetoptError:
         print("cmd.py help")
-        sys.exit()
     else:
         mode_submit = False
         mode_delete = False
@@ -123,8 +122,3 @@ def command_line(argv, execute_command=execute_command):
                 remote_dirs.append(p)
                 remote_files += [os.path.join(p, f) for f in files]
             print(json.dumps({"dirs": remote_dirs, "files": remote_files}))
-        sys.exit()
-
-
-if __name__ == "__main__":
-    command_line(sys.argv[1:])

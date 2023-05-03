@@ -43,13 +43,13 @@ class TestRemoteQueueAdapter(unittest.TestCase):
 
     def test_delete_command(self):
         self.assertEqual(
-            "python -m pysqa.cmd --config_directory /u/share/pysqa/resources/queues/ --delete --id 123",
+            "python -m pysqa --config_directory /u/share/pysqa/resources/queues/ --delete --id 123",
             self.remote._adapter._delete_command(job_id=123)
         )
 
     def test_reservation_command(self):
         self.assertEqual(
-            "python -m pysqa.cmd --config_directory /u/share/pysqa/resources/queues/ --reservation --id 123",
+            "python -m pysqa --config_directory /u/share/pysqa/resources/queues/ --reservation --id 123",
             self.remote._adapter._reservation_command(job_id=123)
         )
 
