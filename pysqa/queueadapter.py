@@ -54,7 +54,7 @@ class QueueAdapter(object):
                 "default": set_queue_adapter(
                     config=read_config(file_name=queue_yaml),
                     directory=directory,
-                    execute_command=execute_command
+                    execute_command=execute_command,
                 )
             }
             primary_queue = "default"
@@ -64,7 +64,7 @@ class QueueAdapter(object):
                 k: set_queue_adapter(
                     config=read_config(file_name=os.path.join(directory, v)),
                     directory=directory,
-                    execute_command=execute_command
+                    execute_command=execute_command,
                 )
                 for k, v in config["cluster"].items()
             }
@@ -309,10 +309,16 @@ def set_queue_adapter(config, directory, execute_command=execute_command):
         directory (str): directory which contains the queue configurations
     """
     if config["queue_type"] in ["SGE", "TORQUE", "SLURM", "LSF", "MOAB"]:
-        return BasisQueueAdapter(config=config, directory=directory, execute_command=execute_command)
+        return BasisQueueAdapter(
+            config=config, directory=directory, execute_command=execute_command
+        )
     elif config["queue_type"] in ["GENT"]:
-        return ModularQueueAdapter(config=config, directory=directory, execute_command=execute_command)
+        return ModularQueueAdapter(
+            config=config, directory=directory, execute_command=execute_command
+        )
     elif config["queue_type"] in ["REMOTE"]:
-        return RemoteQueueAdapter(config=config, directory=directory, execute_command=execute_command)
+        return RemoteQueueAdapter(
+            config=config, directory=directory, execute_command=execute_command
+        )
     else:
         raise ValueError
