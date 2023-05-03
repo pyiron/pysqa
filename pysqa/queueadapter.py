@@ -6,6 +6,7 @@ from pysqa.utils.basic import BasisQueueAdapter
 from pysqa.ext.modular import ModularQueueAdapter
 from pysqa.ext.remote import RemoteQueueAdapter
 from pysqa.utils.config import read_config
+from pysqa.utils.execute import execute_command
 
 __author__ = "Jan Janssen"
 __copyright__ = "Copyright 2019, Jan Janssen"
@@ -44,14 +45,16 @@ class QueueAdapter(object):
             Queues available for auto completion QueueAdapter().queues.<queue name> returns the queue name.
     """
 
-    def __init__(self, directory="~/.queues"):
+    def __init__(self, directory="~/.queues", execute_command=execute_command):
         queue_yaml = os.path.join(directory, "queue.yaml")
         clusters_yaml = os.path.join(directory, "clusters.yaml")
         self._adapter = None
         if os.path.exists(queue_yaml):
             self._queue_dict = {
                 "default": set_queue_adapter(
-                    config=read_config(file_name=queue_yaml), directory=directory
+                    config=read_config(file_name=queue_yaml),
+                    directory=directory,
+                    execute_command=execute_command
                 )
             }
             primary_queue = "default"
@@ -61,6 +64,7 @@ class QueueAdapter(object):
                 k: set_queue_adapter(
                     config=read_config(file_name=os.path.join(directory, v)),
                     directory=directory,
+                    execute_command=execute_command
                 )
                 for k, v in config["cluster"].items()
             }
@@ -296,7 +300,7 @@ class QueueAdapter(object):
         )
 
 
-def set_queue_adapter(config, directory):
+def set_queue_adapter(config, directory, execute_command=execute_command):
     """
     Initialize the queue adapter
 
@@ -305,10 +309,10 @@ def set_queue_adapter(config, directory):
         directory (str): directory which contains the queue configurations
     """
     if config["queue_type"] in ["SGE", "TORQUE", "SLURM", "LSF", "MOAB"]:
-        return BasisQueueAdapter(config=config, directory=directory)
+        return BasisQueueAdapter(config=config, directory=directory, execute_command=execute_command)
     elif config["queue_type"] in ["GENT"]:
-        return ModularQueueAdapter(config=config, directory=directory)
+        return ModularQueueAdapter(config=config, directory=directory, execute_command=execute_command)
     elif config["queue_type"] in ["REMOTE"]:
-        return RemoteQueueAdapter(config=config, directory=directory)
+        return RemoteQueueAdapter(config=config, directory=directory, execute_command=execute_command)
     else:
         raise ValueError
