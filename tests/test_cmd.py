@@ -22,10 +22,11 @@ class TestCMD(unittest.TestCase):
         ):
             return "1\n"
 
+        test_dir = os.path.abspath(os.path.dirname(__file__))
         with self.assertRaises(SystemExit):
             command_line(
                 [
-                    "--config_directory", "config/slurm",
+                    "--config_directory", os.path.join(test_dir, "config", "slurm"),
                     "--submit",
                     "--queue", "slurm",
                     "--job_name", "test",
