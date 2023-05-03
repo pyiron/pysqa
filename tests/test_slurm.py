@@ -32,6 +32,16 @@ class TestRunmode(unittest.TestCase):
     def test_ssh_delete_file_on_remote(self):
         self.assertEqual(self.slurm.ssh_delete_file_on_remote, True)
 
+    def test_interfaces(self):
+        self.assertEqual(
+            self.slurm._adapter._commands.submit_job_command, ["sbatch", "--parsable"]
+        )
+        self.assertEqual(self.slurm._adapter._commands.delete_job_command, ["scancel"])
+        self.assertEqual(
+            self.slurm._adapter._commands.get_queue_status_command,
+            ["squeue", "--format", "%A|%u|%t|%.15j|%Z", "--noheader"],
+        )
+
     def test__list_command_to_be_executed(self):
         with self.subTest("slurm"):
             self.assertEqual(
