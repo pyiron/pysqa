@@ -5,10 +5,10 @@ import getpass
 import importlib
 from jinja2 import Template
 import os
-import subprocess
 import re
 import pandas
 from pysqa.utils.queues import Queues
+from pysqa.utils.execute import execute_command
 
 
 class BasisQueueAdapter(object):
@@ -17,8 +17,10 @@ class BasisQueueAdapter(object):
     locally.
 
     Args:
+        config (dict):
         directory (str): directory containing the queue.yaml files as well as corresponding jinja2 templates for the
                          individual queues.
+        execute_command(funct):
 
     Attributes:
 
@@ -39,7 +41,7 @@ class BasisQueueAdapter(object):
             Queues available for auto completion QueueAdapter().queues.<queue name> returns the queue name.
     """
 
-    def __init__(self, config, directory="~/.queues"):
+    def __init__(self, config, directory="~/.queues", execute_command=execute_command):
         self._config = config
         self._fill_queue_dict(queue_lst_dict=self._config["queues"])
         self._load_templates(queue_lst_dict=self._config["queues"], directory=directory)
@@ -71,6 +73,7 @@ class BasisQueueAdapter(object):
         self._queues = Queues(self.queue_list)
         self._remote_flag = False
         self._ssh_delete_file_on_remote = True
+        self._execute_command_function = execute_command
 
     @property
     def ssh_delete_file_on_remote(self):
@@ -405,18 +408,8 @@ class BasisQueueAdapter(object):
             **kwargs
         )
 
-    @staticmethod
-    def _get_user():
-        """
-
-        Returns:
-            str:
-        """
-        return getpass.getuser()
-
-    @staticmethod
     def _execute_command(
-        commands, working_directory=None, split_output=True, shell=False
+        self, commands, working_directory=None, split_output=True, shell=False, error_filename="pysqa.err"
     ):
         """
 
@@ -425,28 +418,27 @@ class BasisQueueAdapter(object):
             working_directory (str):
             split_output (bool):
             shell (bool):
+            error_filename (str):
 
         Returns:
             str:
         """
-        if shell and isinstance(commands, list):
-            commands = " ".join(commands)
-        try:
-            out = subprocess.check_output(
-                commands,
-                cwd=working_directory,
-                stderr=subprocess.STDOUT,
-                universal_newlines=True,
-                shell=not isinstance(commands, list),
-            )
-        except subprocess.CalledProcessError as e:
-            with open(os.path.join(working_directory, "pysqa.err"), "w") as f:
-                print(e.stdout, file=f)
-            out = None
-        if out is not None and split_output:
-            return out.split("\n")
-        else:
-            return out
+        return self._execute_command_function(
+            commands=commands,
+            working_directory=working_directory,
+            split_output=split_output,
+            shell=shell,
+            error_filename=error_filename
+        )
+
+    @staticmethod
+    def _get_user():
+        """
+
+        Returns:
+            str:
+        """
+        return getpass.getuser()
 
     @staticmethod
     def _fill_queue_dict(queue_lst_dict):
