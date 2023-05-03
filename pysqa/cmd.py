@@ -3,14 +3,16 @@ import os
 import json
 import getopt
 from pysqa.queueadapter import QueueAdapter
+from pysqa.utils.execute import execute_command
 
 
-def command_line(argv):
+def command_line(argv, execute_command=execute_command):
     """
     Parse the command line arguments.
 
     Args:
         argv: Command line arguments
+        execute_command: function to comunicate with shell process
 
     """
     directory = "~/.queues"
@@ -94,7 +96,7 @@ def command_line(argv):
                 print("cmd.py help ... coming soon.")
                 sys.exit()
         if mode_submit or mode_delete or mode_reservation or mode_status:
-            qa = QueueAdapter(directory=directory)
+            qa = QueueAdapter(directory=directory, execute_command=execute_command)
             if mode_submit:
                 print(
                     qa.submit_job(
