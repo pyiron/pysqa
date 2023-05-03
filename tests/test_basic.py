@@ -27,6 +27,10 @@ class TestQueueAdapter(unittest.TestCase):
 
 
 class TestBasisQueueAdapter(unittest.TestCase):
+    def test_bad_queue_type(self):
+        with self.assertRaises(ValueError):
+            BasisQueueAdapter(config={"queue_type": "error", "queues": {}})
+
     def test_memory_string_comparison(self):
         self.assertEqual(BasisQueueAdapter._value_in_range(1023, value_min="1K"), "1K")
         self.assertEqual(BasisQueueAdapter._value_in_range(1035, value_min="1K"), 1035)

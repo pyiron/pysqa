@@ -2,6 +2,7 @@
 # Copyright (c) Jan Janssen
 
 import os
+import pandas
 import unittest
 from pysqa import QueueAdapter
 
@@ -49,3 +50,29 @@ class TestGentQueueAdapter(unittest.TestCase):
                 [],
                 "here",
             )
+
+    def test_get_job_id_from_output(self):
+        self.assertEqual(self.gent._adapter._commands.get_job_id_from_output("123;MyQueue"), 123)
+
+    def test_get_queue_from_output(self):
+        self.assertEqual(self.gent._adapter._commands.get_queue_from_output("123;MyQueue"), "MyQueue")
+
+    def test_convert_queue_status_slurm(self):
+        with open(os.path.join(self.path, "config/gent", "gent_output"), "r") as f:
+            content = f.read()
+        df_verify = pandas.DataFrame(
+            {
+                "cluster": ["Mycluster", "Mycluster", "Mycluster", "Mycluster", "Mycluster"],
+                "jobid": [5322019, 5322016, 5322017, 5322018, 5322013],
+                "user": ["janj", "janj", "janj", "janj", "janj"],
+                "jobname": ["pi_19576488", "pi_19576485", "pi_19576486", "pi_19576487", "pi_19576482"],
+                "status": ["r", "r", "r", "r", "r"],
+            }
+        )
+        self.assertTrue(
+            df_verify.equals(
+                self.gent._adapter._commands.convert_queue_status(
+                    queue_status_output=content
+                )
+            )
+        )
