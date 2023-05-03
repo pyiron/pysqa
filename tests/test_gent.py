@@ -88,3 +88,47 @@ class TestGentQueueAdapter(unittest.TestCase):
             self.gent._adapter._resolve_queue_id(process_id=20120, cluster_dict={0: "cluster1"}),
             ("cluster1", 2012)
         )
+
+    def test_submit_job_no_output(self):
+        def execute_command(
+                commands,
+                working_directory=None,
+                split_output=True,
+                shell=False,
+                error_filename="pysqa.err",
+        ):
+            pass
+
+        gent_tmp = QueueAdapter(
+            directory=os.path.join(self.path, "config/gent"),
+            execute_command=execute_command
+        )
+        self.assertIsNone(gent_tmp.submit_job(
+            queue="slurm",
+            job_name="test",
+            working_directory=".",
+            command="echo hello"
+        ))
+        os.remove("run_queue.sh")
+
+    def test_submit_job_with_output(self):
+        def execute_command(
+                commands,
+                working_directory=None,
+                split_output=True,
+                shell=False,
+                error_filename="pysqa.err",
+        ):
+            return "123;cluster0"
+
+        gent_tmp = QueueAdapter(
+            directory=os.path.join(self.path, "config/gent"),
+            execute_command=execute_command
+        )
+        self.assertEqual(gent_tmp.submit_job(
+            queue="slurm",
+            job_name="test",
+            working_directory=".",
+            command="echo hello"
+        ), 1230)
+        os.remove("run_queue.sh")
