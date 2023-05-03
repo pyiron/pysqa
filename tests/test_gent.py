@@ -132,3 +132,35 @@ class TestGentQueueAdapter(unittest.TestCase):
             command="echo hello"
         ), 1230)
         os.remove("run_queue.sh")
+
+    def test_delete_job_no_output(self):
+        def execute_command(
+                commands,
+                working_directory=None,
+                split_output=True,
+                shell=False,
+                error_filename="pysqa.err",
+        ):
+            pass
+
+        gent_tmp = QueueAdapter(
+            directory=os.path.join(self.path, "config/gent"),
+            execute_command=execute_command
+        )
+        self.assertIsNone(gent_tmp.delete_job(process_id=1))
+
+    def test_delete_job_with_output(self):
+        def execute_command(
+                commands,
+                working_directory=None,
+                split_output=True,
+                shell=False,
+                error_filename="pysqa.err",
+        ):
+            return 0, 1
+
+        gent_tmp = QueueAdapter(
+            directory=os.path.join(self.path, "config/gent"),
+            execute_command=execute_command
+        )
+        self.assertEqual(gent_tmp.delete_job(process_id=1), 0)
