@@ -147,11 +147,11 @@ class TestCMD(unittest.TestCase):
             execute_command,
             json.dumps({
                 "dirs": [os.path.join(self.test_dir, "config", "slurm")],
-                "files": [
+                "files": sorted([
                     os.path.join(self.test_dir, "config", "slurm", "squeue_output"),
                     os.path.join(self.test_dir, "config", "slurm", "slurm_extra.sh"),
                     os.path.join(self.test_dir, "config", "slurm", "slurm.sh"),
                     os.path.join(self.test_dir, "config", "slurm", "queue.yaml"),
-                ]
+                ])
             }) + "\n"
         )
