@@ -83,7 +83,6 @@ class TestFluxQueueAdapter(unittest.TestCase):
         content = """\
 #!/bin/bash
 #flux: -n4 --job-name=test --env=CORES=4 --output=time.out --error=error.out
-run_queue.sh
-"""
+echo hello"""
         self.assertEqual(content, output)
         os.remove("run_queue.sh")
