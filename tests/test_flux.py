@@ -3,6 +3,7 @@
 
 import os
 import unittest
+import pandas
 from pysqa import QueueAdapter
 
 
@@ -46,6 +47,43 @@ class TestFluxQueueAdapter(unittest.TestCase):
     def test_convert_queue_status_slurm(self):
         with open(os.path.join(self.path, "config/flux", "flux_jobs"), "r") as f:
             content = f.read()
-        print(self.flux._adapter._commands.convert_queue_status(
-                    queue_status_output=content
-        ))
+        df = pandas.DataFrame({
+            "jobid": [1125147213824, 1109007532032, 1092532305920],
+            "user": ["dahn", "dahn", "dahn"],
+            "jobname": ["sleep_batc", "sleep_batc", "sleep_batc"],
+            "status": ["running", "running", "running"]
+        })
+        self.assertTrue(df.equals(self.flux._adapter._commands.convert_queue_status(
+            queue_status_output=content
+        )))
+
+    def test_submit_job(self):
+        def execute_command(
+                commands,
+                working_directory=None,
+                split_output=True,
+                shell=False,
+                error_filename="pysqa.err",
+        ):
+            return "ƒWZEQa8X\n"
+
+        flux_tmp = QueueAdapter(
+            directory=os.path.join(self.path, "config/flux"),
+            execute_command=execute_command
+        )
+        self.assertEqual(flux_tmp.submit_job(
+            queue="flux",
+            job_name="test",
+            working_directory=".",
+            cores=4,
+            command="echo hello"
+        ), 1125147213824)
+        with open("run_queue.sh") as f:
+            output = f.readlines()
+        content = """\
+#!/bin/bash
+#flux: -n4 --job-name=test --env=CORES=4 --output=time.out --error=error.out
+run_queue.sh
+"""
+        self.assertEqual(content, output)
+        os.remove("run_queue.sh")
