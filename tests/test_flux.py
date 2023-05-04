@@ -2,13 +2,19 @@
 # Copyright (c) Jan Janssen
 
 import os
-import pandas
 import unittest
-import getpass
 from pysqa import QueueAdapter
 
 
-class TestSlurmQueueAdapter(unittest.TestCase):
+try:
+    import flux
+    skip_flux_test = False
+except ImportError:
+    skip_flux_test = True
+
+
+@unittest.skipIf(skip_flux_test, "Flux is not installed, so the flux tests are skipped")
+class TestFluxQueueAdapter(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.path = os.path.dirname(os.path.abspath(__file__))
