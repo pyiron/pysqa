@@ -79,7 +79,7 @@ class TestFluxQueueAdapter(unittest.TestCase):
             command="echo hello"
         ), 1125147213824)
         with open("run_queue.sh") as f:
-            output = f.readlines()
+            output = f.read()
         content = """\
 #!/bin/bash
 #flux: -n4 --job-name=test --env=CORES=4 --output=time.out --error=error.out
