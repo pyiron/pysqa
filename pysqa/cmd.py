@@ -118,6 +118,8 @@ def command_line(argv, execute_command=execute_command):
             for p, folder, files in os.walk(working_directory):
                 remote_dirs.append(p)
                 remote_files += [os.path.join(p, f) for f in files]
-            print(json.dumps({"dirs": sorted(remote_dirs), "files": sorted(remote_files)}))
+            print(
+                json.dumps({"dirs": sorted(remote_dirs), "files": sorted(remote_files)})
+            )
         else:
             print("python -m pysqa --help ... coming soon.")
