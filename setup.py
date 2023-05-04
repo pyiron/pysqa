@@ -29,16 +29,15 @@ setup(
 
     keywords='pysqa',
     packages=find_packages(exclude=["*tests*"]),
-    install_requires=['defusedxml==0.7.1',
-                      'jinja2==3.1.2',
-                      'pandas==2.0.1',
-                      'paramiko==3.1.0',
-                      'pyyaml==6.0',
-                      'tqdm==4.65.0'],
+    install_requires=['jinja2==3.1.2', 'pandas==2.0.1', 'pyyaml==6.0'],
+    extras_require={
+        "sge": ['defusedxml==0.7.1'],
+        "remote": ['paramiko==3.1.0', 'tqdm==4.65.0'],
+    },
     cmdclass=versioneer.get_cmdclass(),
     entry_points={
             "console_scripts": [
                 'pysqa=pysqa:main'
             ]
     }
-    )
+)
