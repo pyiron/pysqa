@@ -66,6 +66,9 @@ class BasisQueueAdapter(object):
         elif self._config["queue_type"] == "REMOTE":
             class_name = None
             module_name = None
+        elif self._config["queue_type"] == "FLUX":
+            class_name = "FluxCommands"
+            module_name = "pysqa.wrapper.flux"
         else:
             raise ValueError()
         if self._config["queue_type"] != "REMOTE":
