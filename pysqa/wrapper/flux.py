@@ -1,5 +1,5 @@
 # coding: utf-8
-import flux
+from flux.job import JobID
 import pandas
 from pysqa.wrapper.generic import SchedulerCommands
 
@@ -19,7 +19,7 @@ class FluxCommands(SchedulerCommands):
 
     @staticmethod
     def get_job_id_from_output(queue_submit_output):
-        return flux.job.JobID(
+        return JobID(
             queue_submit_output.splitlines()[-1].rstrip().lstrip().split()[-1]
         )
 
@@ -37,7 +37,7 @@ class FluxCommands(SchedulerCommands):
             runtime,
             ranks,
         ) in line_split_lst:
-            job_id_lst.append(flux.job.JobID(flux_id))
+            job_id_lst.append(JobID(flux_id))
             user_lst.append(user)
             job_name_lst.append(job_name)
             status_lst.append(status)

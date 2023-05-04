@@ -43,9 +43,9 @@ class TestFluxQueueAdapter(unittest.TestCase):
             ["flux", "jobs", "-a", "--no-header"],
         )
 
-    # def test_convert_queue_status_slurm(self):
-    #     with open(os.path.join(self.path, "config/flux", "flux_jobs"), "r") as f:
-    #         content = f.read()
-    #     print(self.flux._adapter._commands.convert_queue_status(
-    #                 queue_status_output=content
-    #     ))
+    def test_convert_queue_status_slurm(self):
+        with open(os.path.join(self.path, "config/flux", "flux_jobs"), "r") as f:
+            content = f.read()
+        print(self.flux._adapter._commands.convert_queue_status(
+                    queue_status_output=content
+        ))
