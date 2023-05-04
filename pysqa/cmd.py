@@ -48,8 +48,7 @@ def command_line(argv, execute_command=execute_command):
             ],
         )
     except getopt.GetoptError:
-        print("cmd.py help")
-        sys.exit()
+        print("python -m pysqa --help")
     else:
         mode_submit = False
         mode_delete = False
@@ -92,9 +91,6 @@ def command_line(argv, execute_command=execute_command):
                     dependency_list = [arg]
                 else:
                     dependency_list.append(arg)
-            elif opt in ("-h", "--help"):
-                print("cmd.py help ... coming soon.")
-                sys.exit()
         if mode_submit or mode_delete or mode_reservation or mode_status:
             qa = QueueAdapter(directory=directory, execute_command=execute_command)
             if mode_submit:
@@ -122,9 +118,8 @@ def command_line(argv, execute_command=execute_command):
             for p, folder, files in os.walk(working_directory):
                 remote_dirs.append(p)
                 remote_files += [os.path.join(p, f) for f in files]
-            print(json.dumps({"dirs": remote_dirs, "files": remote_files}))
-        sys.exit()
-
-
-if __name__ == "__main__":
-    command_line(sys.argv[1:])
+            print(
+                json.dumps({"dirs": sorted(remote_dirs), "files": sorted(remote_files)})
+            )
+        else:
+            print("python -m pysqa --help ... coming soon.")
