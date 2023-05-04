@@ -19,7 +19,12 @@ class FluxCommands(SchedulerCommands):
     @staticmethod
     def get_job_id_from_output(queue_submit_output):
         result = subprocess.run(
-            ['flux', 'job', 'id', queue_submit_output.splitlines()[-1].rstrip().lstrip().split()[-1]],
-            stdout=subprocess.PIPE
+            [
+                "flux",
+                "job",
+                "id",
+                queue_submit_output.splitlines()[-1].rstrip().lstrip().split()[-1],
+            ],
+            stdout=subprocess.PIPE,
         )
         return int(result.stdout.strip())
