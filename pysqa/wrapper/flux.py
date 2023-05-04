@@ -19,13 +19,24 @@ class FluxCommands(SchedulerCommands):
 
     @staticmethod
     def get_job_id_from_output(queue_submit_output):
-        return flux.job.JobID(queue_submit_output.splitlines()[-1].rstrip().lstrip().split()[-1])
+        return flux.job.JobID(
+            queue_submit_output.splitlines()[-1].rstrip().lstrip().split()[-1]
+        )
 
     @staticmethod
     def convert_queue_status(queue_status_output):
         line_split_lst = [line.split() for line in queue_status_output.splitlines()]
         job_id_lst, user_lst, job_name_lst, status_lst = [], [], [], []
-        for flux_id, user, job_name, status, task, nodes, runtime, ranks in line_split_lst:
+        for (
+            flux_id,
+            user,
+            job_name,
+            status,
+            task,
+            nodes,
+            runtime,
+            ranks,
+        ) in line_split_lst:
             job_id_lst.append(flux.job.JobID(flux_id))
             user_lst.append(user)
             job_name_lst.append(job_name)
