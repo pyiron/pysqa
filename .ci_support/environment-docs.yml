@@ -1,0 +1,11 @@
+channels:
+- conda-forge
+dependencies:
+  - nbsphinx
+  - sphinx <6.1
+  - defusedxml
+  - pandas
+  - pyyaml
+  - jinja2
+  - paramiko
+  - tqdm
