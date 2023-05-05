@@ -311,7 +311,7 @@ def set_queue_adapter(config, directory, execute_command=execute_command):
         config (dict): configuration for one cluster
         directory (str): directory which contains the queue configurations
     """
-    if config["queue_type"] in ["SGE", "TORQUE", "SLURM", "LSF", "MOAB"]:
+    if config["queue_type"] in ["SGE", "TORQUE", "SLURM", "LSF", "MOAB", "FLUX"]:
         return BasisQueueAdapter(
             config=config, directory=directory, execute_command=execute_command
         )
