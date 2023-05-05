@@ -1,3 +1,11 @@
 #!/bin/bash
-#flux: -n{{cores}} --job-name={{job_name}} --env=CORES={{cores}} --output=time.out --error=error.out
+# flux:--job-name={{job_name}}
+# flux: --env=CORES={{cores}}
+# flux: --output=time.out
+# flux: --error=error.out
+# flux: -n {{cores}}
+{%- if run_time_max %}
+# flux: -t {{ [1, run_time_max // 60]|max }}
+{%- endif %}
+
 {{command}}
