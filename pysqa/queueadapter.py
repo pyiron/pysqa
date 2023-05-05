@@ -152,16 +152,19 @@ class QueueAdapter(object):
 
         Args:
             queue (str/None):  Name of the queue to submit to, must be one of the names configured for this adapter
-            job_name (str/None):  Name of the job for the underlying queuing system
-            working_directory (str/None):  Directory to run the job in
-            cores (int/None):  Number of hardware threads requested
-            memory_max (int/None):  Amount of memory requested per node in GB
-            run_time_max (int/None):  Maximum runtime in seconds
-            dependency_list(list[str]/None: Job ids of jobs to be completed before starting
-            command (str/None):  shell command to run in the job
+                               (optional)
+            job_name (str/None):  Name of the job for the underlying queuing system (optional)
+            working_directory (str/None):  Directory to run the job in (optional)
+            cores (int/None):  Number of hardware threads requested (optional)
+            memory_max (int/None):  Amount of memory requested per node in GB (optional)
+            run_time_max (int/None):  Maximum runtime in seconds (optional)
+            dependency_list(list[str]/None: Job ids of jobs to be completed before starting (optional)
+            command (str/None): shell command to run in the job
+            **kwargs: allows writing additional parameters to the job submission script if they are available in the
+                      corresponding template.
 
         Returns:
-            int:
+            int: Job id received from the queuing system for the job which was submitted \
         """
         return self._adapter.submit_job(
             queue=queue,
