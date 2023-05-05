@@ -1,0 +1,4 @@
+queue_type: FLUX
+queue_primary: flux
+queues:
+  flux: {cores_max: 64, cores_min: 1, run_time_max: 172800, script: flux.sh}

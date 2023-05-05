@@ -1,0 +1,60 @@
+# This workflow will install Python dependencies, run tests and lint with a variety of Python versions
+# For more information see: https://help.github.com/actions/language-and-framework-guides/using-python-with-github-actions
+
+name: Coverage
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      CODACY_PROJECT_TOKEN: ${{ secrets.CODACY_PROJECT_TOKEN }}
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup environment
+        run: |
+          cp .ci_support/environment.yml environment.yml
+          echo "  - flux-core =0.50.0" >> environment.yml
+      - name: Setup Mambaforge
+        uses: conda-incubator/setup-miniconda@v2
+        with:
+          python-version: '3.10'
+          miniforge-variant: Mambaforge
+          channels: conda-forge
+          channel-priority: strict
+          activate-environment: my-env
+          use-mamba: true
+      - name: Set cache date and number
+        run: |
+          echo "DATE=$(date +'%Y%m%d')" >> $GITHUB_ENV
+          cat .github/variables/cache_number.env >> $GITHUB_ENV
+      - uses: actions/cache@v2
+        with:
+          path: /usr/share/miniconda3/envs/my-env
+          key: coverage-conda-${{ hashFiles('environment.yml') }}-${{ env.DATE }}-${{ env.CACHE_NUMBER }}
+        id: cache
+      - name: Update environment
+        run: mamba env update -n my-env -f environment.yml
+        if: steps.cache.outputs.cache-hit != 'true'
+      - name: Setup
+        shell: bash -l {0}
+        run: |
+          pip install --no-deps .
+      - name: Test
+        shell: bash -l {0}
+        run: coverage run --omit pysqa/_version.py -m unittest discover tests
+      - name: Coverage
+        shell: bash -l {0}
+        run: |
+          coverage combine
+          coveralls
+          coverage xml
+          python-codacy-coverage -r coverage.xml
