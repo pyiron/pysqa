@@ -35,7 +35,10 @@ class RemoteQueueAdapter(BasisQueueAdapter):
             self._ssh_port = config["ssh_port"]
         else:
             self._ssh_port = 22
-        self._ssh_continous_connection = "ssh_continous_connection" in config.keys()
+        if "ssh_continous_connection" in config.keys():
+            self._ssh_continous_connection = config["ssh_continous_connection"]
+        else:
+            self._ssh_continous_connection = False
         self._ssh_connection = None
         self._remote_flag = True
 
