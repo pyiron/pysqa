@@ -7,7 +7,7 @@ ssh_key: ~/.ssh/id_rsa
 ssh_remote_config_dir: /u/share/pysqa/resources/queues/
 ssh_remote_path: /u/hpcuser/remote/
 ssh_local_path: /home/localuser/projects/
-ssh_continous_connection: True
+ssh_continous_connection: False
 ssh_port: 22
 queues:
   remote: {cores_max: 100, cores_min: 10, run_time_max: 259200}
