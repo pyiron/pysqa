@@ -1,7 +1,8 @@
 # Advanced Configuration
+Initially `pysqa` was only designed to interact with the local queuing systems of an HPC cluster. This functionality has recently been extended to support remote HPC clusters in addition to local HPC clusters. These two developments, the support for remote HPC clusters and the support for multiple clusters in `pysqa` are discussed in the following. Both of these features are under active development so this part of the interface might change more frequently than the rest.   
 
 ## Remote HPC Configuration
-`queue.yaml` file for remote access: 
+Remote clusters can be defined in the `queue.yaml` file by setting the `queue_type` to `REMOTE`: 
 ```
 queue_type: REMOTE
 queue_primary: remote
@@ -17,7 +18,7 @@ ssh_delete_file_on_remote: False
 queues:
   remote: {cores_max: 100, cores_min: 10, run_time_max: 259200}
 ```
-In addition to `queue_type`, `queue_primary` and `queues` this also has the following required keywords:
+In addition to `queue_type`, `queue_primary` and `queues` parameters, this also has the following required keywords:
 
 * `ssh_host` the remote HPC login node to connect to 
 * `ssh_username` the username on the HPC login node

@@ -39,3 +39,4 @@ Documentation
    python
    command
    advanced
+   debug

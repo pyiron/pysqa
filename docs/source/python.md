@@ -34,19 +34,38 @@ qa.submit_job(
     **kwargs
 )
 ```
+The only required parameter is: 
+* `command` the command that is executed as part of the job 
+
+Additional options for the submission of the job are:
+* `queue` the queue the job is submitted to. If this option is not defined the `primary_queue` defined in the configuration is used. 
+* `job_name` the name of the job submitted to the queuing system. 
+* `working_directory` the working directory the job submitted to the queuing system is executed in.
+* `cores` the number of cores used for the calculation. If the cores are not defined the minimum number of cores defined for the selected queue are used. 
+* `memory_max` the memory used for the calculation. 
+* `run_time_max` the run time for the calculation. If the run time is not defined the maximum run time defined for the selected queue is used. 
+* `dependency_list` other jobs the calculation depends on. 
+* `**kwargs` allows writing additional parameters to the job submission script if they are available in the corresponding template.
 
 ## Show jobs in queue 
 Get status of all jobs currently handled by the queuing system:
 ```
 qa.get_queue_status()
 ```
-Get status of a specifc job from the queuing system:
+With the additional parameter `user` a specific user can be defined to only list the jobs of this specific user. 
+
+In analogy the jobs of the current user can be listed with: 
+```
+qa.get_status_of_my_jobs()
+```
+
+Finally, the status of a specific job with the queue id  `1234` can be received from the queuing system using:
 ```
 qa.get_status_of_job(process_id=1234)
 ```
 
 ## Delete job from queue 
-Delete a job from the queuing sytem:
+Delete a job with the queue id `1234` from the queuing system:
 ```
 qa.delete_job(process_id=1234)
 ```
