@@ -34,6 +34,10 @@ class TestRemoteQueueAdapter(unittest.TestCase):
     def test_ssh_delete_file_on_remote(self):
         self.assertEqual(self.remote.ssh_delete_file_on_remote, False)
 
+    def test_ssh_continous_connection(self):
+        self.assertEqual(self.remote._adapter._ssh_continous_connection, True)
+        self.assertEqual(self.remote_alternative._adapter._ssh_continous_connection, False)
+
     def test_submit_job_remote(self):
         with self.assertRaises(NotImplementedError):
             self.remote.submit_job(queue="remote", dependency_list=[])
