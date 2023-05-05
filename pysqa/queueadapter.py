@@ -189,32 +189,25 @@ class QueueAdapter(object):
         """
         return self._adapter.enable_reservation(process_id=process_id)
 
-    def get_job_from_remote(self, working_directory, delete_remote=False):
+    def get_job_from_remote(self, working_directory):
         """
         Get the results of the calculation - this is necessary when the calculation was executed on a remote host.
 
         Args:
             working_directory (str):
-            delete_remote (bool):
         """
-        self._adapter.get_job_from_remote(
-            working_directory=working_directory, delete_remote=delete_remote
-        )
+        self._adapter.get_job_from_remote(working_directory=working_directory)
 
-    def transfer_file_to_remote(self, file, transfer_back=False, delete_remote=False):
+    def transfer_file_to_remote(self, file, transfer_back=False):
         """
 
         Args:
             file (str):
             transfer_back (bool):
-            delete_remote (bool):
-
         Returns:
             str:
         """
-        self._adapter.transfer_file(
-            file=file, transfer_back=transfer_back, delete_remote=delete_remote
-        )
+        self._adapter.transfer_file(file=file, transfer_back=transfer_back)
 
     def convert_path_to_remote(self, path):
         """
