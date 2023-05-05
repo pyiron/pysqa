@@ -323,6 +323,7 @@ def set_queue_adapter(config, directory, execute_command=execute_command):
         # By moving the import to this line it only fails when the user specifies the
         # RemoteQueueAdapter in their pysqa configuration.
         from pysqa.ext.remote import RemoteQueueAdapter
+
         return RemoteQueueAdapter(
             config=config, directory=directory, execute_command=execute_command
         )
