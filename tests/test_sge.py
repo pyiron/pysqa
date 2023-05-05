@@ -7,6 +7,12 @@ import unittest
 import getpass
 from pysqa import QueueAdapter
 
+try:
+    import defusedxml.ElementTree as ETree
+    skip_sge_test = False
+except ImportError:
+    skip_sge_test = True
+
 __author__ = "Jan Janssen"
 __copyright__ = "Copyright 2019, Jan Janssen"
 __version__ = "0.0.1"
@@ -16,6 +22,7 @@ __status__ = "production"
 __date__ = "Feb 9, 2019"
 
 
+@unittest.skipIf(skip_sge_test, "defusedxml is not installed, so the sun grid engine (SGE) tests are skipped.")
 class TestSGEQueueAdapter(unittest.TestCase):
     @classmethod
     def setUpClass(cls):

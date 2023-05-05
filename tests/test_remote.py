@@ -5,6 +5,14 @@ import os
 import unittest
 from pysqa import QueueAdapter
 
+try:
+    import paramiko
+    from tqdm import tqdm
+    skip_remote_test = False
+except ImportError:
+    skip_remote_test = True
+
+
 __author__ = "Jan Janssen"
 __copyright__ = "Copyright 2019, Jan Janssen"
 __version__ = "0.0.1"
@@ -14,6 +22,7 @@ __status__ = "production"
 __date__ = "Feb 9, 2019"
 
 
+@unittest.skipIf(skip_remote_test, "Either paramiko or tqdm are not installed, so the remote queue adapter tests are skipped.")
 class TestRemoteQueueAdapter(unittest.TestCase):
     @classmethod
     def setUpClass(cls):

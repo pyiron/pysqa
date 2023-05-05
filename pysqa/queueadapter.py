@@ -3,10 +3,9 @@
 
 import os
 from pysqa.utils.basic import BasisQueueAdapter
-from pysqa.ext.modular import ModularQueueAdapter
-from pysqa.ext.remote import RemoteQueueAdapter
 from pysqa.utils.config import read_config
 from pysqa.utils.execute import execute_command
+from pysqa.ext.modular import ModularQueueAdapter
 
 __author__ = "Jan Janssen"
 __copyright__ = "Copyright 2019, Jan Janssen"
@@ -313,6 +312,11 @@ def set_queue_adapter(config, directory, execute_command=execute_command):
             config=config, directory=directory, execute_command=execute_command
         )
     elif config["queue_type"] in ["REMOTE"]:
+        # The RemoteQueueAdapter has additional dependencies, namely paramiko and tqdm.
+        # By moving the import to this line it only fails when the user specifies the
+        # RemoteQueueAdapter in their pysqa configuration.
+        from pysqa.ext.remote import RemoteQueueAdapter
+
         return RemoteQueueAdapter(
             config=config, directory=directory, execute_command=execute_command
         )
