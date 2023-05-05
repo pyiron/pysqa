@@ -37,10 +37,18 @@ queues:
 The queue named `flux` is defined based on a submission script template named `flux.sh` with the following content: 
 ```
 #!/bin/bash
-#flux: -n{{cores}} --job-name={{job_name}} --env=CORES={{cores}} --output=time.out --error=error.out
+# flux:--job-name={{job_name}}
+# flux: --env=CORES={{cores}}
+# flux: --output=time.out
+# flux: --error=error.out
+# flux: -n {{cores}}
+{%- if run_time_max %}
+# flux: -t {{ [1, run_time_max // 60]|max }}
+{%- endif %}
+
 {{command}}
 ```
-In this case only the number of cores `cores`, the name of the job `job_name` and the command `command` are communicated. 
+In this case only the number of cores `cores`, the name of the job `job_name` , the maximum run time of the job `run_time_max` and the command `command` are communicated. 
 
 ## LFS
 For the load sharing facility framework from IBM the `queue.yaml` file defines the `queue_type` as `LSF`:
