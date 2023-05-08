@@ -8,7 +8,7 @@ pysqa - a simple queue adapter for python
 
 High-performance computing (HPC) does not have to be hard. In this context the aim of pysqa is to simplify the submission of calculation to an HPC cluster as easy as starting another subprocess locally. This is achieved based on the assumption that even though modern HPC queuing systems offer a wide range of different configuration options, most users submit the majority of their jobs with very similar parameters. 
 
-Therefore in pysqa users define submission script templates once and reuse them to submit many different calculation of workflows. These templates are defined in the jinja2 template language, so current submission scripts can be easily extended to templates. In addition to the submission of new jobs to the queuing system pysqa also allows the users to track the progress of their jobs, delete them or enable reservations using the built-in functionality of the queuing system. 
+Therefore, in pysqa users define submission script templates once and reuse them to submit many different calculations or workflows. These templates are defined in the jinja2 template language, so current submission scripts can be easily extended to templates. In addition to the submission of new jobs to the queuing system pysqa also allows the users to track the progress of their jobs, delete them or enable reservations using the built-in functionality of the queuing system.
 
 Features
 --------
