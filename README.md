@@ -55,6 +55,8 @@ Finally, there is current work in progress to support a combination of [multiple
   * [Remote HPC Configuration](https://pysqa.readthedocs.io/en/latest/advanced.html#remote-hpc-configuration)
   * [Access to Multiple HPCs](https://pysqa.readthedocs.io/en/latest/advanced.html#access-to-multiple-hpcs)
 * [Debugging](https://pysqa.readthedocs.io/en/latest/debug.html)
+  * [Local Queuing System](https://pysqa.readthedocs.io/en/latest/debug.html#local-queuing-system)
+  * [Remote HPC](https://pysqa.readthedocs.io/en/latest/debug.html#remote-hpc)
 
 # License
 `pysqa` is released under the BSD license https://github.com/pyiron/pysqa/blob/main/LICENSE . It is a spin-off of the `pyiron` project https://github.com/pyiron/pyiron therefore if you use `pysqa` for calculation which result in a scientific publication, please cite: 
