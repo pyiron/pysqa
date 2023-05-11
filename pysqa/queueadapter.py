@@ -69,7 +69,7 @@ class QueueAdapter(object):
             }
             primary_queue = config["cluster_primary"]
         else:
-            raise ValueError
+            raise ValueError("Neither a queue.yaml file nor a clusters.yaml file were found in " + directory)
         self._adapter = self._queue_dict[primary_queue]
 
     def list_clusters(self):
@@ -321,4 +321,8 @@ def set_queue_adapter(config, directory, execute_command=execute_command):
             config=config, directory=directory, execute_command=execute_command
         )
     else:
-        raise ValueError
+        raise ValueError(
+            "The queue_type " + config["queue_type"] +
+            " is not found in the list of supported queue types " +
+            str(["SGE", "TORQUE", "SLURM", "LSF", "MOAB", "FLUX", "GENT", "REMOTE"])
+        )
