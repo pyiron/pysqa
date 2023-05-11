@@ -17,8 +17,10 @@ class ModularQueueAdapter(BasisQueueAdapter):
         for v in self._queue_to_cluster_dict.values():
             if v not in self._config["cluster"]:
                 raise ValueError(
-                    "The cluster " + v + " was not found in the list of clusters " +
-                    str(list(self._config["cluster"].keys()))
+                    "The cluster "
+                    + v
+                    + " was not found in the list of clusters "
+                    + str(list(self._config["cluster"].keys()))
                 )
 
     def submit_job(

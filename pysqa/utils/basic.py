@@ -71,9 +71,12 @@ class BasisQueueAdapter(object):
             module_name = "pysqa.wrapper.flux"
         else:
             raise ValueError(
-                "The queue_type " + self._config["queue_type"] +
-                " is not found in the list of supported queue types " +
-                str(["SGE", "TORQUE", "SLURM", "LSF", "MOAB", "FLUX", "GENT", "REMOTE"])
+                "The queue_type "
+                + self._config["queue_type"]
+                + " is not found in the list of supported queue types "
+                + str(
+                    ["SGE", "TORQUE", "SLURM", "LSF", "MOAB", "FLUX", "GENT", "REMOTE"]
+                )
             )
         if self._config["queue_type"] != "REMOTE":
             self._commands = getattr(importlib.import_module(module_name), class_name)()
@@ -395,7 +398,12 @@ class BasisQueueAdapter(object):
             queue = self._config["queue_primary"]
         self._value_error_if_none(value=command)
         if queue not in self.queue_list:
-            raise ValueError("The queue " + queue + " was not found in the list of queues: " + str(self.queue_list))
+            raise ValueError(
+                "The queue "
+                + queue
+                + " was not found in the list of queues: "
+                + str(self.queue_list)
+            )
         active_queue = self._config["queues"][queue]
         cores, run_time_max, memory_max = self.check_queue_parameters(
             queue=None,
