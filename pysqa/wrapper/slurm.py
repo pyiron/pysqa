@@ -3,8 +3,8 @@
 # Distributed under the terms of "New BSD License", see the LICENSE file.
 
 import pandas
-from pysqa.wrapper.generic import SchedulerCommands
 
+from pysqa.wrapper.generic import SchedulerCommands
 
 __author__ = "Jan Janssen"
 __copyright__ = (

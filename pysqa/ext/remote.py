@@ -3,10 +3,12 @@
 
 import json
 import os
+import warnings
+
 import pandas
 import paramiko
-import warnings
 from tqdm import tqdm
+
 from pysqa.utils.basic import BasisQueueAdapter
 from pysqa.utils.execute import execute_command
 

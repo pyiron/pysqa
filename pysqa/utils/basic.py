@@ -3,12 +3,14 @@
 
 import getpass
 import importlib
-from jinja2 import Template
 import os
 import re
+
 import pandas
-from pysqa.utils.queues import Queues
+from jinja2 import Template
+
 from pysqa.utils.execute import execute_command
+from pysqa.utils.queues import Queues
 
 
 class BasisQueueAdapter(object):

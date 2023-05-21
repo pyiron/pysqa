@@ -1,6 +1,7 @@
 # coding: utf-8
-from flux.job import JobID
 import pandas
+from flux.job import JobID
+
 from pysqa.wrapper.generic import SchedulerCommands
 
 
