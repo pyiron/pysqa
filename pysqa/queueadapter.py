@@ -2,10 +2,11 @@
 # Copyright (c) Jan Janssen
 
 import os
+
+from pysqa.ext.modular import ModularQueueAdapter
 from pysqa.utils.basic import BasisQueueAdapter
 from pysqa.utils.config import read_config
 from pysqa.utils.execute import execute_command
-from pysqa.ext.modular import ModularQueueAdapter
 
 __author__ = "Jan Janssen"
 __copyright__ = "Copyright 2019, Jan Janssen"

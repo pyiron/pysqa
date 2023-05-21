@@ -1,7 +1,8 @@
-import sys
-import os
-import json
 import getopt
+import json
+import os
+import sys
+
 from pysqa.queueadapter import QueueAdapter
 from pysqa.utils.execute import execute_command
 
