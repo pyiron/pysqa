@@ -8,6 +8,7 @@ import re
 
 import pandas
 from jinja2 import Template
+from jinja2.exceptions import TemplateSyntaxError
 
 from pysqa.utils.execute import execute_command
 from pysqa.utils.queues import Queues
@@ -485,7 +486,10 @@ class BasisQueueAdapter(object):
         for queue_dict in queue_lst_dict.values():
             if "script" in queue_dict.keys():
                 with open(os.path.join(directory, queue_dict["script"]), "r") as f:
-                    queue_dict["template"] = Template(f.read())
+                    try:
+                        queue_dict["template"] = Template(f.read())
+                    except TemplateSyntaxError as error:
+                        raise(TemplateSyntaxError(queue_dict["script"] + ": " + error))
 
     @staticmethod
     def _value_error_if_none(value):
