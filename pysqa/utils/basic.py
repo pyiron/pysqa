@@ -489,7 +489,10 @@ class BasisQueueAdapter(object):
                     try:
                         queue_dict["template"] = Template(f.read())
                     except TemplateSyntaxError as error:
-                        raise (TemplateSyntaxError(queue_dict["script"] + ": " + error))
+                        raise TemplateSyntaxError(
+                            message="File: " + queue_dict["script"] + " - " + error.message,
+                            lineno=error.lineno
+                        )
 
     @staticmethod
     def _value_error_if_none(value):
