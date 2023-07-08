@@ -240,7 +240,7 @@ class RemoteQueueAdapter(BasisQueueAdapter):
             ssh = self._ssh_connection
         else:
             ssh = self._open_ssh_connection()
-        stdin, stdout, stderr = ssh.exec_command(command)
+        stdin, stdout, stderr = ssh.exec_command(command=command, get_pty=True)
         warnings.warn(stderr.read().decode())
         output = stdout.read().decode()
         if not self._ssh_continous_connection:
