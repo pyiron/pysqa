@@ -65,7 +65,7 @@ class RemoteQueueAdapter(BasisQueueAdapter):
             )
         self._transfer_data_to_remote(working_directory=working_directory)
         output = self._execute_remote_command(command=command)
-        return int(output.split()[-1])
+        return output.split()[-1]
 
     def enable_reservation(self, process_id):
         """
