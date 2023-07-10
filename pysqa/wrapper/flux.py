@@ -20,7 +20,7 @@ class FluxCommands(SchedulerCommands):
 
     @staticmethod
     def get_job_id_from_output(queue_submit_output):
-        return JobID(queue_submit_output.splitlines()[-1].rstrip().lstrip().split()[-1])
+        return int(JobID(queue_submit_output.splitlines()[-1].rstrip().lstrip().split()[-1]))
 
     @staticmethod
     def convert_queue_status(queue_status_output):
