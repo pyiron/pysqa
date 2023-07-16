@@ -50,25 +50,6 @@ class TestRemoteQueueAdapter(unittest.TestCase):
     def test_submit_job_remote(self):
         with self.assertRaises(NotImplementedError):
             self.remote.submit_job(queue="remote", dependency_list=[])
-            
-    def test_submit_command(self):
-        command = self.remote._adapter._submit_command(
-            queue="remote",
-            job_name="test",
-            working_directory="/home/localuser/projects/test",
-            cores=str(1),
-            memory_max=str(1),
-            run_time_max=str(1),
-            command_str="/bin/true",
-        )
-        self.assertEqual(
-            command,
-            'python -m pysqa --config_directory /u/share/pysqa/resources/queues/ --submit --queue remote --job_name test --working_directory /home/localuser/projects/test --cores 1 --memory 1 --run_time 1 --command "/bin/true" '
-        )
-
-    def test_get_queue_status_command(self):
-        command = self.remote._adapter._get_queue_status_command()
-        self.assertEqual(command, "python -m pysqa --config_directory /u/share/pysqa/resources/queues/ --status")
 
     def test_submit_command(self):
         command = self.remote._adapter._submit_command(
