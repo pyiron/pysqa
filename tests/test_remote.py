@@ -66,6 +66,10 @@ class TestRemoteQueueAdapter(unittest.TestCase):
             'python -m pysqa --config_directory /u/share/pysqa/resources/queues/ --submit --queue remote --job_name test --working_directory /home/localuser/projects/test --cores 1 --memory 1 --run_time 1 --command "/bin/true" '
         )
 
+    def test_get_queue_status_command(self):
+        command = self.remote._adapter._get_queue_status_command()
+        self.assertEqual(command, "python -m pysqa --config_directory /u/share/pysqa/resources/queues/ --status")
+
     def test_convert_path_to_remote(self):
         self.assertEqual(self.remote.convert_path_to_remote("/home/localuser/projects/test"), "/u/hpcuser/remote/test")
 
