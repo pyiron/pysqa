@@ -114,6 +114,7 @@ class TestExecutor(unittest.TestCase):
             os.remove(os.path.join(self.test_dir, f))
         os.removedirs(self.test_dir)
 
+    @unittest.skipIf(os.name == 'nt', "Runs forever on Windows")
     def test_executor(self):
         def execute_command(
                 commands,
