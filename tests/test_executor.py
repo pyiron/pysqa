@@ -14,6 +14,7 @@ from pysqa.executor.helper import (
     set_future,
     reload_previous_futures,
     get_file_name,
+    update_task_dict,
 )
 from pysqa.queueadapter import QueueAdapter
 
@@ -44,9 +45,9 @@ class TestExecutorHelper(unittest.TestCase):
             file_name=os.path.join(self.test_dir, file_name_in)
         )
         apply_dict = deserialize(funct_dict=funct_dict)
-        result_dict = {
-            k: v["fn"].__call__(*v["args"], **v["kwargs"]) for k, v in apply_dict.items()
-        }
+        key = list(apply_dict.keys())[0]
+        v = apply_dict[key]
+        result_dict = {key: v["fn"].__call__(*v["args"], **v["kwargs"])}
         file_name_out = write_to_file(
             funct_dict=serialize_result(result_dict=result_dict),
             state="out",
@@ -59,6 +60,13 @@ class TestExecutorHelper(unittest.TestCase):
             future=f
         )
         self.assertEqual(f.result(), 3)
+        task_dict = {key: Future()}
+        update_task_dict(
+            task_dict=task_dict,
+            task_memory_dict={},
+            cache_directory=self.test_dir
+        )
+        self.assertEqual(task_dict[key].result(), 3)
 
     def test_reload_previous_future(self):
         funct_dict = serialize_funct(fn=funct_add, a=1, b=2)

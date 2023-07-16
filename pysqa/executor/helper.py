@@ -71,21 +71,29 @@ def reload_previous_futures(future_queue, future_dict, cache_directory):
                 future_queue.put({key: future_dict[key]})
 
 
+def update_task_dict(task_dict, task_memory_dict, cache_directory):
+    file_lst = os.listdir(cache_directory)
+    for key, future in task_dict.items():
+        task_memory_dict[key] = future
+    for key, future in task_memory_dict.items():
+        file_name_out = get_file_name(name=key, state="out")
+        if not future.done() and file_name_out in file_lst:
+            set_future(
+                file_name=os.path.join(cache_directory, file_name_out),
+                future=future,
+            )
+
+
 def find_executed_tasks(future_queue, cache_directory):
     task_memory_dict = {}
     while True:
         task_dict = {}
-        file_lst = os.listdir(cache_directory)
         try:
             task_dict = future_queue.get_nowait()
         except queue.Empty:
             pass
-        for key, future in task_dict.items():
-            task_memory_dict[key] = future
-        for key, future in task_memory_dict.items():
-            file_name_out = get_file_name(name=key, state="out")
-            if not future.done() and file_name_out in file_lst:
-                set_future(
-                    file_name=os.path.join(cache_directory, file_name_out),
-                    future=future,
-                )
+        update_task_dict(
+            task_dict=task_dict,
+            task_memory_dict=task_memory_dict,
+            cache_directory=cache_directory
+        )
