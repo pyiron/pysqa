@@ -2,6 +2,7 @@
 # Copyright (c) Jan Janssen
 
 import pandas
+
 from pysqa.utils.basic import BasisQueueAdapter
 from pysqa.utils.execute import execute_command
 

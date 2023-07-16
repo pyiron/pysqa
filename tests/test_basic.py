@@ -3,6 +3,7 @@
 
 import os
 import unittest
+from jinja2.exceptions import TemplateSyntaxError
 from pysqa import QueueAdapter
 from pysqa.utils.basic import BasisQueueAdapter
 
@@ -21,9 +22,12 @@ class TestQueueAdapter(unittest.TestCase):
         cls.path = os.path.dirname(os.path.abspath(__file__))
 
     def test_missing_config(self):
-        self.assertRaises(
-            ValueError, QueueAdapter, directory=os.path.join(self.path, "config/error")
-        )
+        with self.assertRaises(ValueError):
+            QueueAdapter(directory=os.path.join(self.path, "config/error"))
+
+    def test_bad_queue_template(self):
+        with self.assertRaises(TemplateSyntaxError):
+            QueueAdapter(directory=os.path.join(self.path, "config/bad_template"))
 
 
 class TestBasisQueueAdapter(unittest.TestCase):
