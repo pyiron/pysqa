@@ -68,6 +68,7 @@ class TestExecutorHelper(unittest.TestCase):
         )
         self.assertEqual(task_dict[key].result(), 3)
 
+    @unittest.skipIf(os.name == 'nt', "Runs forever on Windows")
     def test_reload_previous_future(self):
         funct_dict = serialize_funct(fn=funct_add, a=1, b=2)
         file_name_in = write_to_file(
