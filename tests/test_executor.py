@@ -20,13 +20,12 @@ def funct_add(a, b):
 
 
 class TestExecutorHelper(unittest.TestCase):
-    @classmethod
-    def setUpClass(cls):
+    def setUp(cls):
         cls.test_dir = os.path.abspath(os.path.dirname(__file__))
         os.makedirs(os.path.join(cls.test_dir, "cache"), exist_ok=True)
 
-    @classmethod
-    def tearDownClass(cls):
+
+    def tearDown(cls):
         os.removedirs(os.path.join(cls.test_dir, "cache"))
 
     def test_cache(self):
