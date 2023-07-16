@@ -11,10 +11,10 @@ from pysqa.executor.helper import (
     serialize_funct,
     write_to_file,
     serialize_result,
-    set_future,
     reload_previous_futures,
-    get_file_name,
-    update_task_dict,
+    _get_file_name,
+    _set_future,
+    _update_task_dict,
 )
 from pysqa.queueadapter import QueueAdapter
 
@@ -55,13 +55,13 @@ class TestExecutorHelper(unittest.TestCase):
         )[0]
         self.assertEqual(len(os.listdir(self.test_dir)), 2)
         f = Future()
-        set_future(
+        _set_future(
             file_name=os.path.join(self.test_dir, file_name_out), 
             future=f
         )
         self.assertEqual(f.result(), 3)
         task_dict = {key: Future()}
-        update_task_dict(
+        _update_task_dict(
             task_dict=task_dict,
             task_memory_dict={},
             cache_directory=self.test_dir
@@ -139,7 +139,7 @@ class TestExecutor(unittest.TestCase):
         ) as exe:
             fs = exe.submit(fn=funct_add, a=1, b=2)
             funct_dict = serialize_funct(fn=funct_add, a=1, b=2)
-            file_name_in = get_file_name(name=list(funct_dict.keys())[0], state="in")
+            file_name_in = _get_file_name(name=list(funct_dict.keys())[0], state="in")
             funct_dict = read_from_file(
                 file_name=os.path.join(self.test_dir, file_name_in)
             )
