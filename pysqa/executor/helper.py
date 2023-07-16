@@ -45,12 +45,6 @@ def deserialize(funct_dict):
         return {}
 
 
-def apply_funct(apply_dict):
-    return {
-        k: v["fn"].__call__(*v["args"], **v["kwargs"]) for k, v in apply_dict.items()
-    }
-
-
 def serialize_result(result_dict):
     return {k: cloudpickle.dumps(v) for k, v in result_dict.items()}
 

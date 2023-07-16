@@ -1,8 +1,9 @@
 import os
 import queue
+from threading import Thread
 from concurrent.futures import Future, Executor as FutureExecutor
 
-from pympipool import cancel_items_in_queue, RaisingThread
+from pympipool import cancel_items_in_queue
 from pysqa.executor.helper import (
     reload_previous_futures,
     find_executed_tasks,
@@ -33,7 +34,7 @@ class Executor(FutureExecutor):
             command=command,
             **queue_adapter_kwargs
         )
-        self._process = RaisingThread(
+        self._process = Thread(
             target=find_executed_tasks,
             kwargs={
                 "future_queue": self._task_queue,

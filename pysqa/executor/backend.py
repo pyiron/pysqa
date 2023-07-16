@@ -5,7 +5,6 @@ from pympipool import PoolExecutor
 from pysqa.executor.helper import (
     read_from_file,
     deserialize,
-    apply_funct,
     write_to_file,
     serialize_result,
 )
@@ -43,9 +42,8 @@ def execute_tasks(cores, cache_directory):
                         )
             for k, v in tasks_in_progress_dict.items():
                 if v.done():
-                    result_dict = apply_funct(apply_dict=v.result())
                     write_to_file(
-                        funct_dict=serialize_result(result_dict=result_dict),
+                        funct_dict=serialize_result(result_dict=v.result()),
                         state="out",
                         cache_directory=cache_directory,
                     )
