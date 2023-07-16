@@ -105,7 +105,6 @@ class TestExecutorHelper(unittest.TestCase):
         self.assertEqual(future_dict_two[key].result(), 3)
 
 
-@unittest.skipIf(os.name == 'nt', "Runs forever on Windows")
 class TestExecutor(unittest.TestCase):
     def setUp(self):
         self.test_dir = os.path.join(os.path.abspath(os.path.dirname(__file__)), "executor_cache")
