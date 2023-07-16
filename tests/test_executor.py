@@ -20,13 +20,14 @@ def funct_add(a, b):
 
 
 class TestExecutorHelper(unittest.TestCase):
-    def setUp(cls):
-        cls.test_dir = os.path.abspath(os.path.dirname(__file__))
-        os.makedirs(os.path.join(cls.test_dir, "cache"), exist_ok=True)
+    def setUp(self):
+        self.test_dir = os.path.join(os.path.abspath(os.path.dirname(__file__)), "cache")
+        os.makedirs(self.test_dir, exist_ok=True)
 
-
-    def tearDown(cls):
-        os.removedirs(os.path.join(cls.test_dir, "cache"))
+    def tearDown(self):
+        for f in os.listdir(self.test_dir):
+            os.remove(os.path.join(self.test_dir, f))
+        os.removedirs(self.test_dir)
 
     def test_cache(self):
         funct_dict = serialize_funct(fn=funct_add, a=1, b=2)
@@ -35,6 +36,7 @@ class TestExecutorHelper(unittest.TestCase):
             state="in",
             cache_directory=self.test_dir
         )[0]
+        self.assertEqual(len(os.listdir(self.test_dir)), 1)
         funct_dict = read_from_file(
             file_name=os.path.join(self.test_dir, file_name_in)
         )
@@ -47,6 +49,7 @@ class TestExecutorHelper(unittest.TestCase):
             state="out",
             cache_directory=self.test_dir,
         )[0]
+        self.assertEqual(len(os.listdir(self.test_dir)), 2)
         f = Future()
         set_future(
             file_name=os.path.join(self.test_dir, file_name_out), 
@@ -70,12 +73,14 @@ class TestExecutorHelper(unittest.TestCase):
         )
         self.assertEqual(len(future_dict_one), 1)
         self.assertEqual(list(future_dict_one.keys())[0], file_name_in.split(".in.pl")[0])
+        self.assertEqual(len(os.listdir(self.test_dir)), 1)
         with ThreadPoolExecutor() as exe:
             execute_files_from_list(
                 tasks_in_progress_dict={},
                 cache_directory=self.test_dir,
                 executor=exe
             )
+        self.assertEqual(len(os.listdir(self.test_dir)), 2)
         future_dict_two = {}
         reload_previous_futures(
             future_queue=queue,
