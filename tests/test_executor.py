@@ -1,8 +1,9 @@
 import os
 from queue import Queue
-from concurrent.futures import Future
+from concurrent.futures import Future, ThreadPoolExecutor
 import unittest
 
+from pysqa.executor.backend import execute_files_from_list
 from pysqa.executor.helper import (
     read_from_file,
     deserialize,
@@ -70,15 +71,12 @@ class TestExecutorHelper(unittest.TestCase):
         )
         self.assertEqual(len(future_dict_one), 1)
         self.assertEqual(list(future_dict_one.keys())[0], file_name_in.split(".in.pl")[0])
-        apply_dict = deserialize(funct_dict=funct_dict)
-        result_dict = {
-            k: v["fn"].__call__(*v["args"], **v["kwargs"]) for k, v in apply_dict.items()
-        }
-        file_name_out = write_to_file(
-            funct_dict=serialize_result(result_dict=result_dict),
-            state="out",
-            cache_directory=self.test_dir,
-        )[0]
+        with ThreadPoolExecutor() as exe:
+            execute_files_from_list(
+                tasks_in_progress_dict={},
+                cache_directory=self.test_dir,
+                executor=exe
+            )
         future_dict_two = {}
         reload_previous_futures(
             future_queue=queue,
@@ -87,5 +85,5 @@ class TestExecutorHelper(unittest.TestCase):
         )
         key = list(future_dict_two.keys())[0]
         self.assertEqual(len(future_dict_two), 1)
-        self.assertEqual(key, file_name_out.split(".out.pl")[0])
+        self.assertEqual(key, file_name_in.split(".in.pl")[0])
         self.assertEqual(future_dict_two[key].result(), 3)

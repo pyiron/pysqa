@@ -10,6 +10,33 @@ from pysqa.executor.helper import (
 )
 
 
+def execute_files_from_list(tasks_in_progress_dict, cache_directory, executor):
+    file_lst = os.listdir(cache_directory)
+    for file_name_in in file_lst:
+        key = file_name_in.split(".in.pl")[0]
+        file_name_out = key + ".out.pl"
+        if (
+                file_name_in.endswith(".in.pl")
+                and file_name_out not in file_lst
+                and file_name_out not in tasks_in_progress_dict.keys()
+        ):
+            funct_dict = read_from_file(
+                file_name=os.path.join(cache_directory, file_name_in)
+            )
+            apply_dict = deserialize(funct_dict=funct_dict)
+            for k, v in apply_dict.items():
+                tasks_in_progress_dict[k] = executor.submit(
+                    fn=v["fn"], args=v["args"], kwargs=v["kwargs"]
+                )
+    for k, v in tasks_in_progress_dict.items():
+        if v.done():
+            write_to_file(
+                funct_dict=serialize_result(result_dict=v.result()),
+                state="out",
+                cache_directory=cache_directory,
+            )
+
+
 def execute_tasks(cores, cache_directory):
     tasks_in_progress_dict = {}
     with PoolExecutor(
@@ -23,30 +50,11 @@ def execute_tasks(cores, cache_directory):
         queue_adapter_kwargs=None,
     ) as exe:
         while True:
-            file_lst = os.listdir(cache_directory)
-            for file_name_in in file_lst:
-                key = file_name_in.split(".in.pl")[0]
-                file_name_out = key + ".out.pl"
-                if (
-                    file_name_in.endswith(".in.pl")
-                    and file_name_out not in file_lst
-                    and file_name_out not in tasks_in_progress_dict.keys()
-                ):
-                    funct_dict = read_from_file(
-                        file_name=os.path.join(cache_directory, file_name_in)
-                    )
-                    apply_dict = deserialize(funct_dict=funct_dict)
-                    for k, v in apply_dict.items():
-                        tasks_in_progress_dict[k] = exe.submit(
-                            fn=v["fn"], args=v["args"], kwargs=v["kwargs"]
-                        )
-            for k, v in tasks_in_progress_dict.items():
-                if v.done():
-                    write_to_file(
-                        funct_dict=serialize_result(result_dict=v.result()),
-                        state="out",
-                        cache_directory=cache_directory,
-                    )
+            execute_files_from_list(
+                tasks_in_progress_dict=tasks_in_progress_dict,
+                cache_directory=cache_directory,
+                executor=exe
+            )
 
 
 def command_line(arguments_lst=None):
