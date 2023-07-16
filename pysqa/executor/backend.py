@@ -26,12 +26,12 @@ def execute_files_from_list(tasks_in_progress_dict, cache_directory, executor):
             apply_dict = deserialize(funct_dict=funct_dict)
             for k, v in apply_dict.items():
                 tasks_in_progress_dict[k] = executor.submit(
-                    fn=v["fn"], args=v["args"], kwargs=v["kwargs"]
+                    v["fn"], *v["args"], **v["kwargs"]
                 )
     for k, v in tasks_in_progress_dict.items():
         if v.done():
             write_to_file(
-                funct_dict=serialize_result(result_dict=v.result()),
+                funct_dict=serialize_result(result_dict={k: v.result()}),
                 state="out",
                 cache_directory=cache_directory,
             )
