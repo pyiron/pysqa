@@ -41,5 +41,8 @@ class TestExecutorHelper(unittest.TestCase):
             cache_directory=self.test_dir,
         )[0]
         f = Future()
-        set_future(file_name=file_name_out, future=f)
+        set_future(
+            file_name=os.path.join(self.test_dir, file_name_out), 
+            future=f
+        )
         self.assertEqual(f.result(), 3)
