@@ -22,11 +22,14 @@ def find_executed_tasks(future_queue, cache_directory):
             task_dict = future_queue.get_nowait()
         except queue.Empty:
             pass
-        _update_task_dict(
-            task_dict=task_dict,
-            task_memory_dict=task_memory_dict,
-            cache_directory=cache_directory,
-        )
+        if "shutdown" in task_dict.keys() and task_dict["shutdown"]:
+            break
+        else:
+            _update_task_dict(
+                task_dict=task_dict,
+                task_memory_dict=task_memory_dict,
+                cache_directory=cache_directory,
+            )
 
 
 def read_from_file(file_name):
