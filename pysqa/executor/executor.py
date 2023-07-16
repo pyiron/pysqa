@@ -17,18 +17,28 @@ class FileExecutor(Executor):
         self._task_queue = queue.Queue()
         self._memory_dict = {}
         self._cache_directory = os.path.abspath(os.path.expanduser(cwd))
+        self._queue_adapter = queue_adapter
         reload_previous_futures(
             future_queue=self._task_queue,
             future_dict=self._memory_dict,
             cache_directory=self._cache_directory,
+        )
+        command = (
+            "python -m pysqa.executor --cores "
+            + str(queue_adapter_kwargs["cores"])
+            + " --path "
+            + str(self._cache_directory),
+        )
+        self._queue_id = self._queue_adapter.submit_job(
+            working_directory=self._cache_directory,
+            command=command,
+            **queue_adapter_kwargs
         )
         self._process = Thread(
             target=find_executed_tasks,
             kwargs={
                 "future_queue": self._task_queue,
                 "cache_directory": self._cache_directory,
-                "queue_adapter": queue_adapter,
-                "queue_adapter_kwargs": queue_adapter_kwargs,
             },
         )
         self._process.start()
@@ -48,4 +58,5 @@ class FileExecutor(Executor):
         if cancel_futures:
             cancel_items_in_queue(que=self._task_queue)
         self._task_queue.put({"shutdown": True, "wait": wait})
+        self._queue_adapter.delete_job(process_id=self._queue_id)
         self._process.join()

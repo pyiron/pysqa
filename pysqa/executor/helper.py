@@ -77,19 +77,8 @@ def reload_previous_futures(future_queue, future_dict, cache_directory):
                 future_queue.put({key: future_dict[key]})
 
 
-def find_executed_tasks(
-    future_queue, cache_directory, queue_adapter, queue_adapter_kwargs
-):
+def find_executed_tasks(future_queue, cache_directory):
     task_memory_dict = {}
-    command = (
-        "python -m pysqa.executor --cores "
-        + str(queue_adapter_kwargs["cores"])
-        + " --path "
-        + str(cache_directory),
-    )
-    queue_adapter.submit_job(
-        working_directory=cache_directory, command=command, **queue_adapter_kwargs
-    )
     while True:
         task_dict = {}
         file_lst = os.listdir(cache_directory)
