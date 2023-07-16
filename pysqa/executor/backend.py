@@ -16,9 +16,9 @@ def execute_files_from_list(tasks_in_progress_dict, cache_directory, executor):
         key = file_name_in.split(".in.pl")[0]
         file_name_out = key + ".out.pl"
         if (
-                file_name_in.endswith(".in.pl")
-                and file_name_out not in file_lst
-                and file_name_out not in tasks_in_progress_dict.keys()
+            file_name_in.endswith(".in.pl")
+            and file_name_out not in file_lst
+            and file_name_out not in tasks_in_progress_dict.keys()
         ):
             funct_dict = read_from_file(
                 file_name=os.path.join(cache_directory, file_name_in)
@@ -53,7 +53,7 @@ def execute_tasks(cores, cache_directory):
             execute_files_from_list(
                 tasks_in_progress_dict=tasks_in_progress_dict,
                 cache_directory=cache_directory,
-                executor=exe
+                executor=exe,
             )
 
 
