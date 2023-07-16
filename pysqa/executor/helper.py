@@ -95,5 +95,5 @@ def find_executed_tasks(future_queue, cache_directory):
         update_task_dict(
             task_dict=task_dict,
             task_memory_dict=task_memory_dict,
-            cache_directory=cache_directory
+            cache_directory=cache_directory,
         )
