@@ -29,11 +29,11 @@ setup(
 
     keywords='pysqa',
     packages=find_packages(exclude=["*tests*"]),
-    install_requires=['jinja2==3.1.2', 'pandas==2.0.1', 'pyyaml==6.0'],
+    install_requires=['jinja2==3.1.2', 'pandas==2.0.3', 'pyyaml==6.0'],
     extras_require={
         "sge": ['defusedxml==0.7.1'],
-        "remote": ['paramiko==3.1.0', 'tqdm==4.65.0'],
-        "executor": ['pympipool==0.5.4', 'cloudpickle==2.2.1']
+        "remote": ['paramiko==3.2.0', 'tqdm==4.65.0'],
+        "executor": ['pympipool==0.5.4', 'cloudpickle==2.2.1'],
     },
     cmdclass=versioneer.get_cmdclass(),
     entry_points={

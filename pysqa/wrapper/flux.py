@@ -1,6 +1,7 @@
 # coding: utf-8
-from flux.job import JobID
 import pandas
+from flux.job import JobID
+
 from pysqa.wrapper.generic import SchedulerCommands
 
 
@@ -19,7 +20,9 @@ class FluxCommands(SchedulerCommands):
 
     @staticmethod
     def get_job_id_from_output(queue_submit_output):
-        return JobID(queue_submit_output.splitlines()[-1].rstrip().lstrip().split()[-1])
+        return int(
+            JobID(queue_submit_output.splitlines()[-1].rstrip().lstrip().split()[-1])
+        )
 
     @staticmethod
     def convert_queue_status(queue_status_output):
@@ -40,4 +43,5 @@ class FluxCommands(SchedulerCommands):
         )
         df.loc[df.status == "R", "status"] = "running"
         df.loc[df.status == "S", "status"] = "pending"
+        df.loc[df.status == "CD", "status"] = "finished"
         return df

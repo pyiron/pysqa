@@ -2,8 +2,9 @@
 # Copyright (c) Max-Planck-Institut für Eisenforschung GmbH - Computational Materials Design (CM) Department
 # Distributed under the terms of "New BSD License", see the LICENSE file.
 
-import pandas
 import defusedxml.ElementTree as ETree
+import pandas
+
 from pysqa.wrapper.generic import SchedulerCommands
 
 __author__ = "Jan Janssen"
