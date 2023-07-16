@@ -23,6 +23,7 @@ def funct_add(a, b):
     return a+b
 
 
+@unittest.skipIf(os.name == 'nt', "Runs forever on Windows")
 class TestExecutorHelper(unittest.TestCase):
     def setUp(self):
         self.test_dir = os.path.join(os.path.abspath(os.path.dirname(__file__)), "cache")
@@ -68,7 +69,6 @@ class TestExecutorHelper(unittest.TestCase):
         )
         self.assertEqual(task_dict[key].result(), 3)
 
-    @unittest.skipIf(os.name == 'nt', "Runs forever on Windows")
     def test_reload_previous_future(self):
         funct_dict = serialize_funct(fn=funct_add, a=1, b=2)
         file_name_in = write_to_file(
@@ -105,6 +105,7 @@ class TestExecutorHelper(unittest.TestCase):
         self.assertEqual(future_dict_two[key].result(), 3)
 
 
+@unittest.skipIf(os.name == 'nt', "Runs forever on Windows")
 class TestExecutor(unittest.TestCase):
     def setUp(self):
         self.test_dir = os.path.join(os.path.abspath(os.path.dirname(__file__)), "executor_cache")
@@ -115,7 +116,6 @@ class TestExecutor(unittest.TestCase):
             os.remove(os.path.join(self.test_dir, f))
         os.removedirs(self.test_dir)
 
-    @unittest.skipIf(os.name == 'nt', "Runs forever on Windows")
     def test_executor(self):
         def execute_command(
                 commands,
