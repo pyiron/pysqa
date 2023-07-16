@@ -4,6 +4,7 @@ from concurrent.futures import Future, ThreadPoolExecutor
 import unittest
 
 from pysqa.executor.backend import execute_files_from_list
+from pysqa.executor.executor import Executor
 from pysqa.executor.helper import (
     read_from_file,
     deserialize,
@@ -11,8 +12,10 @@ from pysqa.executor.helper import (
     write_to_file,
     serialize_result,
     set_future,
-    reload_previous_futures
+    reload_previous_futures,
+    get_file_name,
 )
+from pysqa.queueadapter import QueueAdapter
 
 
 def funct_add(a, b):
@@ -91,3 +94,54 @@ class TestExecutorHelper(unittest.TestCase):
         self.assertEqual(len(future_dict_two), 1)
         self.assertEqual(key, file_name_in.split(".in.pl")[0])
         self.assertEqual(future_dict_two[key].result(), 3)
+
+
+class TestExecutor(unittest.TestCase):
+    def setUp(self):
+        self.test_dir = os.path.join(os.path.abspath(os.path.dirname(__file__)), "executor_cache")
+        os.makedirs(self.test_dir, exist_ok=True)
+
+    def tearDown(self):
+        for f in os.listdir(self.test_dir):
+            os.remove(os.path.join(self.test_dir, f))
+        os.removedirs(self.test_dir)
+
+    def test_executor(self):
+        def execute_command(
+                commands,
+                working_directory=None,
+                split_output=True,
+                shell=False,
+                error_filename="pysqa.err",
+        ):
+            return str(1)
+
+        queue_adapter = QueueAdapter(
+            directory=os.path.join(self.test_dir, "../config/slurm"),
+            execute_command=execute_command
+        )
+        with Executor(
+            cwd=self.test_dir,
+            queue_adapter=queue_adapter,
+            queue_adapter_kwargs={
+                "queue": "slurm",
+                "job_name": "test",
+                "cores": 1
+            }
+        ) as exe:
+            fs = exe.submit(fn=funct_add, a=1, b=2)
+            funct_dict = serialize_funct(fn=funct_add, a=1, b=2)
+            file_name_in = get_file_name(name=list(funct_dict.keys())[0], state="in")
+            funct_dict = read_from_file(
+                file_name=os.path.join(self.test_dir, file_name_in)
+            )
+            apply_dict = deserialize(funct_dict=funct_dict)
+            result_dict = {
+                k: v["fn"].__call__(*v["args"], **v["kwargs"]) for k, v in apply_dict.items()
+            }
+            _ = write_to_file(
+                funct_dict=serialize_result(result_dict=result_dict),
+                state="out",
+                cache_directory=self.test_dir,
+            )[0]
+            self.assertEqual(fs.result(), 3)

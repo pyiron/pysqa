@@ -27,7 +27,7 @@ class Executor(FutureExecutor):
             "python -m pysqa.executor --cores "
             + str(queue_adapter_kwargs["cores"])
             + " --path "
-            + str(self._cache_directory),
+            + str(self._cache_directory)
         )
         self._queue_id = self._queue_adapter.submit_job(
             working_directory=self._cache_directory,
