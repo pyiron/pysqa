@@ -33,11 +33,13 @@ setup(
     extras_require={
         "sge": ['defusedxml==0.7.1'],
         "remote": ['paramiko==3.2.0', 'tqdm==4.65.0'],
+        "executor": ['pympipool==0.5.4', 'cloudpickle==2.2.1'],
     },
     cmdclass=versioneer.get_cmdclass(),
     entry_points={
             "console_scripts": [
-                'pysqa=pysqa:main'
+                'pysqa=pysqa.cmd:command_line',
+                'pysqa-executor=pysqa.executor.backend:command_line'
             ]
     }
 )
