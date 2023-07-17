@@ -44,8 +44,8 @@ def execute_tasks(cores, cache_directory):
         oversubscribe=False,
         enable_flux_backend=False,
         enable_slurm_backend=False,
-        init_function=None,
         cwd=cache_directory,
+        sleep_interval=0.1,
         queue_adapter=None,
         queue_adapter_kwargs=None,
     ) as exe:
