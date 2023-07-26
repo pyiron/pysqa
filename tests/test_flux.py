@@ -86,6 +86,7 @@ class TestFluxQueueAdapter(unittest.TestCase):
 # flux: --env=CORES=4
 # flux: --output=time.out
 # flux: --error=error.out
+# flux: --nslots 1
 # flux: --cores 4
 # flux: -t 2880
 
