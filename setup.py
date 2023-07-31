@@ -33,7 +33,7 @@ setup(
     extras_require={
         "sge": ['defusedxml==0.7.1'],
         "remote": ['paramiko==3.3.1', 'tqdm==4.65.0'],
-        "executor": ['pympipool==0.5.6', 'cloudpickle==2.2.1'],
+        "executor": ['pympipool==0.6.1', 'cloudpickle==2.2.1'],
     },
     cmdclass=versioneer.get_cmdclass(),
     entry_points={
