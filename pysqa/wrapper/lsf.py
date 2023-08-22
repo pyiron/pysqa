@@ -19,7 +19,7 @@ __date__ = "Feb 9, 2019"
 class LsfCommands(SchedulerCommands):
     @property
     def submit_job_command(self):
-        return ["bsub", "-terse"]
+        return ["bsub"]
 
     @property
     def delete_job_command(self):
@@ -28,3 +28,7 @@ class LsfCommands(SchedulerCommands):
     @property
     def get_queue_status_command(self):
         return ["qstat", "-x"]
+
+    @staticmethod
+    def get_job_id_from_output(queue_submit_output):
+        return int(queue_submit_output.split("<")[1].split(">")[0])
