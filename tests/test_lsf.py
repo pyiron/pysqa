@@ -3,6 +3,9 @@
 
 import os
 import unittest
+
+import pandas
+
 from pysqa import QueueAdapter
 
 __author__ = "Jan Janssen"
@@ -62,3 +65,20 @@ class TestLsfQueueAdapter(unittest.TestCase):
                 [],
                 "here",
             )
+
+    def test_convert_queue_status_sge(self):
+        with open(os.path.join(self.path, "config/lsf", "bjobs_output"), "r") as f:
+            content = f.read()
+        df = pandas.DataFrame({
+            "jobid": [5136563, 5136570, 5136571],
+            "user": ["testuse"] * 3,
+            "jobname": ["pi_None"] * 3,
+            "status": ["running"] * 3
+        })
+        self.assertTrue(
+            df.equals(
+                self.lsf._adapter._commands.convert_queue_status(
+                    queue_status_output=content
+                )
+            )
+        )
