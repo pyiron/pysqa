@@ -42,18 +42,18 @@ class TestLsfQueueAdapter(unittest.TestCase):
 
     def test_interfaces(self):
         self.assertEqual(
-            self.lsf._adapter._commands.submit_job_command, ["bsub", "-terse"]
+            self.lsf._adapter._commands.submit_job_command, ["bsub"]
         )
         self.assertEqual(self.lsf._adapter._commands.delete_job_command, ["bkill"])
         self.assertEqual(
-            self.lsf._adapter._commands.get_queue_status_command, ["qstat", "-x"]
+            self.lsf._adapter._commands.get_queue_status_command, ["bjobs"]
         )
 
     def test__list_command_to_be_executed(self):
         with self.subTest("lsf"):
             self.assertEqual(
                 self.lsf._adapter._list_command_to_be_executed(None, "here"),
-                ["bsub", "-terse", "here"],
+                ["bsub", "here"],
             )
         with self.subTest("lsf with dependency"):
             self.assertRaises(
