@@ -3,6 +3,9 @@
 
 import os
 import unittest
+
+import pandas
+
 from pysqa import QueueAdapter
 
 __author__ = "Jan Janssen"
@@ -42,18 +45,18 @@ class TestLsfQueueAdapter(unittest.TestCase):
 
     def test_interfaces(self):
         self.assertEqual(
-            self.lsf._adapter._commands.submit_job_command, ["bsub", "-terse"]
+            self.lsf._adapter._commands.submit_job_command, ["bsub"]
         )
         self.assertEqual(self.lsf._adapter._commands.delete_job_command, ["bkill"])
         self.assertEqual(
-            self.lsf._adapter._commands.get_queue_status_command, ["qstat", "-x"]
+            self.lsf._adapter._commands.get_queue_status_command, ["bjobs"]
         )
 
     def test__list_command_to_be_executed(self):
         with self.subTest("lsf"):
             self.assertEqual(
                 self.lsf._adapter._list_command_to_be_executed(None, "here"),
-                ["bsub", "-terse", "here"],
+                ["bsub", "here"],
             )
         with self.subTest("lsf with dependency"):
             self.assertRaises(
@@ -62,3 +65,20 @@ class TestLsfQueueAdapter(unittest.TestCase):
                 [],
                 "here",
             )
+
+    def test_convert_queue_status_sge(self):
+        with open(os.path.join(self.path, "config/lsf", "bjobs_output"), "r") as f:
+            content = f.read()
+        df = pandas.DataFrame({
+            "jobid": [5136563, 5136570, 5136571],
+            "user": ["testuse"] * 3,
+            "jobname": ["pi_None"] * 3,
+            "status": ["running"] * 3
+        })
+        self.assertTrue(
+            df.equals(
+                self.lsf._adapter._commands.convert_queue_status(
+                    queue_status_output=content
+                )
+            )
+        )
