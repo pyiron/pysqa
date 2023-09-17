@@ -2,7 +2,7 @@ import os
 import queue
 from concurrent.futures import Future, Executor as FutureExecutor
 
-from pympipool import cancel_items_in_queue, RaisingThread
+from pympipool.shared import cancel_items_in_queue, RaisingThread
 from pysqa.executor.helper import (
     reload_previous_futures,
     find_executed_tasks,

@@ -1,7 +1,7 @@
 import os
 import sys
 
-from pympipool import PoolExecutor
+from pympipool.mpi import PyMPIExecutor
 from pysqa.executor.helper import (
     read_from_file,
     deserialize,
@@ -39,15 +39,16 @@ def execute_files_from_list(tasks_in_progress_dict, cache_directory, executor):
 
 def execute_tasks(cores, cache_directory):
     tasks_in_progress_dict = {}
-    with PoolExecutor(
+    with PyMPIExecutor(
         max_workers=cores,
+        cores_per_worker=1,
+        threads_per_core=1,
+        gpus_per_worker=0,
         oversubscribe=False,
-        enable_flux_backend=False,
-        enable_slurm_backend=False,
+        init_function=None,
         cwd=cache_directory,
         sleep_interval=0.1,
-        queue_adapter=None,
-        queue_adapter_kwargs=None,
+        enable_slurm_backend=False,
     ) as exe:
         while True:
             execute_files_from_list(
