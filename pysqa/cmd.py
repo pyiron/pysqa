@@ -7,7 +7,7 @@ from pysqa.queueadapter import QueueAdapter
 from pysqa.utils.execute import execute_command
 
 
-def command_line(argv, execute_command=execute_command):
+def command_line(argv=None, execute_command=execute_command):
     """
     Parse the command line arguments.
 
@@ -25,6 +25,8 @@ def command_line(argv, execute_command=execute_command):
     run_time_max = None
     command = None
     job_id = None
+    if argv is None:
+        argv = sys.argv[1:]
     try:
         opts, args = getopt.getopt(
             argv,
