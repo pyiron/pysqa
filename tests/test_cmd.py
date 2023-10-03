@@ -14,7 +14,7 @@ class TestCMD(unittest.TestCase):
     @unittest.mock.patch('sys.stdout', new_callable=io.StringIO)
     def assert_stdout_command_line(self, cmd_args, execute_command, expected_output, mock_stdout):
         command_line(
-            argv=cmd_args,
+            arguments_lst=cmd_args,
             execute_command=execute_command
         )
         self.assertEqual(mock_stdout.getvalue(), expected_output)
