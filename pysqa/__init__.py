@@ -2,7 +2,6 @@ __version__ = "0.0.1"
 __all__ = []
 
 from pysqa.queueadapter import QueueAdapter
-from pysqa.executor.executor import Executor
 
 from ._version import get_versions
 
