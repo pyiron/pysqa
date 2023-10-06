@@ -50,11 +50,8 @@ jobs:
           pip install --no-deps .
       - name: Test
         shell: bash -l {0}
-        run: coverage run --omit pysqa/_version.py -m unittest discover tests
-      - name: Coverage
-        shell: bash -l {0}
         run: |
+          coverage run --omit pysqa/_version.py -m unittest discover tests
           coverage combine
-          coveralls
-          coverage xml
-          python-codacy-coverage -r coverage.xml
+      - name: Coveralls
+        uses: coverallsapp/github-action@v2
