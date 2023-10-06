@@ -2,9 +2,7 @@ channels:
   - conda-forge
 dependencies:
   - defusedxml =0.7.1
-  - coveralls
   - coverage
-  - codacy-coverage
   - pandas =2.1.1
   - pyyaml =6.0.1
   - jinja2 =3.1.2
