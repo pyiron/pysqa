@@ -1,10 +1,9 @@
-.. pysqa documentation master file, created by
-   sphinx-quickstart on Thu May  4 14:01:49 2023.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
-
+=========================================
 pysqa - a simple queue adapter for python
 =========================================
+
+:Author:  Jan Janssen
+:Contact: janssen@mpie.de
 
 High-performance computing (HPC) does not have to be hard. In this context the aim of pysqa is to simplify the submission of calculation to an HPC cluster as easy as starting another subprocess locally. This is achieved based on the assumption that even though modern HPC queuing systems offer a wide range of different configuration options, most users submit the majority of their jobs with very similar parameters. 
 
