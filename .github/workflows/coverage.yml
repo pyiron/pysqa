@@ -22,7 +22,7 @@ jobs:
       - name: Setup environment
         run: |
           cp .ci_support/environment.yml environment.yml
-          echo "  - flux-core =0.50.0" >> environment.yml
+          echo "  - flux-core" >> environment.yml
       - name: Setup Mambaforge
         uses: conda-incubator/setup-miniconda@v2
         with:
