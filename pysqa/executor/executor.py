@@ -31,7 +31,7 @@ class Executor(FutureExecutor):
         self._queue_id = self._queue_adapter.submit_job(
             working_directory=self._cache_directory,
             command=command,
-            **queue_adapter_kwargs
+            **queue_adapter_kwargs,
         )
         self._process = RaisingThread(
             target=find_executed_tasks,
