@@ -1,5 +1,5 @@
 [build-system]
-requires = ["jinja2", "pandas", "pyyaml", "setuptools"]
+requires = ["jinja2", "pandas", "pyyaml", "setuptools", "versioneer[toml]==0.29"]
 build-backend = "setuptools.build_meta"
 
 [project]

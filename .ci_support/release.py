@@ -52,10 +52,10 @@ if __name__ == "__main__":
         env_content = f.readlines()
 
     setup_content_new = update_dependencies(
-        setup_content=setup_content,
+        setup_content=setup_content[2:],
         version_low_dict=get_env_version(env_content=env_content),
-        version_high_dict=get_setup_version_and_pattern(setup_content=setup_content),
+        version_high_dict=get_setup_version_and_pattern(setup_content=setup_content[2:]),
     )
 
     with open('pyproject.toml', "w") as f:
-        f.writelines(setup_content_new)
+        f.writelines("".join(setup_content[:2]) + setup_content_new)

@@ -16,9 +16,8 @@ env:
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - name: Setup environment
         run: |
           cp .ci_support/environment.yml environment.yml
