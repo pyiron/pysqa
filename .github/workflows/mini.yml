@@ -9,16 +9,12 @@ on:
   pull_request:
     branches: [ main ]
 
-env:
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      CODACY_PROJECT_TOKEN: ${{ secrets.CODACY_PROJECT_TOKEN }}
-
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - name: Setup environment
         run: |
           cp .ci_support/environment.yml environment.yml
@@ -33,23 +29,10 @@ jobs:
           channels: conda-forge
           channel-priority: strict
           activate-environment: my-env
+          environment-file: environment.yml
           use-mamba: true
-      - name: Set cache date and number
-        run: |
-          echo "DATE=$(date +'%Y%m%d')" >> $GITHUB_ENV
-          cat .github/variables/cache_number.env >> $GITHUB_ENV
-      - uses: actions/cache@v2
-        with:
-          path: /usr/share/miniconda3/envs/my-env
-          key: mini-conda-${{ hashFiles('environment.yml') }}-${{ env.DATE }}-${{ env.CACHE_NUMBER }}
-        id: cache
-      - name: Update environment
-        run: mamba env update -n my-env -f environment.yml
-        if: steps.cache.outputs.cache-hit != 'true'
-      - name: Setup
+      - name: Test
         shell: bash -l {0}
         run: |
           pip install --no-deps .
-      - name: Test
-        shell: bash -l {0}
-        run: python -m unittest discover tests
+          python -m unittest discover tests

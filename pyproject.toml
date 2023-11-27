@@ -1,0 +1,65 @@
+[build-system]
+requires = ["jinja2", "pandas", "pyyaml", "setuptools", "versioneer[toml]==0.29"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pysqa"
+description = "Simple HPC queuing system adapter for Python on based jinja templates to automate the submission script creation."
+authors = [
+    { name = "Jan Janssen", email = "janssen@mpie.de" },
+]
+readme = "README.md"
+license = { file = "LICENSE" }
+keywords = ["pyiron"]
+requires-python = ">=3.8"
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Topic :: Scientific/Engineering :: Physics",
+    "License :: OSI Approved :: BSD License",
+    "Intended Audience :: Science/Research",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+]
+dependencies = [
+    "jinja2==3.1.2",
+    "pandas==2.1.3",
+    "pyyaml==6.0.1",
+]
+dynamic = ["version"]
+
+[project.urls]
+Homepage = "https://github.com/pyiron/pysqa"
+Documentation = "https://pysqa.readthedocs.io"
+Repository = "https://github.com/pyiron/pysqa"
+
+[project.optional-dependencies]
+sge = ["defusedxml==0.7.1"]
+remote = [
+    "paramiko==3.3.1",
+    "tqdm==4.66.1",
+]
+executor = [
+    "pympipool==0.7.5",
+    "cloudpickle==3.0.0",
+]
+
+[project.scripts]
+pysqa = "pysqa.cmd:command_line"
+pysqa-executor = "pysqa.executor.backend:command_line"
+
+[tool.setuptools]
+packages = ["pysqa"]
+
+[tool.setuptools.dynamic]
+version = {attr = "pysqa.__version__"}
+
+[tool.versioneer]
+VCS = "git"
+style = "pep440-pre"
+versionfile_source = "pysqa/_version.py"
+parentdir_prefix = "pysqa"
+tag_prefix = "pysqa-"
