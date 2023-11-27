@@ -51,8 +51,8 @@ executor = [
 pysqa = "pysqa.cmd:command_line"
 pysqa-executor = "pysqa.executor.backend:command_line"
 
-[tool.setuptools]
-packages = ["pysqa"]
+[tool.setuptools.packages.find]
+include = ["pysqa*"]
 
 [tool.setuptools.dynamic]
 version = {attr = "pysqa.__version__"}
