@@ -34,5 +34,6 @@ jobs:
       - name: Test
         shell: bash -l {0}
         run: |
-          pip install --no-deps .
+          pip install versioneer[toml]==0.29
+          pip install . --no-deps --no-build-isolation
           python -m unittest discover tests
