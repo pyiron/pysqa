@@ -5,18 +5,21 @@ from flux.job import JobID
 from pysqa.wrapper.generic import SchedulerCommands
 
 
+command_lst = ["/bin/bash", "-i", "-c", "remote_flux"]
+
+
 class FluxCommands(SchedulerCommands):
     @property
     def submit_job_command(self):
-        return ["flux", "batch"]
+        return command_lst + ["batch"]
 
     @property
     def delete_job_command(self):
-        return ["flux", "cancel"]
+        return command_lst + ["cancel"]
 
     @property
     def get_queue_status_command(self):
-        return ["flux", "jobs", "-a", "--no-header"]
+        return command_lst + ["jobs", "-a", "--no-header"]
 
     @staticmethod
     def get_job_id_from_output(queue_submit_output):
