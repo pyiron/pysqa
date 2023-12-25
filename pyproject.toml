@@ -39,7 +39,7 @@ Repository = "https://github.com/pyiron/pysqa"
 [project.optional-dependencies]
 sge = ["defusedxml==0.7.1"]
 remote = [
-    "paramiko==3.3.1",
+    "paramiko==3.4.0",
     "tqdm==4.66.1",
 ]
 executor = [
