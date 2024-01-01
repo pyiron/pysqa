@@ -176,6 +176,10 @@ class RemoteQueueAdapter(BasisQueueAdapter):
         for file_src, file_dst in tqdm(file_dict.items()):
             if transfer_back:
                 try:
+                    # Check remote file existence.
+                    # If the remote file does not exist, sftp_client.get() will make the local file empty
+                    # sftp_client.stat() can throw an exception early to prevent the execution of sftp_client.get().
+                    sftp_client.stat(file_dst)
                     sftp_client.get(file_dst, file_src)
                 except FileNotFoundError:
                     pass
