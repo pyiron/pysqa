@@ -524,9 +524,11 @@ class BasisQueueAdapter(object):
 
         if value is not None:
             value_, value_min_, value_max_ = [
-                cls._memory_spec_string_to_value(v)
-                if v is not None and isinstance(v, str)
-                else v
+                (
+                    cls._memory_spec_string_to_value(v)
+                    if v is not None and isinstance(v, str)
+                    else v
+                )
                 for v in (value, value_min, value_max)
             ]
             # ATTENTION: '60000' is interpreted as '60000M' since default magnitude is 'M'
