@@ -23,6 +23,7 @@ jobs:
           from=$(echo "$PR_TITLE" | awk '{print $4}')
           to=$(echo "$PR_TITLE" | awk '{print $6}')
           sed -i "/${package}/s/${from}/${to}/g" .ci_support/environment.yml
+          sed -i "/${package}/s/${from}/${to}/g" .ci_support/environment-docs.yml
       - name: UpdateDependabotPR commit
         run: |
           git config --local user.email "pyiron@mpie.de"
