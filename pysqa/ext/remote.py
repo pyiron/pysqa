@@ -39,6 +39,10 @@ class RemoteQueueAdapter(BasisQueueAdapter):
             self._ssh_authenticator_service = config["ssh_authenticator_service"]
         else:
             self._ssh_authenticator_service = None
+        if "ssh_proxy_host" in config.keys():
+            self._ssh_proxy_host = config["ssh_proxy_host"]
+        else:
+            self._ssh_proxy_host = None
         self._ssh_remote_config_dir = config["ssh_remote_config_dir"]
         self._ssh_remote_path = config["ssh_remote_path"]
         self._ssh_local_path = os.path.abspath(
@@ -57,6 +61,7 @@ class RemoteQueueAdapter(BasisQueueAdapter):
         else:
             self._ssh_continous_connection = False
         self._ssh_connection = None
+        self._ssh_proxy_connection = None
         self._remote_flag = True
 
     def convert_path_to_remote(self, path):
@@ -173,6 +178,8 @@ class RemoteQueueAdapter(BasisQueueAdapter):
     def __del__(self):
         if self._ssh_connection is not None:
             self._ssh_connection.close()
+        if self._ssh_proxy_connection is not None:
+            self._ssh_proxy_connection.close()
 
     def _check_ssh_connection(self):
         if self._ssh_connection is None:
@@ -251,7 +258,24 @@ class RemoteQueueAdapter(BasisQueueAdapter):
         else:
             raise ValueError("Un-supported authentication method.")
 
-        return ssh
+        if self._ssh_proxy_host is not None:
+            client_new = paramiko.SSHClient()
+            client_new.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+            vmtransport = ssh.get_transport()
+            vmchannel = vmtransport.open_channel(
+                kind="direct-tcpip",
+                dest_addr=(self._ssh_proxy_host, self._ssh_port),
+                src_addr=(self._ssh_host, self._ssh_port),
+            )
+            client_new.connect(
+                hostname=self._ssh_proxy_host,
+                username=self._ssh_username,
+                sock=vmchannel
+            )
+            self._ssh_proxy_connection = ssh
+            return client_new
+        else:
+            return ssh
 
     def _remote_command(self):
         return "python -m pysqa --config_directory " + self._ssh_remote_config_dir + " "
