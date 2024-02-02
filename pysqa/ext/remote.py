@@ -235,11 +235,18 @@ class RemoteQueueAdapter(BasisQueueAdapter):
                 username=self._ssh_username,
                 password=self._ssh_password,
             )
-        elif self._ssh_password is not None and self._ssh_authenticator_service is not None:
+        elif (
+            self._ssh_password is not None
+            and self._ssh_authenticator_service is not None
+        ):
+
             def authentication(title, instructions, prompt_list):
                 from pyauthenticator import get_two_factor_code
+
                 if len(prompt_list) > 0:
-                    return [get_two_factor_code(service=self._ssh_authenticator_service)]
+                    return [
+                        get_two_factor_code(service=self._ssh_authenticator_service)
+                    ]
                 else:
                     return []
 
@@ -251,9 +258,7 @@ class RemoteQueueAdapter(BasisQueueAdapter):
             )
 
             ssh._transport.auth_interactive(
-                username=self._ssh_username,
-                handler=authentication,
-                submethods=''
+                username=self._ssh_username, handler=authentication, submethods=""
             )
         else:
             raise ValueError("Un-supported authentication method.")
