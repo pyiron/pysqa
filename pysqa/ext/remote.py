@@ -23,7 +23,22 @@ class RemoteQueueAdapter(BasisQueueAdapter):
         self._ssh_known_hosts = os.path.abspath(
             os.path.expanduser(config["known_hosts"])
         )
-        self._ssh_key = os.path.abspath(os.path.expanduser(config["ssh_key"]))
+        if "ssh_key" in config.keys():
+            self._ssh_key = os.path.abspath(os.path.expanduser(config["ssh_key"]))
+        else:
+            self._ssh_key = None
+        if "ssh_password" in config.keys():
+            self._ssh_password = config["ssh_password"]
+        else:
+            self._ssh_password = None
+        if "ssh_key_passphrase" in config.keys():
+            self._ssh_key_passphrase = config["ssh_key_passphrase"]
+        else:
+            self._ssh_key_passphrase = None
+        if "ssh_authenticator_service" in config.keys():
+            self._ssh_authenticator_service = config["ssh_authenticator_service"]
+        else:
+            self._ssh_authenticator_service = None
         self._ssh_remote_config_dir = config["ssh_remote_config_dir"]
         self._ssh_remote_path = config["ssh_remote_path"]
         self._ssh_local_path = os.path.abspath(
@@ -191,12 +206,51 @@ class RemoteQueueAdapter(BasisQueueAdapter):
     def _open_ssh_connection(self):
         ssh = paramiko.SSHClient()
         ssh.load_host_keys(self._ssh_known_hosts)
-        ssh.connect(
-            hostname=self._ssh_host,
-            port=self._ssh_port,
-            username=self._ssh_username,
-            key_filename=self._ssh_key,
-        )
+        if self._ssh_key is not None and self._ssh_key_passphrase is not None:
+            ssh.connect(
+                hostname=self._ssh_host,
+                port=self._ssh_port,
+                username=self._ssh_username,
+                key_filename=self._ssh_key,
+                passphrase=self._ssh_key_passphrase,
+            )
+        elif self._ssh_key is not None:
+            ssh.connect(
+                hostname=self._ssh_host,
+                port=self._ssh_port,
+                username=self._ssh_username,
+                key_filename=self._ssh_key,
+            )
+        elif self._ssh_password is not None and self._ssh_authenticator_service is None:
+            ssh.connect(
+                hostname=self._ssh_host,
+                port=self._ssh_port,
+                username=self._ssh_username,
+                password=self._ssh_password,
+            )
+        elif self._ssh_password is not None and self._ssh_authenticator_service is not None:
+            def authentication(title, instructions, prompt_list):
+                from pyauthenticator import get_two_factor_code
+                if len(prompt_list) > 0:
+                    return [get_two_factor_code(service=self._ssh_authenticator_service)]
+                else:
+                    return []
+
+            ssh.connect(
+                hostname=self._ssh_host,
+                port=self._ssh_port,
+                username=self._ssh_username,
+                password=self._ssh_password,
+            )
+
+            ssh._transport.auth_interactive(
+                username=self._ssh_username,
+                handler=authentication,
+                submethods=''
+            )
+        else:
+            raise ValueError("Un-supported authentication method.")
+
         return ssh
 
     def _remote_command(self):
