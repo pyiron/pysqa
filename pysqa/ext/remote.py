@@ -275,7 +275,7 @@ class RemoteQueueAdapter(BasisQueueAdapter):
             client_new.connect(
                 hostname=self._ssh_proxy_host,
                 username=self._ssh_username,
-                sock=vmchannel
+                sock=vmchannel,
             )
             self._ssh_proxy_connection = ssh
             return client_new
