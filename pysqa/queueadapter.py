@@ -201,7 +201,9 @@ class QueueAdapter(object):
         """
         self._adapter.get_job_from_remote(working_directory=working_directory)
 
-    def transfer_file_to_remote(self, file, transfer_back=False, delete_file_on_remote=False):
+    def transfer_file_to_remote(
+        self, file, transfer_back=False, delete_file_on_remote=False
+    ):
         """
         Transfer file from remote host to local host
 
@@ -213,7 +215,7 @@ class QueueAdapter(object):
         self._adapter.transfer_file(
             file=file,
             transfer_back=transfer_back,
-            delete_file_on_remote=delete_file_on_remote
+            delete_file_on_remote=delete_file_on_remote,
         )
 
     def convert_path_to_remote(self, path):
