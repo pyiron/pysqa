@@ -9,3 +9,4 @@ dependencies:
 - tqdm =4.66.1
 - pympipool =0.7.0
 - cloudpickle =2.2.1
+- pyauthenticator =0.2.0
