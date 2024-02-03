@@ -161,7 +161,7 @@ class RemoteQueueAdapter(BasisQueueAdapter):
         if self._ssh_delete_file_on_remote:
             self._execute_remote_command(command="rm -r " + remote_working_directory)
 
-    def transfer_file(self, file, transfer_back=False):
+    def transfer_file(self, file, transfer_back=False, delete_file_on_remote=False):
         working_directory = os.path.abspath(os.path.expanduser(file))
         remote_working_directory = self._get_remote_working_dir(
             working_directory=working_directory
@@ -172,7 +172,7 @@ class RemoteQueueAdapter(BasisQueueAdapter):
             sftp=None,
             transfer_back=transfer_back,
         )
-        if self._ssh_delete_file_on_remote and transfer_back:
+        if self._ssh_delete_file_on_remote and transfer_back and delete_file_on_remote:
             self._execute_remote_command(command="rm " + remote_working_directory)
 
     def __del__(self):
