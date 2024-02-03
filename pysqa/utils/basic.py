@@ -295,7 +295,7 @@ class BasisQueueAdapter(object):
     def convert_path_to_remote(self, path):
         raise NotImplementedError
 
-    def transfer_file(self, file, transfer_back=False):
+    def transfer_file(self, file, transfer_back=False, delete_file_on_remote=False):
         raise NotImplementedError
 
     def check_queue_parameters(

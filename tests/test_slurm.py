@@ -230,7 +230,7 @@ echo \"hello\""""
             slurm_tmp._adapter.convert_path_to_remote(path="test")
 
         with self.assertRaises(NotImplementedError):
-            slurm_tmp._adapter.transfer_file(file="test", transfer_back=False)
+            slurm_tmp._adapter.transfer_file(file="test", transfer_back=False, delete_file_on_remote=False)
 
         with self.assertRaises(NotImplementedError):
             slurm_tmp._adapter.get_job_from_remote(working_directory=".")
