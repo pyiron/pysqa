@@ -46,6 +46,7 @@ executor = [
     "pympipool==0.7.9",
     "cloudpickle==3.0.0",
 ]
+twofactor = ["pyauthenticator==0.2.0"]
 
 [project.scripts]
 pysqa = "pysqa.cmd:command_line"
