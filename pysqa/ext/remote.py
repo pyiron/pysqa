@@ -281,8 +281,6 @@ class RemoteQueueAdapter(BasisQueueAdapter):
                 username=self._ssh_username,
                 password=self._ssh_password,
             )
-
-            print("Manual authenticaion")
             ssh._transport.auth_interactive_dumb(
                 username=self._ssh_username, handler=None, submethods=""
             )
