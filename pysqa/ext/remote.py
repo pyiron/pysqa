@@ -85,6 +85,7 @@ class RemoteQueueAdapter(BasisQueueAdapter):
         run_time_max=None,
         dependency_list=None,
         command=None,
+        **kwargs,
     ):
         if dependency_list is not None:
             raise NotImplementedError(
