@@ -36,7 +36,9 @@ class RemoteQueueAdapter(BasisQueueAdapter):
         else:
             self._ssh_key_passphrase = None
         if "ssh_two_factor_authentication" in config.keys():
-            self._ssh_two_factor_authentication = config["ssh_two_factor_authentication"]
+            self._ssh_two_factor_authentication = config[
+                "ssh_two_factor_authentication"
+            ]
         else:
             self._ssh_two_factor_authentication = False
         if "ssh_authenticator_service" in config.keys():
