@@ -35,8 +35,15 @@ class RemoteQueueAdapter(BasisQueueAdapter):
             self._ssh_key_passphrase = config["ssh_key_passphrase"]
         else:
             self._ssh_key_passphrase = None
+        if "ssh_two_factor_authentication" in config.keys():
+            self._ssh_two_factor_authentication = config[
+                "ssh_two_factor_authentication"
+            ]
+        else:
+            self._ssh_two_factor_authentication = False
         if "ssh_authenticator_service" in config.keys():
             self._ssh_authenticator_service = config["ssh_authenticator_service"]
+            self._ssh_two_factor_authentication = True
         else:
             self._ssh_authenticator_service = None
         if "ssh_proxy_host" in config.keys():
@@ -228,7 +235,11 @@ class RemoteQueueAdapter(BasisQueueAdapter):
                 username=self._ssh_username,
                 key_filename=self._ssh_key,
             )
-        elif self._ssh_password is not None and self._ssh_authenticator_service is None:
+        elif (
+            self._ssh_password is not None
+            and self._ssh_authenticator_service is None
+            and not self._ssh_two_factor_authentication
+        ):
             ssh.connect(
                 hostname=self._ssh_host,
                 port=self._ssh_port,
@@ -238,6 +249,7 @@ class RemoteQueueAdapter(BasisQueueAdapter):
         elif (
             self._ssh_password is not None
             and self._ssh_authenticator_service is not None
+            and self._ssh_two_factor_authentication
         ):
 
             def authentication(title, instructions, prompt_list):
@@ -259,6 +271,20 @@ class RemoteQueueAdapter(BasisQueueAdapter):
 
             ssh._transport.auth_interactive(
                 username=self._ssh_username, handler=authentication, submethods=""
+            )
+        elif (
+            self._ssh_password is not None
+            and self._ssh_authenticator_service is None
+            and self._ssh_two_factor_authentication
+        ):
+            ssh.connect(
+                hostname=self._ssh_host,
+                port=self._ssh_port,
+                username=self._ssh_username,
+                password=self._ssh_password,
+            )
+            ssh._transport.auth_interactive_dumb(
+                username=self._ssh_username, handler=None, submethods=""
             )
         else:
             raise ValueError("Un-supported authentication method.")
