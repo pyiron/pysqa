@@ -228,7 +228,11 @@ class RemoteQueueAdapter(BasisQueueAdapter):
     def _open_ssh_connection(self):
         ssh = paramiko.SSHClient()
         ssh.load_host_keys(self._ssh_known_hosts)
-        if self._ssh_key is not None and self._ssh_key_passphrase is not None and not self._ssh_ask_for_password:
+        if (
+            self._ssh_key is not None
+            and self._ssh_key_passphrase is not None
+            and not self._ssh_ask_for_password
+        ):
             ssh.connect(
                 hostname=self._ssh_host,
                 port=self._ssh_port,
@@ -260,7 +264,7 @@ class RemoteQueueAdapter(BasisQueueAdapter):
                 hostname=self._ssh_host,
                 port=self._ssh_port,
                 username=self._ssh_username,
-                password=getpass.getpass(prompt='SSH Password: ', stream=None),
+                password=getpass.getpass(prompt="SSH Password: ", stream=None),
             )
         elif (
             self._ssh_password is not None
@@ -307,7 +311,7 @@ class RemoteQueueAdapter(BasisQueueAdapter):
                 hostname=self._ssh_host,
                 port=self._ssh_port,
                 username=self._ssh_username,
-                password=getpass.getpass(prompt='SSH Password: ', stream=None),
+                password=getpass.getpass(prompt="SSH Password: ", stream=None),
             )
             ssh._transport.auth_interactive_dumb(
                 username=self._ssh_username, handler=None, submethods=""
