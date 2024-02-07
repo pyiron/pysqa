@@ -1,6 +1,7 @@
 # coding: utf-8
 # Copyright (c) Jan Janssen
 
+import getpass
 import json
 import os
 import warnings
@@ -25,12 +26,18 @@ class RemoteQueueAdapter(BasisQueueAdapter):
         )
         if "ssh_key" in config.keys():
             self._ssh_key = os.path.abspath(os.path.expanduser(config["ssh_key"]))
+            self._ssh_ask_for_password = False
         else:
             self._ssh_key = None
         if "ssh_password" in config.keys():
             self._ssh_password = config["ssh_password"]
+            self._ssh_ask_for_password = False
         else:
             self._ssh_password = None
+        if "ssh_ask_for_password" in config.keys():
+            self._ssh_ask_for_password = config["ssh_ask_for_password"]
+        else:
+            self._ssh_ask_for_password = False
         if "ssh_key_passphrase" in config.keys():
             self._ssh_key_passphrase = config["ssh_key_passphrase"]
         else:
@@ -221,7 +228,11 @@ class RemoteQueueAdapter(BasisQueueAdapter):
     def _open_ssh_connection(self):
         ssh = paramiko.SSHClient()
         ssh.load_host_keys(self._ssh_known_hosts)
-        if self._ssh_key is not None and self._ssh_key_passphrase is not None:
+        if (
+            self._ssh_key is not None
+            and self._ssh_key_passphrase is not None
+            and not self._ssh_ask_for_password
+        ):
             ssh.connect(
                 hostname=self._ssh_host,
                 port=self._ssh_port,
@@ -229,7 +240,7 @@ class RemoteQueueAdapter(BasisQueueAdapter):
                 key_filename=self._ssh_key,
                 passphrase=self._ssh_key_passphrase,
             )
-        elif self._ssh_key is not None:
+        elif self._ssh_key is not None and not self._ssh_ask_for_password:
             ssh.connect(
                 hostname=self._ssh_host,
                 port=self._ssh_port,
@@ -240,12 +251,20 @@ class RemoteQueueAdapter(BasisQueueAdapter):
             self._ssh_password is not None
             and self._ssh_authenticator_service is None
             and not self._ssh_two_factor_authentication
+            and not self._ssh_ask_for_password
         ):
             ssh.connect(
                 hostname=self._ssh_host,
                 port=self._ssh_port,
                 username=self._ssh_username,
                 password=self._ssh_password,
+            )
+        elif self._ssh_ask_for_password and not self._ssh_two_factor_authentication:
+            ssh.connect(
+                hostname=self._ssh_host,
+                port=self._ssh_port,
+                username=self._ssh_username,
+                password=getpass.getpass(prompt="SSH Password: ", stream=None),
             )
         elif (
             self._ssh_password is not None
@@ -283,6 +302,16 @@ class RemoteQueueAdapter(BasisQueueAdapter):
                 port=self._ssh_port,
                 username=self._ssh_username,
                 password=self._ssh_password,
+            )
+            ssh._transport.auth_interactive_dumb(
+                username=self._ssh_username, handler=None, submethods=""
+            )
+        elif self._ssh_ask_for_password and self._ssh_two_factor_authentication:
+            ssh.connect(
+                hostname=self._ssh_host,
+                port=self._ssh_port,
+                username=self._ssh_username,
+                password=getpass.getpass(prompt="SSH Password: ", stream=None),
             )
             ssh._transport.auth_interactive_dumb(
                 username=self._ssh_username, handler=None, submethods=""
