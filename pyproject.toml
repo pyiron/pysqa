@@ -40,7 +40,7 @@ Repository = "https://github.com/pyiron/pysqa"
 sge = ["defusedxml==0.7.1"]
 remote = [
     "paramiko==3.4.0",
-    "tqdm==4.66.1",
+    "tqdm==4.66.2",
 ]
 executor = [
     "pympipool==0.7.11",
