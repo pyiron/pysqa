@@ -43,7 +43,7 @@ remote = [
     "tqdm==4.66.1",
 ]
 executor = [
-    "pympipool==0.7.11",
+    "pympipool==0.7.13",
     "cloudpickle==3.0.0",
 ]
 twofactor = ["pyauthenticator==0.2.0"]
