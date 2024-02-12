@@ -40,10 +40,10 @@ Repository = "https://github.com/pyiron/pysqa"
 sge = ["defusedxml==0.7.1"]
 remote = [
     "paramiko==3.4.0",
-    "tqdm==4.66.1",
+    "tqdm==4.66.2",
 ]
 executor = [
-    "pympipool==0.7.11",
+    "pympipool==0.7.13",
     "cloudpickle==3.0.0",
 ]
 twofactor = ["pyauthenticator==0.2.0"]
