@@ -1,5 +1,0 @@
-# .coveragerc to control coverage.py
-[run]
-source = pysqa
-omit = pysqa/_version.py
-concurrency = multiprocessing
