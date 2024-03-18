@@ -2,6 +2,7 @@
 # Copyright (c) Jan Janssen
 
 import os
+import pandas
 from typing import Optional
 
 from pysqa.ext.modular import ModularQueueAdapter
