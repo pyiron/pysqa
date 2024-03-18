@@ -4,7 +4,7 @@
 
 import re
 
-import pandas as pd
+import pandas
 
 from pysqa.wrapper.generic import SchedulerCommands
 
@@ -78,7 +78,7 @@ class TorqueCommands(SchedulerCommands):
             regex_pattern_working_directory, input_string
         )
 
-        df = pd.DataFrame(
+        df = pandas.DataFrame(
             {
                 "jobid": job_id_lst,
                 "user": user_lst,
