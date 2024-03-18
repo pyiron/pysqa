@@ -4,6 +4,8 @@
 
 from abc import ABC, abstractmethod
 
+import pandas
+
 __author__ = "Niklas Siemer"
 __copyright__ = (
     "Copyright 2022, Max-Planck-Institut für Eisenforschung GmbH - "
