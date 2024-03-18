@@ -7,7 +7,7 @@ from pysqa.queueadapter import QueueAdapter
 from pysqa.utils.execute import execute_command
 
 
-def command_line(arguments_lst=None, execute_command=execute_command):
+def command_line(arguments_lst: list=None, execute_command: callable = execute_command):
     """
     Parse the command line arguments.
 

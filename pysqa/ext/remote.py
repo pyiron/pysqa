@@ -15,7 +15,7 @@ from pysqa.utils.execute import execute_command
 
 
 class RemoteQueueAdapter(BasisQueueAdapter):
-    def __init__(self, config, directory="~/.queues", execute_command=execute_command):
+    def __init__(self, config: dict, directory: str = "~/.queues", execute_command: callable = execute_command):
         super(RemoteQueueAdapter, self).__init__(
             config=config, directory=directory, execute_command=execute_command
         )
@@ -78,22 +78,37 @@ class RemoteQueueAdapter(BasisQueueAdapter):
         self._ssh_proxy_connection = None
         self._remote_flag = True
 
-    def convert_path_to_remote(self, path):
+    def convert_path_to_remote(self, path: str):
         working_directory = os.path.abspath(os.path.expanduser(path))
         return self._get_remote_working_dir(working_directory=working_directory)
 
     def submit_job(
         self,
-        queue=None,
-        job_name=None,
-        working_directory=None,
-        cores=None,
-        memory_max=None,
-        run_time_max=None,
-        dependency_list=None,
-        command=None,
+        queue: str = None,
+        job_name: str = None,
+        working_directory: str = None,
+        cores: int = None,
+        memory_max: int = None,
+        run_time_max: int = None,
+        dependency_list: list[str] = None,
+        command: str = None,
         **kwargs,
-    ):
+    ) -> int:
+        """
+
+        Args:
+            queue (str/None):
+            job_name (str/None):
+            working_directory (str/None):
+            cores (int/None):
+            memory_max (int/None):
+            run_time_max (int/None):
+            dependency_list (list/None):
+            command (str/None):
+
+        Returns:
+            int:
+        """
         if dependency_list is not None:
             raise NotImplementedError(
                 "Submitting jobs with dependencies to a remote cluster is not yet supported."
@@ -102,7 +117,7 @@ class RemoteQueueAdapter(BasisQueueAdapter):
         output = self._execute_remote_command(command=command)
         return int(output.split()[-1])
 
-    def enable_reservation(self, process_id):
+    def enable_reservation(self, process_id: int) -> str:
         """
 
         Args:
@@ -115,7 +130,7 @@ class RemoteQueueAdapter(BasisQueueAdapter):
             command=self._reservation_command(job_id=process_id)
         )
 
-    def delete_job(self, process_id):
+    def delete_job(self, process_id: int) -> str:
         """
 
         Args:
@@ -128,7 +143,7 @@ class RemoteQueueAdapter(BasisQueueAdapter):
             command=self._delete_command(job_id=process_id)
         )
 
-    def get_queue_status(self, user=None):
+    def get_queue_status(self, user: str = None) -> pandas.DataFrame:
         """
 
         Args:
@@ -147,7 +162,7 @@ class RemoteQueueAdapter(BasisQueueAdapter):
         else:
             return df[df["user"] == user]
 
-    def get_job_from_remote(self, working_directory):
+    def get_job_from_remote(self, working_directory: str):
         """
         Get the results of the calculation - this is necessary when the calculation was executed on a remote host.
         """
@@ -176,7 +191,7 @@ class RemoteQueueAdapter(BasisQueueAdapter):
         if self._ssh_delete_file_on_remote:
             self._execute_remote_command(command="rm -r " + remote_working_directory)
 
-    def transfer_file(self, file, transfer_back=False, delete_file_on_remote=False):
+    def transfer_file(self, file: str, transfer_back: bool = False, delete_file_on_remote: bool = False):
         working_directory = os.path.abspath(os.path.expanduser(file))
         remote_working_directory = self._get_remote_working_dir(
             working_directory=working_directory
@@ -200,7 +215,7 @@ class RemoteQueueAdapter(BasisQueueAdapter):
         if self._ssh_connection is None:
             self._ssh_connection = self._open_ssh_connection()
 
-    def _transfer_files(self, file_dict, sftp=None, transfer_back=False):
+    def _transfer_files(self, file_dict: dict, sftp=None, transfer_back: bool = False):
         if sftp is None:
             if self._ssh_continous_connection:
                 self._check_ssh_connection()
@@ -346,13 +361,13 @@ class RemoteQueueAdapter(BasisQueueAdapter):
 
     def _submit_command(
         self,
-        queue=None,
-        job_name=None,
-        working_directory=None,
-        cores=None,
-        memory_max=None,
-        run_time_max=None,
-        command_str=None,
+        queue: str = None,
+        job_name: str = None,
+        working_directory: str = None,
+        cores: int = None,
+        memory_max: int = None,
+        run_time_max: int = None,
+        command_str: str = None,
     ):
         command = self._remote_command() + "--submit "
         if queue is not None:
@@ -371,13 +386,13 @@ class RemoteQueueAdapter(BasisQueueAdapter):
             command += '--command "' + command_str + '" '
         return command
 
-    def _delete_command(self, job_id):
+    def _delete_command(self, job_id: int) -> str:
         return self._remote_command() + "--delete --id " + str(job_id)
 
-    def _reservation_command(self, job_id):
+    def _reservation_command(self, job_id: int) -> str:
         return self._remote_command() + "--reservation --id " + str(job_id)
 
-    def _execute_remote_command(self, command):
+    def _execute_remote_command(self, command: str):
         if self._ssh_continous_connection:
             self._check_ssh_connection()
             ssh = self._ssh_connection
@@ -390,13 +405,13 @@ class RemoteQueueAdapter(BasisQueueAdapter):
             ssh.close()
         return output
 
-    def _get_remote_working_dir(self, working_directory):
+    def _get_remote_working_dir(self, working_directory: str):
         return os.path.join(
             self._ssh_remote_path,
             os.path.relpath(working_directory, self._ssh_local_path),
         )
 
-    def _create_remote_dir(self, directory):
+    def _create_remote_dir(self, directory: str):
         if isinstance(directory, str):
             self._execute_remote_command(command="mkdir -p " + directory)
         elif isinstance(directory, list):
@@ -407,7 +422,7 @@ class RemoteQueueAdapter(BasisQueueAdapter):
         else:
             raise TypeError()
 
-    def _transfer_data_to_remote(self, working_directory):
+    def _transfer_data_to_remote(self, working_directory: str):
         working_directory = os.path.abspath(os.path.expanduser(working_directory))
         remote_working_directory = self._get_remote_working_dir(
             working_directory=working_directory
@@ -432,7 +447,7 @@ class RemoteQueueAdapter(BasisQueueAdapter):
         self._create_remote_dir(directory=new_dir_list)
         self._transfer_files(file_dict=file_dict, sftp=None, transfer_back=False)
 
-    def _get_user(self):
+    def _get_user(self) -> str:
         """
 
         Returns:
@@ -441,7 +456,7 @@ class RemoteQueueAdapter(BasisQueueAdapter):
         return self._ssh_username
 
     @staticmethod
-    def _get_file_transfer(file, local_dir, remote_dir):
+    def _get_file_transfer(file: str, local_dir: str, remote_dir: str) -> str:
         return os.path.abspath(
             os.path.join(remote_dir, os.path.relpath(file, local_dir))
         )

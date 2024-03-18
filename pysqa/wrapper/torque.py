@@ -22,19 +22,19 @@ __date__ = "Feb 9, 2019"
 
 class TorqueCommands(SchedulerCommands):
     @property
-    def submit_job_command(self):
+    def submit_job_command(self) -> list[str]:
         return ["qsub"]
 
     @property
-    def delete_job_command(self):
+    def delete_job_command(self) -> list[str]:
         return ["qdel"]
 
     @property
-    def get_queue_status_command(self):
+    def get_queue_status_command(self) -> list[str]:
         return ["qstat", "-f"]
 
     @staticmethod
-    def get_job_id_from_output(queue_submit_output):
+    def get_job_id_from_output(queue_submit_output: str) -> int:
         # strip last line from output, leading and trailing whitespaces,
         # and separates the queue id from the stuff after "."
         # Adjust if your system doesn't have output like below!
@@ -45,7 +45,7 @@ class TorqueCommands(SchedulerCommands):
         )
 
     @staticmethod
-    def convert_queue_status(queue_status_output):
+    def convert_queue_status(queue_status_output: str) -> pandas.DataFrame:
         # # Run the qstat -f command and capture its output
         # output = subprocess.check_output(["qstat", "-f"]) -> output is the
         # queue_status_output that goes into this function

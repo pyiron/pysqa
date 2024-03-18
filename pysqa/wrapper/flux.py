@@ -7,25 +7,25 @@ from pysqa.wrapper.generic import SchedulerCommands
 
 class FluxCommands(SchedulerCommands):
     @property
-    def submit_job_command(self):
+    def submit_job_command(self) -> list[str]:
         return ["flux", "batch"]
 
     @property
-    def delete_job_command(self):
+    def delete_job_command(self) -> list[str]:
         return ["flux", "cancel"]
 
     @property
-    def get_queue_status_command(self):
+    def get_queue_status_command(self) -> list[str]:
         return ["flux", "jobs", "-a", "--no-header"]
 
     @staticmethod
-    def get_job_id_from_output(queue_submit_output):
+    def get_job_id_from_output(queue_submit_output: str) -> int:
         return int(
             JobID(queue_submit_output.splitlines()[-1].rstrip().lstrip().split()[-1])
         )
 
     @staticmethod
-    def convert_queue_status(queue_status_output):
+    def convert_queue_status(queue_status_output: str) -> pandas.DataFrame:
         line_split_lst = [line.split() for line in queue_status_output.splitlines()]
         job_id_lst, user_lst, job_name_lst, status_lst = [], [], [], []
         for entry in line_split_lst:

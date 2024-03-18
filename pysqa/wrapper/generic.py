@@ -19,12 +19,12 @@ __date__ = "Aug 15, 2022"
 class SchedulerCommands(ABC):
     @property
     @abstractmethod
-    def submit_job_command(self):
+    def submit_job_command(self) -> list[str]:
         pass
 
     @property
     @abstractmethod
-    def delete_job_command(self):
+    def delete_job_command(self) -> list[str]:
         pass
 
     @property
@@ -33,20 +33,20 @@ class SchedulerCommands(ABC):
 
     @property
     @abstractmethod
-    def get_queue_status_command(self):
+    def get_queue_status_command(self) -> list[str]:
         pass
 
     @staticmethod
-    def dependencies(dependency_list) -> list:
+    def dependencies(dependency_list: list[str]) -> list:
         if dependency_list is not None:
             raise NotImplementedError()
         else:
             return []
 
     @staticmethod
-    def get_job_id_from_output(queue_submit_output):
+    def get_job_id_from_output(queue_submit_output: str) -> int:
         raise NotImplementedError()
 
     @staticmethod
-    def convert_queue_status(queue_status_output):
+    def convert_queue_status(queue_status_output: str) -> pandas.DataFrame:
         raise NotImplementedError()

@@ -8,7 +8,7 @@ from pysqa.utils.execute import execute_command
 
 
 class ModularQueueAdapter(BasisQueueAdapter):
-    def __init__(self, config, directory="~/.queues", execute_command=execute_command):
+    def __init__(self, config: dict, directory: str = "~/.queues", execute_command: callable = execute_command):
         super(ModularQueueAdapter, self).__init__(
             config=config, directory=directory, execute_command=execute_command
         )
@@ -26,16 +26,16 @@ class ModularQueueAdapter(BasisQueueAdapter):
 
     def submit_job(
         self,
-        queue=None,
-        job_name=None,
-        working_directory=None,
-        cores=None,
-        memory_max=None,
-        run_time_max=None,
-        dependency_list=None,
-        command=None,
+        queue: str = None,
+        job_name: str = None,
+        working_directory: str = None,
+        cores: int = None,
+        memory_max: str = None,
+        run_time_max: int = None,
+        dependency_list: list[str] = None,
+        command: str = None,
         **kwargs,
-    ):
+    ) -> int:
         """
 
         Args:
@@ -79,7 +79,7 @@ class ModularQueueAdapter(BasisQueueAdapter):
         else:
             return None
 
-    def enable_reservation(self, process_id):
+    def enable_reservation(self, process_id: int):
         """
 
         Args:
@@ -103,7 +103,7 @@ class ModularQueueAdapter(BasisQueueAdapter):
         else:
             return None
 
-    def delete_job(self, process_id):
+    def delete_job(self, process_id: int):
         """
 
         Args:
@@ -127,7 +127,7 @@ class ModularQueueAdapter(BasisQueueAdapter):
         else:
             return None
 
-    def get_queue_status(self, user=None):
+    def get_queue_status(self, user: str = None) -> pandas.DataFrame:
         """
 
         Args:
@@ -155,11 +155,11 @@ class ModularQueueAdapter(BasisQueueAdapter):
             return df[df["user"] == user]
 
     @staticmethod
-    def _resolve_queue_id(process_id, cluster_dict):
+    def _resolve_queue_id(process_id: int, cluster_dict: dict):
         cluster_queue_id = int(process_id / 10)
         cluster_module = cluster_dict[process_id - cluster_queue_id * 10]
         return cluster_module, cluster_queue_id
 
     @staticmethod
-    def _switch_cluster_command(cluster_module):
+    def _switch_cluster_command(cluster_module: str):
         return ["module", "--quiet", "swap", "cluster/{};".format(cluster_module)]

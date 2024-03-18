@@ -18,13 +18,13 @@ __date__ = "Feb 9, 2019"
 
 class MoabCommands(SchedulerCommands):
     @property
-    def submit_job_command(self):
+    def submit_job_command(self) -> list[str]:
         return ["msub"]
 
     @property
-    def delete_job_command(self):
+    def delete_job_command(self) -> list[str]:
         return ["mjobctl", "-c"]
 
     @property
-    def get_queue_status_command(self):
+    def get_queue_status_command(self) -> list[str]:
         return ["mdiag", "-x"]
