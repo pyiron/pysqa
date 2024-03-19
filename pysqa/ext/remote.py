@@ -5,6 +5,7 @@ import getpass
 import json
 import os
 import warnings
+from typing import Optional
 
 import pandas
 import paramiko
@@ -15,7 +16,12 @@ from pysqa.utils.execute import execute_command
 
 
 class RemoteQueueAdapter(BasisQueueAdapter):
-    def __init__(self, config: dict, directory: str = "~/.queues", execute_command: callable = execute_command):
+    def __init__(
+        self,
+        config: dict,
+        directory: str = "~/.queues",
+        execute_command: callable = execute_command,
+    ):
         super(RemoteQueueAdapter, self).__init__(
             config=config, directory=directory, execute_command=execute_command
         )
@@ -84,14 +90,14 @@ class RemoteQueueAdapter(BasisQueueAdapter):
 
     def submit_job(
         self,
-        queue: str = None,
-        job_name: str = None,
-        working_directory: str = None,
-        cores: int = None,
-        memory_max: int = None,
-        run_time_max: int = None,
-        dependency_list: list[str] = None,
-        command: str = None,
+        queue: Optional[str] = None,
+        job_name: Optional[str] = None,
+        working_directory: Optional[str] = None,
+        cores: Optional[int] = None,
+        memory_max: Optional[int] = None,
+        run_time_max: Optional[int] = None,
+        dependency_list: Optional[list[str]] = None,
+        command: Optional[str] = None,
         **kwargs,
     ) -> int:
         """
@@ -143,7 +149,7 @@ class RemoteQueueAdapter(BasisQueueAdapter):
             command=self._delete_command(job_id=process_id)
         )
 
-    def get_queue_status(self, user: str = None) -> pandas.DataFrame:
+    def get_queue_status(self, user: Optional[str] = None) -> pandas.DataFrame:
         """
 
         Args:
@@ -191,7 +197,12 @@ class RemoteQueueAdapter(BasisQueueAdapter):
         if self._ssh_delete_file_on_remote:
             self._execute_remote_command(command="rm -r " + remote_working_directory)
 
-    def transfer_file(self, file: str, transfer_back: bool = False, delete_file_on_remote: bool = False):
+    def transfer_file(
+        self,
+        file: str,
+        transfer_back: bool = False,
+        delete_file_on_remote: bool = False,
+    ):
         working_directory = os.path.abspath(os.path.expanduser(file))
         remote_working_directory = self._get_remote_working_dir(
             working_directory=working_directory
@@ -361,13 +372,13 @@ class RemoteQueueAdapter(BasisQueueAdapter):
 
     def _submit_command(
         self,
-        queue: str = None,
-        job_name: str = None,
-        working_directory: str = None,
-        cores: int = None,
-        memory_max: int = None,
-        run_time_max: int = None,
-        command_str: str = None,
+        queue: Optional[str] = None,
+        job_name: Optional[str] = None,
+        working_directory: Optional[str] = None,
+        cores: Optional[int] = None,
+        memory_max: Optional[int] = None,
+        run_time_max: Optional[int] = None,
+        command_str: Optional[str] = None,
     ):
         command = self._remote_command() + "--submit "
         if queue is not None:

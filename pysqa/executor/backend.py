@@ -1,4 +1,5 @@
 import os
+from typing import Optional
 import sys
 
 from pympipool.mpi import PyMPIExecutor
@@ -10,7 +11,9 @@ from pysqa.executor.helper import (
 )
 
 
-def execute_files_from_list(tasks_in_progress_dict: dict, cache_directory: str, executor):
+def execute_files_from_list(
+    tasks_in_progress_dict: dict, cache_directory: str, executor
+):
     file_lst = os.listdir(cache_directory)
     for file_name_in in file_lst:
         key = file_name_in.split(".in.pl")[0]
@@ -58,7 +61,7 @@ def execute_tasks(cores: int, cache_directory: str):
             )
 
 
-def command_line(arguments_lst: list=None):
+def command_line(arguments_lst: Optional[list] = None):
     if arguments_lst is None:
         arguments_lst = sys.argv[1:]
     cores_arg = arguments_lst[arguments_lst.index("--cores") + 1]

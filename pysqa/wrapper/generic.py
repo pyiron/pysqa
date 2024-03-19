@@ -28,7 +28,7 @@ class SchedulerCommands(ABC):
         pass
 
     @property
-    def enable_reservation_command(self):
+    def enable_reservation_command(self) -> list[str]:
         raise NotImplementedError()
 
     @property

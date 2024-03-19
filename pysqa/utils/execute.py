@@ -1,10 +1,11 @@
 import os
 import subprocess
+from typing import Optional
 
 
 def execute_command(
     commands: str,
-    working_directory: str = None,
+    working_directory: Optional[str] = None,
     split_output: bool = True,
     shell: bool = False,
     error_filename: str = "pysqa.err",

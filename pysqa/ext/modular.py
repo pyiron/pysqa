@@ -1,6 +1,6 @@
 # coding: utf-8
 # Copyright (c) Jan Janssen
-
+from typing import Optional
 import pandas
 
 from pysqa.utils.basic import BasisQueueAdapter
@@ -8,7 +8,12 @@ from pysqa.utils.execute import execute_command
 
 
 class ModularQueueAdapter(BasisQueueAdapter):
-    def __init__(self, config: dict, directory: str = "~/.queues", execute_command: callable = execute_command):
+    def __init__(
+        self,
+        config: dict,
+        directory: str = "~/.queues",
+        execute_command: callable = execute_command,
+    ):
         super(ModularQueueAdapter, self).__init__(
             config=config, directory=directory, execute_command=execute_command
         )
@@ -26,14 +31,14 @@ class ModularQueueAdapter(BasisQueueAdapter):
 
     def submit_job(
         self,
-        queue: str = None,
-        job_name: str = None,
-        working_directory: str = None,
-        cores: int = None,
-        memory_max: str = None,
-        run_time_max: int = None,
-        dependency_list: list[str] = None,
-        command: str = None,
+        queue: Optional[str] = None,
+        job_name: Optional[str] = None,
+        working_directory: Optional[str] = None,
+        cores: Optional[int] = None,
+        memory_max: Optional[str] = None,
+        run_time_max: Optional[int] = None,
+        dependency_list: Optional[list[str]] = None,
+        command: Optional[str] = None,
         **kwargs,
     ) -> int:
         """
@@ -127,7 +132,7 @@ class ModularQueueAdapter(BasisQueueAdapter):
         else:
             return None
 
-    def get_queue_status(self, user: str = None) -> pandas.DataFrame:
+    def get_queue_status(self, user: Optional[str] = None) -> pandas.DataFrame:
         """
 
         Args:

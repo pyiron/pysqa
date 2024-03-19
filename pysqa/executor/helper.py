@@ -7,7 +7,7 @@ import hashlib
 import cloudpickle
 
 
-def deserialize(funct_dict):
+def deserialize(funct_dict: dict) -> dict:
     try:
         return {k: cloudpickle.loads(v) for k, v in funct_dict.items()}
     except EOFError:
@@ -38,7 +38,9 @@ def read_from_file(file_name: str) -> dict:
         return {name: f.read()}
 
 
-def reload_previous_futures(future_queue: queue.Queue, future_dict: dict, cache_directory: str):
+def reload_previous_futures(
+    future_queue: queue.Queue, future_dict: dict, cache_directory: str
+):
     file_lst = os.listdir(cache_directory)
     for f in file_lst:
         if f.endswith(".in.pl"):

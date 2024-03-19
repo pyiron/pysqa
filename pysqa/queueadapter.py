@@ -2,6 +2,7 @@
 # Copyright (c) Jan Janssen
 
 import os
+from typing import Optional
 
 from pysqa.ext.modular import ModularQueueAdapter
 from pysqa.utils.basic import BasisQueueAdapter
@@ -45,7 +46,9 @@ class QueueAdapter(object):
             Queues available for auto completion QueueAdapter().queues.<queue name> returns the queue name.
     """
 
-    def __init__(self, directory: str = "~/.queues", execute_command: callable = execute_command):
+    def __init__(
+        self, directory: str = "~/.queues", execute_command: callable = execute_command
+    ):
         queue_yaml = os.path.join(directory, "queue.yaml")
         clusters_yaml = os.path.join(directory, "clusters.yaml")
         self._adapter = None
@@ -140,14 +143,14 @@ class QueueAdapter(object):
 
     def submit_job(
         self,
-        queue: str = None,
-        job_name: str = None,
-        working_directory: str = None,
-        cores: int = None,
-        memory_max: int = None,
-        run_time_max: int = None,
-        dependency_list: list[str] = None,
-        command: str = None,
+        queue: Optional[str] = None,
+        job_name: Optional[str] = None,
+        working_directory: Optional[str] = None,
+        cores: Optional[int] = None,
+        memory_max: Optional[int] = None,
+        run_time_max: Optional[int] = None,
+        dependency_list: Optional[list[str]] = None,
+        command: Optional[str] = None,
         **kwargs,
     ) -> int:
         """
@@ -202,7 +205,10 @@ class QueueAdapter(object):
         self._adapter.get_job_from_remote(working_directory=working_directory)
 
     def transfer_file_to_remote(
-        self, file: str, transfer_back: bool = False, delete_file_on_remote: bool = False
+        self,
+        file: str,
+        transfer_back: bool = False,
+        delete_file_on_remote: bool = False,
     ):
         """
         Transfer file from remote host to local host
@@ -240,7 +246,7 @@ class QueueAdapter(object):
         """
         return self._adapter.delete_job(process_id=process_id)
 
-    def get_queue_status(self, user: str=None) -> pandas.DataFrame:
+    def get_queue_status(self, user: Optional[str] = None) -> pandas.DataFrame:
         """
 
         Args:
@@ -282,7 +288,12 @@ class QueueAdapter(object):
         return self._adapter.get_status_of_jobs(process_id_lst=process_id_lst)
 
     def check_queue_parameters(
-        self, queue: str, cores: int = 1, run_time_max: int = None, memory_max: int = None, active_queue: dict = None
+        self,
+        queue: str,
+        cores: int = 1,
+        run_time_max: Optional[int] = None,
+        memory_max: Optional[int] = None,
+        active_queue: Optional[dict] = None,
     ):
         """
 
@@ -305,7 +316,9 @@ class QueueAdapter(object):
         )
 
 
-def set_queue_adapter(config: dict, directory: str, execute_command: callable=execute_command):
+def set_queue_adapter(
+    config: dict, directory: str, execute_command: callable = execute_command
+):
     """
     Initialize the queue adapter
 

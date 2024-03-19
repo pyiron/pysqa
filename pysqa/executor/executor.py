@@ -1,5 +1,6 @@
 import os
 import queue
+from typing import Optional
 from concurrent.futures import Future, Executor as FutureExecutor
 
 from pympipool.shared import cancel_items_in_queue, RaisingThread
@@ -12,7 +13,12 @@ from pysqa.executor.helper import (
 
 
 class Executor(FutureExecutor):
-    def __init__(self, cwd: str=None, queue_adapter=None, queue_adapter_kwargs: dict=None):
+    def __init__(
+        self,
+        cwd: Optional[str] = None,
+        queue_adapter=None,
+        queue_adapter_kwargs: Optional[dict] = None,
+    ):
         self._task_queue = queue.Queue()
         self._memory_dict = {}
         self._cache_directory = os.path.abspath(os.path.expanduser(cwd))
