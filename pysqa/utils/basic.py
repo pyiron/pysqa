@@ -5,6 +5,7 @@ import getpass
 import importlib
 import os
 import re
+from typing import Optional
 
 import pandas
 from jinja2 import Template
@@ -44,7 +45,12 @@ class BasisQueueAdapter(object):
             Queues available for auto completion QueueAdapter().queues.<queue name> returns the queue name.
     """
 
-    def __init__(self, config, directory="~/.queues", execute_command=execute_command):
+    def __init__(
+        self,
+        config: dict,
+        directory: str = "~/.queues",
+        execute_command: callable = execute_command,
+    ):
         self._config = config
         self._fill_queue_dict(queue_lst_dict=self._config["queues"])
         self._load_templates(queue_lst_dict=self._config["queues"], directory=directory)
@@ -89,11 +95,11 @@ class BasisQueueAdapter(object):
         self._execute_command_function = execute_command
 
     @property
-    def ssh_delete_file_on_remote(self):
+    def ssh_delete_file_on_remote(self) -> bool:
         return self._ssh_delete_file_on_remote
 
     @property
-    def remote_flag(self):
+    def remote_flag(self) -> bool:
         return self._remote_flag
 
     @property
@@ -106,7 +112,7 @@ class BasisQueueAdapter(object):
         return self._config
 
     @property
-    def queue_list(self):
+    def queue_list(self) -> list:
         """
 
         Returns:
@@ -115,7 +121,7 @@ class BasisQueueAdapter(object):
         return list(self._config["queues"].keys())
 
     @property
-    def queue_view(self):
+    def queue_view(self) -> pandas.DataFrame:
         """
 
         Returns:
@@ -131,16 +137,16 @@ class BasisQueueAdapter(object):
 
     def submit_job(
         self,
-        queue=None,
-        job_name=None,
-        working_directory=None,
-        cores=None,
-        memory_max=None,
-        run_time_max=None,
-        dependency_list=None,
-        command=None,
+        queue: Optional[str] = None,
+        job_name: Optional[str] = None,
+        working_directory: Optional[str] = None,
+        cores: Optional[int] = None,
+        memory_max: Optional[int] = None,
+        run_time_max: Optional[int] = None,
+        dependency_list: Optional[list[str]] = None,
+        command: Optional[str] = None,
         **kwargs,
-    ):
+    ) -> int:
         """
 
         Args:
@@ -182,14 +188,16 @@ class BasisQueueAdapter(object):
         else:
             return None
 
-    def _list_command_to_be_executed(self, dependency_list, queue_script_path) -> list:
+    def _list_command_to_be_executed(
+        self, dependency_list: list[str], queue_script_path: str
+    ) -> list:
         return (
             self._commands.submit_job_command
             + self._commands.dependencies(dependency_list)
             + [queue_script_path]
         )
 
-    def enable_reservation(self, process_id):
+    def enable_reservation(self, process_id: int):
         """
 
         Args:
@@ -207,7 +215,7 @@ class BasisQueueAdapter(object):
         else:
             return None
 
-    def delete_job(self, process_id):
+    def delete_job(self, process_id: int) -> str:
         """
 
         Args:
@@ -225,7 +233,7 @@ class BasisQueueAdapter(object):
         else:
             return None
 
-    def get_queue_status(self, user=None):
+    def get_queue_status(self, user: Optional[str] = None) -> pandas.DataFrame:
         """
 
         Args:
@@ -243,7 +251,7 @@ class BasisQueueAdapter(object):
         else:
             return df[df["user"] == user]
 
-    def get_status_of_my_jobs(self):
+    def get_status_of_my_jobs(self) -> pandas.DataFrame:
         """
 
         Returns:
@@ -251,7 +259,7 @@ class BasisQueueAdapter(object):
         """
         return self.get_queue_status(user=self._get_user())
 
-    def get_status_of_job(self, process_id):
+    def get_status_of_job(self, process_id: int) -> str:
         """
 
         Args:
@@ -267,14 +275,14 @@ class BasisQueueAdapter(object):
         else:
             return None
 
-    def get_status_of_jobs(self, process_id_lst):
+    def get_status_of_jobs(self, process_id_lst: list[int]) -> list[str]:
         """
 
         Args:
-            process_id_lst:
+            process_id_lst list[int]:
 
         Returns:
-             list: ['running', 'pending', 'error', ...]
+             list[str]: ['running', 'pending', 'error', ...]
         """
         df = self.get_queue_status()
         results_lst = []
@@ -286,21 +294,31 @@ class BasisQueueAdapter(object):
                 results_lst.append("finished")
         return results_lst
 
-    def get_job_from_remote(self, working_directory):
+    def get_job_from_remote(self, working_directory: str):
         """
         Get the results of the calculation - this is necessary when the calculation was executed on a remote host.
         """
         raise NotImplementedError
 
-    def convert_path_to_remote(self, path):
+    def convert_path_to_remote(self, path: str):
         raise NotImplementedError
 
-    def transfer_file(self, file, transfer_back=False, delete_file_on_remote=False):
+    def transfer_file(
+        self,
+        file: str,
+        transfer_back: bool = False,
+        delete_file_on_remote: bool = False,
+    ):
         raise NotImplementedError
 
     def check_queue_parameters(
-        self, queue, cores=1, run_time_max=None, memory_max=None, active_queue=None
-    ):
+        self,
+        queue: str,
+        cores: int = 1,
+        run_time_max: Optional[int] = None,
+        memory_max: Optional[int] = None,
+        active_queue: Optional[dict] = None,
+    ) -> list:
         """
 
         Args:
@@ -330,13 +348,13 @@ class BasisQueueAdapter(object):
 
     def _write_queue_script(
         self,
-        queue=None,
-        job_name=None,
-        working_directory=None,
-        cores=None,
-        memory_max=None,
-        run_time_max=None,
-        command=None,
+        queue: Optional[str] = None,
+        job_name: Optional[str] = None,
+        working_directory: Optional[str] = None,
+        cores: Optional[int] = None,
+        memory_max: Optional[int] = None,
+        run_time_max: Optional[int] = None,
+        command: Optional[str] = None,
         **kwargs,
     ):
         """
@@ -374,15 +392,15 @@ class BasisQueueAdapter(object):
 
     def _job_submission_template(
         self,
-        queue=None,
-        job_name="job.py",
-        working_directory=".",
-        cores=None,
-        memory_max=None,
-        run_time_max=None,
-        command=None,
+        queue: Optional[str] = None,
+        job_name: str = "job.py",
+        working_directory: str = ".",
+        cores: Optional[int] = None,
+        memory_max: Optional[int] = None,
+        run_time_max: Optional[int] = None,
+        command: Optional[str] = None,
         **kwargs,
-    ):
+    ) -> str:
         """
 
         Args:
@@ -428,12 +446,12 @@ class BasisQueueAdapter(object):
 
     def _execute_command(
         self,
-        commands,
-        working_directory=None,
-        split_output=True,
-        shell=False,
-        error_filename="pysqa.err",
-    ):
+        commands: str,
+        working_directory: Optional[str] = None,
+        split_output: bool = True,
+        shell: bool = False,
+        error_filename: str = "pysqa.err",
+    ) -> str:
         """
 
         Args:
@@ -455,7 +473,7 @@ class BasisQueueAdapter(object):
         )
 
     @staticmethod
-    def _get_user():
+    def _get_user() -> str:
         """
 
         Returns:
@@ -464,7 +482,7 @@ class BasisQueueAdapter(object):
         return getpass.getuser()
 
     @staticmethod
-    def _fill_queue_dict(queue_lst_dict):
+    def _fill_queue_dict(queue_lst_dict: dict):
         """
 
         Args:
@@ -476,7 +494,7 @@ class BasisQueueAdapter(object):
                 queue_dict[key] = None
 
     @staticmethod
-    def _load_templates(queue_lst_dict, directory="."):
+    def _load_templates(queue_lst_dict: dict, directory: str = "."):
         """
 
         Args:
@@ -498,7 +516,7 @@ class BasisQueueAdapter(object):
                         )
 
     @staticmethod
-    def _value_error_if_none(value):
+    def _value_error_if_none(value: str):
         """
 
         Args:
@@ -548,7 +566,7 @@ class BasisQueueAdapter(object):
             return value
 
     @staticmethod
-    def _is_memory_string(value):
+    def _is_memory_string(value: str) -> bool:
         """
         Tests a string if it specifies a certain amount of memory e.g.: '20G', '60b'. Also pure integer strings are
         also valid.
@@ -564,7 +582,7 @@ class BasisQueueAdapter(object):
 
     @classmethod
     def _memory_spec_string_to_value(
-        cls, value, default_magnitude="m", target_magnitude="b"
+        cls, value: str, default_magnitude: str = "m", target_magnitude: str = "b"
     ):
         """
         Converts a valid memory string (tested by _is_memory_string) into an integer/float value of desired

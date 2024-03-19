@@ -1,5 +1,6 @@
 import os
 import queue
+from typing import Optional
 from concurrent.futures import Future, Executor as FutureExecutor
 
 from pympipool.shared import cancel_items_in_queue, RaisingThread
@@ -12,7 +13,12 @@ from pysqa.executor.helper import (
 
 
 class Executor(FutureExecutor):
-    def __init__(self, cwd=None, queue_adapter=None, queue_adapter_kwargs=None):
+    def __init__(
+        self,
+        cwd: Optional[str] = None,
+        queue_adapter=None,
+        queue_adapter_kwargs: Optional[dict] = None,
+    ):
         self._task_queue = queue.Queue()
         self._memory_dict = {}
         self._cache_directory = os.path.abspath(os.path.expanduser(cwd))
@@ -42,7 +48,7 @@ class Executor(FutureExecutor):
         )
         self._process.start()
 
-    def submit(self, fn, *args, **kwargs):
+    def submit(self, fn: callable, *args, **kwargs):
         funct_dict = serialize_funct(fn, *args, **kwargs)
         key = list(funct_dict.keys())[0]
         if key not in self._memory_dict.keys():
@@ -53,7 +59,7 @@ class Executor(FutureExecutor):
             self._task_queue.put({key: self._memory_dict[key]})
         return self._memory_dict[key]
 
-    def shutdown(self, wait=True, *, cancel_futures=False):
+    def shutdown(self, wait: bool = True, *, cancel_futures: bool = False):
         if cancel_futures:
             cancel_items_in_queue(que=self._task_queue)
         self._task_queue.put({"shutdown": True, "wait": wait})

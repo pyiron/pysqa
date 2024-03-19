@@ -20,23 +20,23 @@ __date__ = "Feb 9, 2019"
 
 class LsfCommands(SchedulerCommands):
     @property
-    def submit_job_command(self):
+    def submit_job_command(self) -> list[str]:
         return ["bsub"]
 
     @property
-    def delete_job_command(self):
+    def delete_job_command(self) -> list[str]:
         return ["bkill"]
 
     @property
-    def get_queue_status_command(self):
+    def get_queue_status_command(self) -> list[str]:
         return ["bjobs"]
 
     @staticmethod
-    def get_job_id_from_output(queue_submit_output):
+    def get_job_id_from_output(queue_submit_output: str) -> int:
         return int(queue_submit_output.split("<")[1].split(">")[0])
 
     @staticmethod
-    def convert_queue_status(queue_status_output):
+    def convert_queue_status(queue_status_output: str) -> pandas.DataFrame:
         job_id_lst, user_lst, status_lst, job_name_lst = [], [], [], []
         line_split_lst = queue_status_output.split("\n")
         if len(line_split_lst) > 1:

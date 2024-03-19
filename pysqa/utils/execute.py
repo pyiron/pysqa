@@ -1,14 +1,15 @@
 import os
 import subprocess
+from typing import Optional
 
 
 def execute_command(
-    commands,
-    working_directory=None,
-    split_output=True,
-    shell=False,
-    error_filename="pysqa.err",
-):
+    commands: str,
+    working_directory: Optional[str] = None,
+    split_output: bool = True,
+    shell: bool = False,
+    error_filename: str = "pysqa.err",
+) -> str:
     """
     A wrapper around the subprocess.check_output function.
 

@@ -2,6 +2,8 @@
 # Copyright (c) Jan Janssen
 
 import os
+import pandas
+from typing import Optional
 
 from pysqa.ext.modular import ModularQueueAdapter
 from pysqa.utils.basic import BasisQueueAdapter
@@ -45,7 +47,9 @@ class QueueAdapter(object):
             Queues available for auto completion QueueAdapter().queues.<queue name> returns the queue name.
     """
 
-    def __init__(self, directory="~/.queues", execute_command=execute_command):
+    def __init__(
+        self, directory: str = "~/.queues", execute_command: callable = execute_command
+    ):
         queue_yaml = os.path.join(directory, "queue.yaml")
         clusters_yaml = os.path.join(directory, "clusters.yaml")
         self._adapter = None
@@ -76,7 +80,7 @@ class QueueAdapter(object):
             )
         self._adapter = self._queue_dict[primary_queue]
 
-    def list_clusters(self):
+    def list_clusters(self) -> list[str]:
         """
         List available computing clusters for remote submission
 
@@ -85,7 +89,7 @@ class QueueAdapter(object):
         """
         return list(self._queue_dict.keys())
 
-    def switch_cluster(self, cluster_name):
+    def switch_cluster(self, cluster_name: str):
         """
         Switch to a different computing cluster
 
@@ -104,11 +108,11 @@ class QueueAdapter(object):
         return self._adapter.config
 
     @property
-    def ssh_delete_file_on_remote(self):
+    def ssh_delete_file_on_remote(self) -> bool:
         return self._adapter.ssh_delete_file_on_remote
 
     @property
-    def remote_flag(self):
+    def remote_flag(self) -> bool:
         """
 
         Returns:
@@ -117,7 +121,7 @@ class QueueAdapter(object):
         return self._adapter.remote_flag
 
     @property
-    def queue_list(self):
+    def queue_list(self) -> list[str]:
         """
 
         Returns:
@@ -126,7 +130,7 @@ class QueueAdapter(object):
         return self._adapter.queue_list
 
     @property
-    def queue_view(self):
+    def queue_view(self) -> pandas.DataFrame:
         """
 
         Returns:
@@ -135,21 +139,21 @@ class QueueAdapter(object):
         return self._adapter.queue_view
 
     @property
-    def queues(self):
+    def queues(self) -> list[str]:
         return self._adapter.queues
 
     def submit_job(
         self,
-        queue=None,
-        job_name=None,
-        working_directory=None,
-        cores=None,
-        memory_max=None,
-        run_time_max=None,
-        dependency_list=None,
-        command=None,
+        queue: Optional[str] = None,
+        job_name: Optional[str] = None,
+        working_directory: Optional[str] = None,
+        cores: Optional[int] = None,
+        memory_max: Optional[int] = None,
+        run_time_max: Optional[int] = None,
+        dependency_list: Optional[list[str]] = None,
+        command: Optional[str] = None,
         **kwargs,
-    ):
+    ) -> int:
         """
         Submits command to the given queue.
 
@@ -181,7 +185,7 @@ class QueueAdapter(object):
             **kwargs,
         )
 
-    def enable_reservation(self, process_id):
+    def enable_reservation(self, process_id: int) -> str:
         """
 
         Args:
@@ -192,7 +196,7 @@ class QueueAdapter(object):
         """
         return self._adapter.enable_reservation(process_id=process_id)
 
-    def get_job_from_remote(self, working_directory):
+    def get_job_from_remote(self, working_directory: str):
         """
         Get the results of the calculation - this is necessary when the calculation was executed on a remote host.
 
@@ -202,7 +206,10 @@ class QueueAdapter(object):
         self._adapter.get_job_from_remote(working_directory=working_directory)
 
     def transfer_file_to_remote(
-        self, file, transfer_back=False, delete_file_on_remote=False
+        self,
+        file: str,
+        transfer_back: bool = False,
+        delete_file_on_remote: bool = False,
     ):
         """
         Transfer file from remote host to local host
@@ -218,7 +225,7 @@ class QueueAdapter(object):
             delete_file_on_remote=delete_file_on_remote,
         )
 
-    def convert_path_to_remote(self, path):
+    def convert_path_to_remote(self, path: str) -> str:
         """
 
         Args:
@@ -229,7 +236,7 @@ class QueueAdapter(object):
         """
         return self._adapter.convert_path_to_remote(path=path)
 
-    def delete_job(self, process_id):
+    def delete_job(self, process_id: int) -> str:
         """
 
         Args:
@@ -240,7 +247,7 @@ class QueueAdapter(object):
         """
         return self._adapter.delete_job(process_id=process_id)
 
-    def get_queue_status(self, user=None):
+    def get_queue_status(self, user: Optional[str] = None) -> pandas.DataFrame:
         """
 
         Args:
@@ -251,7 +258,7 @@ class QueueAdapter(object):
         """
         return self._adapter.get_queue_status(user=user)
 
-    def get_status_of_my_jobs(self):
+    def get_status_of_my_jobs(self) -> pandas.DataFrame:
         """
 
         Returns:
@@ -259,7 +266,7 @@ class QueueAdapter(object):
         """
         return self._adapter.get_status_of_my_jobs()
 
-    def get_status_of_job(self, process_id):
+    def get_status_of_job(self, process_id: int) -> str:
         """
 
         Args:
@@ -270,7 +277,7 @@ class QueueAdapter(object):
         """
         return self._adapter.get_status_of_job(process_id=process_id)
 
-    def get_status_of_jobs(self, process_id_lst):
+    def get_status_of_jobs(self, process_id_lst: list[int]) -> list[str]:
         """
 
         Args:
@@ -282,7 +289,12 @@ class QueueAdapter(object):
         return self._adapter.get_status_of_jobs(process_id_lst=process_id_lst)
 
     def check_queue_parameters(
-        self, queue, cores=1, run_time_max=None, memory_max=None, active_queue=None
+        self,
+        queue: str,
+        cores: int = 1,
+        run_time_max: Optional[int] = None,
+        memory_max: Optional[int] = None,
+        active_queue: Optional[dict] = None,
     ):
         """
 
@@ -305,7 +317,9 @@ class QueueAdapter(object):
         )
 
 
-def set_queue_adapter(config, directory, execute_command=execute_command):
+def set_queue_adapter(
+    config: dict, directory: str, execute_command: callable = execute_command
+):
     """
     Initialize the queue adapter
 

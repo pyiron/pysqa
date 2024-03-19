@@ -20,15 +20,15 @@ __date__ = "Feb 9, 2019"
 
 class GentCommands(SlurmCommands):
     @staticmethod
-    def get_job_id_from_output(queue_submit_output):
+    def get_job_id_from_output(queue_submit_output: str) -> int:
         return int(queue_submit_output.splitlines()[-1].rstrip().lstrip().split(";")[0])
 
     @staticmethod
-    def get_queue_from_output(queue_submit_output):
+    def get_queue_from_output(queue_submit_output: str) -> str:
         return str(queue_submit_output.splitlines()[-1].rstrip().lstrip().split(";")[1])
 
     @staticmethod
-    def convert_queue_status(queue_status_output):
+    def convert_queue_status(queue_status_output: str) -> pandas.DataFrame:
         qstat = queue_status_output.splitlines()
         queue = qstat[0].split(":")[1].strip()
         if len(qstat) <= 1:  # first row contains cluster name, check if there are jobs
@@ -52,7 +52,7 @@ class GentCommands(SlurmCommands):
         )
 
     @staticmethod
-    def dependencies(dependency_list) -> list:
+    def dependencies(dependency_list: list[str]) -> list:
         if dependency_list is not None:
             raise NotImplementedError()
         else:

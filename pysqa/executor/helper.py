@@ -7,14 +7,14 @@ import hashlib
 import cloudpickle
 
 
-def deserialize(funct_dict):
+def deserialize(funct_dict: dict) -> dict:
     try:
         return {k: cloudpickle.loads(v) for k, v in funct_dict.items()}
     except EOFError:
         return {}
 
 
-def find_executed_tasks(future_queue, cache_directory):
+def find_executed_tasks(future_queue: queue.Queue, cache_directory: str):
     task_memory_dict = {}
     while True:
         task_dict = {}
@@ -32,13 +32,15 @@ def find_executed_tasks(future_queue, cache_directory):
             )
 
 
-def read_from_file(file_name):
+def read_from_file(file_name: str) -> dict:
     name = file_name.split("/")[-1].split(".")[0]
     with open(file_name, "rb") as f:
         return {name: f.read()}
 
 
-def reload_previous_futures(future_queue, future_dict, cache_directory):
+def reload_previous_futures(
+    future_queue: queue.Queue, future_dict: dict, cache_directory: str
+):
     file_lst = os.listdir(cache_directory)
     for f in file_lst:
         if f.endswith(".in.pl"):
@@ -54,16 +56,16 @@ def reload_previous_futures(future_queue, future_dict, cache_directory):
                 future_queue.put({key: future_dict[key]})
 
 
-def serialize_result(result_dict):
+def serialize_result(result_dict: dict):
     return {k: cloudpickle.dumps(v) for k, v in result_dict.items()}
 
 
-def serialize_funct(fn, *args, **kwargs):
+def serialize_funct(fn: callable, *args, **kwargs):
     binary = cloudpickle.dumps({"fn": fn, "args": args, "kwargs": kwargs})
     return {fn.__name__ + _get_hash(binary=binary): binary}
 
 
-def write_to_file(funct_dict, state, cache_directory):
+def write_to_file(funct_dict: dict, state, cache_directory: str):
     file_name_lst = []
     for k, v in funct_dict.items():
         file_name = _get_file_name(name=k, state=state)

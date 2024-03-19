@@ -1,7 +1,7 @@
 import yaml
 
 
-def read_config(file_name="queue.yaml"):
+def read_config(file_name: str = "queue.yaml") -> dict:
     """
 
     Args:

@@ -21,23 +21,23 @@ __date__ = "Feb 9, 2019"
 
 class SunGridEngineCommands(SchedulerCommands):
     @property
-    def submit_job_command(self):
+    def submit_job_command(self) -> list[str]:
         return ["qsub", "-terse"]
 
     @property
-    def delete_job_command(self):
+    def delete_job_command(self) -> list[str]:
         return ["qdel"]
 
     @property
-    def enable_reservation_command(self):
+    def enable_reservation_command(self) -> list[str]:
         return ["qalter", "-R", "y"]
 
     @property
-    def get_queue_status_command(self):
+    def get_queue_status_command(self) -> list[str]:
         return ["qstat", "-xml"]
 
     @staticmethod
-    def convert_queue_status(queue_status_output):
+    def convert_queue_status(queue_status_output: str) -> pandas.DataFrame:
         def leaf_to_dict(leaf):
             return [
                 {sub_child.tag: sub_child.text for sub_child in child} for child in leaf
