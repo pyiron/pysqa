@@ -7,5 +7,5 @@ dependencies:
 - jinja2 =2.11.3
 - paramiko =2.7.1
 - tqdm =4.66.1
-- pympipool =0.7.0
+- pympipool =0.8.0
 - cloudpickle =2.2.1

@@ -2,7 +2,7 @@ import os
 from typing import Optional
 import sys
 
-from pympipool.mpi import PyMPIExecutor
+from pympipool import Executor
 from pysqa.executor.helper import (
     read_from_file,
     deserialize,
@@ -42,16 +42,15 @@ def execute_files_from_list(
 
 def execute_tasks(cores: int, cache_directory: str):
     tasks_in_progress_dict = {}
-    with PyMPIExecutor(
-        max_workers=cores,
+    with Executor(
+        max_cores=cores,
         cores_per_worker=1,
         threads_per_core=1,
         gpus_per_worker=0,
         oversubscribe=False,
         init_function=None,
         cwd=cache_directory,
-        sleep_interval=0.1,
-        enable_slurm_backend=False,
+        backend="mpi",
     ) as exe:
         while True:
             execute_files_from_list(
