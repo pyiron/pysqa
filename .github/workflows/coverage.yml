@@ -32,13 +32,18 @@ jobs:
           activate-environment: my-env
           environment-file: environment.yml
           use-mamba: true
+      - name: Install
+        shell: bash -l {0}
+        run: |
+          pip install versioneer[toml]==0.29
+          pip install . --no-deps --no-build-isolation
       - name: Test
         shell: bash -l {0}
         run: >
-          pip install versioneer[toml]==0.29
-          pip install . --no-deps --no-build-isolation
           flux start
           coverage run  --omit="pysqa/_version.py,tests/*" -m unittest discover tests
-          coverage xml
+      - name: Collect Coverage
+        shell: bash -l {0}
+        run: coverage xml
       - name: Coveralls
         uses: coverallsapp/github-action@v2
