@@ -34,7 +34,7 @@ jobs:
           use-mamba: true
       - name: Test
         shell: bash -l {0}
-        run: |
+        run: >
           pip install versioneer[toml]==0.29
           pip install . --no-deps --no-build-isolation
           flux start
