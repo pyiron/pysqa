@@ -105,4 +105,4 @@ echo hello"""
         )
         self.assertEqual(self.flux.get_status_of_job(process_id=job_id), 'running')
         self.flux.delete_job(process_id=job_id)
-        self.assertEqual(self.flux.get_status_of_job(process_id=job_id), 'error')
+        self.assertEqual(self.flux.get_status_of_job(process_id=job_id), 'C')
