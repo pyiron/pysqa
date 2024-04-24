@@ -2,11 +2,11 @@
 # Copyright (c) Jan Janssen
 
 import os
-from time import sleep
 import unittest
 
 import pandas
 from pysqa import QueueAdapter
+from pysqa.executor.executor import Executor
 
 
 try:
@@ -16,11 +16,17 @@ except ImportError:
     skip_flux_test = True
 
 
+def funct_add(a, b):
+    return a+b
+
+
 @unittest.skipIf(skip_flux_test, "Flux is not installed, so the flux tests are skipped.")
 class TestFluxQueueAdapter(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.path = os.path.dirname(os.path.abspath(__file__))
+        cls.test_dir = os.path.join(os.path.abspath(os.path.dirname(__file__)), "cache")
+        os.makedirs(cls.test_dir, exist_ok=True)
         cls.flux = QueueAdapter(directory=os.path.join(cls.path, "config/flux"))
 
     def test_config(self):
@@ -106,3 +112,18 @@ echo hello"""
         self.assertEqual(self.flux.get_status_of_job(process_id=job_id), 'running')
         self.flux.delete_job(process_id=job_id)
         self.assertEqual(self.flux.get_status_of_job(process_id=job_id), 'error')
+
+    def test_executor_integration(self):
+        with Executor(
+            cwd=self.test_dir,
+            queue_adapter=self.flux,
+            queue_adapter_kwargs={
+                "queue": "flux",
+                "job_name": "test",
+                "cores": 1,
+            }
+        ) as exe:
+            fs = exe.submit(fn=funct_add, a=1, b=2)
+            self.assertFalse(fs.done())
+            self.assertEqual(fs.result(), 3)
+            self.assertTrue(fs.done())
