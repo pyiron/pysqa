@@ -2,7 +2,9 @@
 # Copyright (c) Jan Janssen
 
 import os
+from time import sleep
 import unittest
+
 import pandas
 from pysqa import QueueAdapter
 
@@ -92,3 +94,15 @@ class TestFluxQueueAdapter(unittest.TestCase):
 echo hello"""
         self.assertEqual(content, output)
         os.remove("run_queue.sh")
+
+    def test_flux_integration(self):
+        job_id = self.flux.submit_job(
+            queue="flux",
+            job_name="test",
+            working_directory=".",
+            cores=1,
+            command="sleep 1"
+        )
+        self.assertEqual(self.flux.get_status_of_job(process_id=job_id), 'running')
+        self.flux.delete_job(process_id=job_id)
+        self.assertEqual(self.flux.get_status_of_job(process_id=job_id), 'error')

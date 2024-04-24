@@ -21,7 +21,7 @@ jobs:
       - name: Setup environment
         run: |
           cp .ci_support/environment.yml environment.yml
-          echo "- flux-core" >> environment.yml
+          echo "- flux-core =0.59.0" >> environment.yml
       - name: Setup Mambaforge
         uses: conda-incubator/setup-miniconda@v2
         with:
@@ -37,6 +37,7 @@ jobs:
         run: |
           pip install versioneer[toml]==0.29
           pip install . --no-deps --no-build-isolation
+          flux start
           coverage run  --omit="pysqa/_version.py,tests/*" -m unittest discover tests
           coverage xml
       - name: Coveralls
