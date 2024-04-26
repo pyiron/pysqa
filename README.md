@@ -3,6 +3,7 @@
 [![Python package](https://github.com/pyiron/pysqa/workflows/Python%20package/badge.svg)](https://github.com/pyiron/pysqa/actions)
 [![Documentation Status](https://readthedocs.org/projects/pysqa/badge/?version=latest)](https://pysqa.readthedocs.io/en/latest/?badge=latest)
 [![Coverage Status](https://coveralls.io/repos/github/pyiron/pysqa/badge.svg?branch=main)](https://coveralls.io/github/pyiron/pysqa?branch=main)
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/pyiron/pysqa/HEAD?labpath=notebooks%2Fexample.ipynb)
 
 High-performance computing (HPC) does not have to be hard. In this context the aim of `pysqa` is to simplify the submission of calculation to an HPC cluster as easy as starting another subprocess locally. This is achieved based on the assumption that even though modern HPC queuing systems offer a wide range of different configuration options, most users submit the majority of their jobs with very similar parameters. 
 
