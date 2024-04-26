@@ -162,7 +162,7 @@ class BasisQueueAdapter(object):
         Returns:
             int:
         """
-        if " " in working_directory:
+        if working_directory is not None and " " in working_directory:
             raise ValueError(
                 "Whitespaces in the working_directory name are not supported!"
             )
