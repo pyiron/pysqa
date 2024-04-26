@@ -11,3 +11,4 @@ dependencies:
 - pympipool =0.8.1
 - cloudpickle =3.0.0
 - flux-core =0.59.0
+- versioneer =0.28
