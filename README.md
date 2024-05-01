@@ -46,7 +46,7 @@ Finally, there is current work in progress to support a combination of [multiple
   * [Show jobs in queue](https://pysqa.readthedocs.io/en/latest/example.html#show-jobs-in-queue)
   * [Delete job from queue](https://pysqa.readthedocs.io/en/latest/example.html#delete-job-from-queue)
 * [Command Line Interface](https://pysqa.readthedocs.io/en/latest/command.html)
-  * [Submit job](https://pysqa.readthedocs.io/en/latestcommand.html#submit-job)
+  * [Submit job](https://pysqa.readthedocs.io/en/latest/command.html#submit-job)
   * [Enable reservation](https://pysqa.readthedocs.io/en/latest/command.html#enable-reservation)
   * [List jobs](https://pysqa.readthedocs.io/en/latest/command.html#list-jobs)
   * [Delete job](https://pysqa.readthedocs.io/en/latest/command.html#delete-job)
