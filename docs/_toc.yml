@@ -1,0 +1,9 @@
+format: jb-book
+root: README
+chapters:
+- file: installation.md
+- file: queue.md
+- file: example.ipynb
+- file: command.md
+- file: advanced.md
+- file: debug.md

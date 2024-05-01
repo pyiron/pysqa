@@ -4,3 +4,10 @@ cp binder/kernel.json /home/jovyan/.local/share/jupyter/kernels/flux
 
 # install pympipool
 pip install . --no-deps --no-build-isolation
+
+# copy notebooks
+mv notebooks/*.ipynb .
+rm -rf notebooks
+
+# clean up
+rm -rf .ci_support .github binder docs notebooks pysqa pysqa.egg-info tests .coveralls.yml .gitignore .readthedocs.yml CODE_OF_CONDUCT.md LICENSE MANIFEST.in README.md pyproject.toml setup.py build
