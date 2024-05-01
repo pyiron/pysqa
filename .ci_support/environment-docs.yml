@@ -13,3 +13,4 @@ dependencies:
 - tqdm =4.66.2
 - pympipool =0.7.18
 - cloudpickle =3.0.0
+- jupyter-book =1.0.0
