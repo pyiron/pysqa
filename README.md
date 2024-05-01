@@ -1,18 +1,18 @@
-# pysqa - a simple queue adapter for python
+# pysqa
 
 [![Python package](https://github.com/pyiron/pysqa/workflows/Python%20package/badge.svg)](https://github.com/pyiron/pysqa/actions)
 [![Documentation Status](https://readthedocs.org/projects/pysqa/badge/?version=latest)](https://pysqa.readthedocs.io/en/latest/?badge=latest)
 [![Coverage Status](https://coveralls.io/repos/github/pyiron/pysqa/badge.svg?branch=main)](https://coveralls.io/github/pyiron/pysqa?branch=main)
-[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/pyiron/pysqa/HEAD?labpath=notebooks%2Fexample.ipynb)
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/pyiron/pysqa/HEAD?labpath=example.ipynb)
 
 High-performance computing (HPC) does not have to be hard. In this context the aim of `pysqa` is to simplify the submission of calculation to an HPC cluster as easy as starting another subprocess locally. This is achieved based on the assumption that even though modern HPC queuing systems offer a wide range of different configuration options, most users submit the majority of their jobs with very similar parameters. 
 
 Therefore, in `pysqa` users define submission script templates once and reuse them to submit many different calculations or workflows. These templates are defined in the [jinja2 template language](https://palletsprojects.com/p/jinja/), so current submission scripts can be easily extended to templates. In addition to the submission of new jobs to the queuing system `pysqa` also allows the users to track the progress of their jobs, delete them or enable reservations using the built-in functionality of the queuing system.
 
-All this functionality is available from both a [Python interface](https://pysqa.readthedocs.io/en/latest/python.html) as well as a [command line interface](https://pysqa.readthedocs.io/en/latest/command.html). 
+All this functionality is available from both a [Python interface](https://pysqa.readthedocs.io/en/latest/example.html) as well as a [command line interface](https://pysqa.readthedocs.io/en/latest/command.html). 
 
 # Features
-The core feature of `pysqa` is the communication to an HPC queuing system ([Flux](https://pysqa.readthedocs.io/en/latest/queue.html#flux), [LFS](https://pysqa.readthedocs.io/en/latest/queue.html#lfs), [MOAB](https://pysqa.readthedocs.io/en/latest/queue.html#moab), [SGE](https://pysqa.readthedocs.io/en/latest/queue.html#sge), [SLURM](https://pysqa.readthedocs.io/en/latest/queue.html#slurm) and [TORQUE](https://pysqa.readthedocs.io/en/latest/queue.html#torque)). This includes: 
+The core feature of `pysqa` is the communication to an HPC queuing system ([Flux](https://pysqa.readthedocs.io/en/latest/queue.html#flux), [LFS](https://pysqa.readthedocs.io/en/latest/queue.html#lfs), [MOAB](https://pysqa.readthedocs.io/en/latest/queue.html#moab), [SGE](hhttps://pysqa.readthedocs.io/en/latest/queue.html#sge), [SLURM](https://pysqa.readthedocs.io/en/latest/queue.html#slurm) and [TORQUE](https://pysqa.readthedocs.io/en/latest/queue.html#torque)). This includes: 
 
 * Submission of new calculation to the queuing system. 
 * List of calculation currently waiting or running on the queuing system. 
@@ -40,11 +40,11 @@ Finally, there is current work in progress to support a combination of [multiple
   * [SGE](https://pysqa.readthedocs.io/en/latest/queue.html#sge)
   * [SLURM](https://pysqa.readthedocs.io/en/latest/queue.html#slurm)
   * [TORQUE](https://pysqa.readthedocs.io/en/latest/queue.html#torque)
-* [Python Interface](https://pysqa.readthedocs.io/en/latest/python.html)
-  * [List available queues](https://pysqa.readthedocs.io/en/latest/python.html#list-available-queues)
-  * [Submit job to queue](https://pysqa.readthedocs.io/en/latest/python.html#submit-job-to-queue)
-  * [Show jobs in queue](https://pysqa.readthedocs.io/en/latest/python.html#show-jobs-in-queue)
-  * [Delete job from queue](https://pysqa.readthedocs.io/en/latest/python.html#delete-job-from-queue)
+* [Python Interface](https://pysqa.readthedocs.io/en/latest/example.html)
+  * [List available queues](https://pysqa.readthedocs.io/en/latest/example.html#list-available-queues)
+  * [Submit job to queue](https://pysqa.readthedocs.io/en/latest/example.html#submit-job-to-queue)
+  * [Show jobs in queue](https://pysqa.readthedocs.io/en/latest/example.html#show-jobs-in-queue)
+  * [Delete job from queue](https://pysqa.readthedocs.io/en/latest/example.html#delete-job-from-queue)
 * [Command Line Interface](https://pysqa.readthedocs.io/en/latest/command.html)
   * [Submit job](https://pysqa.readthedocs.io/en/latest/command.html#submit-job)
   * [Enable reservation](https://pysqa.readthedocs.io/en/latest/command.html#enable-reservation)

@@ -9,10 +9,16 @@ build:
   os: "ubuntu-22.04"
   tools:
     python: "mambaforge-22.9"
+  jobs:
+    pre_build:
+      # Generate the Sphinx configuration for this Jupyter Book so it builds.
+      - "cp README.md docs"
+      - "cp notebooks/*.ipynb docs"
+      - "jupyter-book config sphinx docs/"
 
 # Build documentation in the docs/ directory with Sphinx
 sphinx:
-  configuration: docs/source/conf.py
+  builder: html
 
 # Optionally build your docs in additional formats such as PDF and ePub
 formats: []
@@ -26,3 +32,5 @@ python:
   install:
     - method: pip
       path: .
+      extra_requirements:
+        - sphinx
