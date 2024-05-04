@@ -8,4 +8,4 @@ Documentation of the classes and functions defined in the :code:`pysqa` package.
    :template: custom-module-template.rst
    :recursive:
 
-   pympipool
+   pysqa
