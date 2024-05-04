@@ -31,6 +31,8 @@ jobs:
         run: |
           pip install versioneer[toml]==0.29
           pip install . --no-deps --no-build-isolation
+          mkdir config
+          cp -r tests/config/flux config
       - name: Notebooks
         shell: bash -l {0}
         run: >
