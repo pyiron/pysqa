@@ -35,4 +35,4 @@ jobs:
         shell: bash -l {0}
         run: >
           flux start
-          papermill notebooks/examples.ipynb examples-out.ipynb -k "python3"
+          papermill notebooks/example.ipynb example-out.ipynb -k "python3"
