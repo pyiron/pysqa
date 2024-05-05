@@ -39,6 +39,7 @@ jobs:
           pip install . --no-deps --no-build-isolation
       - name: Test
         shell: bash -l {0}
+        timeout-minutes: 2
         run: >
           flux start
           coverage run  --omit="pysqa/_version.py,tests/*" -m unittest discover tests
