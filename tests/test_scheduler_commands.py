@@ -32,7 +32,6 @@ class TestSchedulerCommands(unittest.TestCase):
 
     def test_no_delete_job_command(self):
         class NoDelteteSchedularCommands(SchedulerCommands):
-
             def get_queue_status_command(self):
                 pass
 

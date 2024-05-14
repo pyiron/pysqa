@@ -64,7 +64,7 @@ class TestBasisQueueAdapter(unittest.TestCase):
         )
         self.assertEqual(
             BasisQueueAdapter._value_in_range(
-                90000 * 1024 ** 2, value_min="1K", value_max="70G"
+                90000 * 1024**2, value_min="1K", value_max="70G"
             ),
             "70G",
         )

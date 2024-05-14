@@ -9,6 +9,7 @@ from pysqa import QueueAdapter
 
 try:
     import defusedxml.ElementTree as ETree
+
     skip_sge_test = False
 except ImportError:
     skip_sge_test = True
@@ -22,7 +23,10 @@ __status__ = "production"
 __date__ = "Feb 9, 2019"
 
 
-@unittest.skipIf(skip_sge_test, "defusedxml is not installed, so the sun grid engine (SGE) tests are skipped.")
+@unittest.skipIf(
+    skip_sge_test,
+    "defusedxml is not installed, so the sun grid engine (SGE) tests are skipped.",
+)
 class TestSGEQueueAdapter(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
@@ -34,7 +38,7 @@ class TestSGEQueueAdapter(unittest.TestCase):
         self.assertEqual(self.sge.config["queue_primary"], "impi_hydra_small")
 
     def test_list_clusters(self):
-        self.assertEqual(self.sge.list_clusters(), ['default'])
+        self.assertEqual(self.sge.list_clusters(), ["default"])
 
     def test_ssh_delete_file_on_remote(self):
         self.assertEqual(self.sge.ssh_delete_file_on_remote, True)

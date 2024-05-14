@@ -26,15 +26,13 @@ class TestTorqueQueueAdapter(unittest.TestCase):
         self.assertEqual(self.torque.config["queue_primary"], "torque")
 
     def test_list_clusters(self):
-        self.assertEqual(self.torque.list_clusters(), ['default'])
+        self.assertEqual(self.torque.list_clusters(), ["default"])
 
     def test_ssh_delete_file_on_remote(self):
         self.assertEqual(self.torque.ssh_delete_file_on_remote, True)
 
     def test_interfaces(self):
-        self.assertEqual(
-            self.torque._adapter._commands.submit_job_command, ["qsub"]
-        )
+        self.assertEqual(self.torque._adapter._commands.submit_job_command, ["qsub"])
         self.assertEqual(self.torque._adapter._commands.delete_job_command, ["qdel"])
         self.assertEqual(
             self.torque._adapter._commands.get_queue_status_command, ["qstat", "-f"]
@@ -55,17 +53,25 @@ class TestTorqueQueueAdapter(unittest.TestCase):
             )
 
     def test_convert_queue_status_torque(self):
-        with open(os.path.join(self.path, "config/torque", "PBSPro_qsub_output"), "r") as f:
+        with open(
+            os.path.join(self.path, "config/torque", "PBSPro_qsub_output"), "r"
+        ) as f:
             content = f.read()
         df_verify = pandas.DataFrame(
             {
                 "jobid": [80005196, 80005197, 80005198],
                 "user": ["asd562", "asd562", "fgh562"],
-                "jobname": ["test1", "test2", "test_asdfasdfasdfasdfasdfasdfasdfasdfasdfasdf"],
+                "jobname": [
+                    "test1",
+                    "test2",
+                    "test_asdfasdfasdfasdfasdfasdfasdfasdfasdfasdf",
+                ],
                 "status": ["running", "pending", "pending"],
-                "working_directory": ["/scratch/a01/asd562/VASP/test/test1", \
-                                      "/scratch/a01/asd562/VASP/test/test2", \
-                                      "/scratch/a01/fgh562/VASP/test/test_asdfasdfasdfasdfasdfasdfasdfasdfasdfasdf"]
+                "working_directory": [
+                    "/scratch/a01/asd562/VASP/test/test1",
+                    "/scratch/a01/asd562/VASP/test/test2",
+                    "/scratch/a01/fgh562/VASP/test/test_asdfasdfasdfasdfasdfasdfasdfasdfasdfasdf",
+                ],
             }
         )
         self.assertTrue(
