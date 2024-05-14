@@ -40,8 +40,8 @@ class LsfCommands(SchedulerCommands):
         job_id_lst, user_lst, status_lst, job_name_lst = [], [], [], []
         line_split_lst = queue_status_output.split("\n")
         if len(line_split_lst) > 1:
-            for l in line_split_lst[1:]:
-                line_segments = l.split()
+            for line in line_split_lst[1:]:
+                line_segments = line.split()
                 if len(line_segments) > 1:
                     job_id_lst.append(int(line_segments[0]))
                     user_lst.append(line_segments[1])

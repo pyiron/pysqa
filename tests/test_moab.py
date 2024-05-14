@@ -25,7 +25,7 @@ class TestMoabQueueAdapter(unittest.TestCase):
         self.assertEqual(self.moab.config["queue_primary"], "moab")
 
     def test_list_clusters(self):
-        self.assertEqual(self.moab.list_clusters(), ['default'])
+        self.assertEqual(self.moab.list_clusters(), ["default"])
 
     def test_ssh_delete_file_on_remote(self):
         self.assertEqual(self.moab.ssh_delete_file_on_remote, True)

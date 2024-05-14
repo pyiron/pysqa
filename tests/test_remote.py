@@ -8,6 +8,7 @@ from pysqa import QueueAdapter
 try:
     import paramiko
     from tqdm import tqdm
+
     skip_remote_test = False
 except ImportError:
     skip_remote_test = True
@@ -22,20 +23,25 @@ __status__ = "production"
 __date__ = "Feb 9, 2019"
 
 
-@unittest.skipIf(skip_remote_test, "Either paramiko or tqdm are not installed, so the remote queue adapter tests are skipped.")
+@unittest.skipIf(
+    skip_remote_test,
+    "Either paramiko or tqdm are not installed, so the remote queue adapter tests are skipped.",
+)
 class TestRemoteQueueAdapter(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.path = os.path.dirname(os.path.abspath(__file__))
         cls.remote = QueueAdapter(directory=os.path.join(cls.path, "config/remote"))
-        cls.remote_alternative = QueueAdapter(directory=os.path.join(cls.path, "config/remote_alternative"))
+        cls.remote_alternative = QueueAdapter(
+            directory=os.path.join(cls.path, "config/remote_alternative")
+        )
 
     def test_config(self):
         self.assertEqual(self.remote.config["queue_type"], "REMOTE")
         self.assertEqual(self.remote.config["queue_primary"], "remote")
 
     def test_list_clusters(self):
-        self.assertEqual(self.remote.list_clusters(), ['default'])
+        self.assertEqual(self.remote.list_clusters(), ["default"])
 
     def test_remote_flag(self):
         self.assertTrue(self.remote._adapter.remote_flag)
@@ -45,7 +51,9 @@ class TestRemoteQueueAdapter(unittest.TestCase):
 
     def test_ssh_continous_connection(self):
         self.assertEqual(self.remote._adapter._ssh_continous_connection, True)
-        self.assertEqual(self.remote_alternative._adapter._ssh_continous_connection, False)
+        self.assertEqual(
+            self.remote_alternative._adapter._ssh_continous_connection, False
+        )
 
     def test_submit_job_remote(self):
         with self.assertRaises(NotImplementedError):
@@ -63,26 +71,32 @@ class TestRemoteQueueAdapter(unittest.TestCase):
         )
         self.assertEqual(
             command,
-            'python -m pysqa --config_directory /u/share/pysqa/resources/queues/ --submit --queue remote --job_name test --working_directory /home/localuser/projects/test --cores 1 --memory 1 --run_time 1 --command "/bin/true" '
+            'python -m pysqa --config_directory /u/share/pysqa/resources/queues/ --submit --queue remote --job_name test --working_directory /home/localuser/projects/test --cores 1 --memory 1 --run_time 1 --command "/bin/true" ',
         )
 
     def test_get_queue_status_command(self):
         command = self.remote._adapter._get_queue_status_command()
-        self.assertEqual(command, "python -m pysqa --config_directory /u/share/pysqa/resources/queues/ --status")
+        self.assertEqual(
+            command,
+            "python -m pysqa --config_directory /u/share/pysqa/resources/queues/ --status",
+        )
 
     def test_convert_path_to_remote(self):
-        self.assertEqual(self.remote.convert_path_to_remote("/home/localuser/projects/test"), "/u/hpcuser/remote/test")
+        self.assertEqual(
+            self.remote.convert_path_to_remote("/home/localuser/projects/test"),
+            "/u/hpcuser/remote/test",
+        )
 
     def test_delete_command(self):
         self.assertEqual(
             "python -m pysqa --config_directory /u/share/pysqa/resources/queues/ --delete --id 123",
-            self.remote._adapter._delete_command(job_id=123)
+            self.remote._adapter._delete_command(job_id=123),
         )
 
     def test_reservation_command(self):
         self.assertEqual(
             "python -m pysqa --config_directory /u/share/pysqa/resources/queues/ --reservation --id 123",
-            self.remote._adapter._reservation_command(job_id=123)
+            self.remote._adapter._reservation_command(job_id=123),
         )
 
     def test_get_ssh_user(self):
@@ -90,6 +104,8 @@ class TestRemoteQueueAdapter(unittest.TestCase):
 
     def test_get_file_transfer(self):
         self.assertEqual(
-            self.remote._adapter._get_file_transfer(file="abc.txt", local_dir="local", remote_dir="test"),
-            os.path.abspath("abc.txt")
+            self.remote._adapter._get_file_transfer(
+                file="abc.txt", local_dir="local", remote_dir="test"
+            ),
+            os.path.abspath("abc.txt"),
         )
