@@ -1,5 +1,5 @@
 #!/bin/bash
-# flux:--job-name={{job_name}}
+# flux: --job-name={{job_name}}
 # flux: --env=CORES={{cores}}
 # flux: --output=time.out
 # flux: --error=error.out
