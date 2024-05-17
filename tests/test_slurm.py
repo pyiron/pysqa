@@ -71,18 +71,8 @@ class TestSlurmQueueAdapter(unittest.TestCase):
     def test__list_command_to_be_executed(self):
         with self.subTest("slurm"):
             self.assertEqual(
-                self.slurm._adapter._list_command_to_be_executed(None, "here"),
+                self.slurm._adapter._list_command_to_be_executed("here"),
                 ["sbatch", "--parsable", "here"],
-            )
-        with self.subTest("slurm with one dependency"):
-            self.assertEqual(
-                self.slurm._adapter._list_command_to_be_executed(["2"], "here"),
-                ["sbatch", "--parsable", "--dependency=afterok:2", "here"],
-            )
-        with self.subTest("slurm with two dependencies"):
-            self.assertEqual(
-                self.slurm._adapter._list_command_to_be_executed(["2", "34"], "here"),
-                ["sbatch", "--parsable", "--dependency=afterok:2,34", "here"],
             )
 
     def test_convert_queue_status_slurm(self):

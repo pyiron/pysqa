@@ -110,12 +110,12 @@ class TestSGEQueueAdapter(unittest.TestCase):
     def test__list_command_to_be_executed(self):
         with self.subTest("sge"):
             self.assertEqual(
-                self.sge._adapter._list_command_to_be_executed(None, "here"),
+                self.sge._adapter._list_command_to_be_executed("here"),
                 ["qsub", "-terse", "here"],
             )
         with self.subTest("sge with dependency"):
             self.assertRaises(
-                NotImplementedError,
+                TypeError,
                 self.sge._adapter._list_command_to_be_executed,
                 [],
                 "here",
