@@ -98,7 +98,7 @@ class TestFluxQueueAdapter(unittest.TestCase):
             output = f.read()
         content = """\
 #!/bin/bash
-# flux:--job-name=test
+# flux: --job-name=test
 # flux: --env=CORES=4
 # flux: --output=time.out
 # flux: --error=error.out
