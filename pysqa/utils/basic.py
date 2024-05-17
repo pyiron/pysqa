@@ -5,7 +5,7 @@ import getpass
 import importlib
 import os
 import re
-from typing import Optional
+from typing import Optional, List
 
 import pandas
 from jinja2 import Template
@@ -178,7 +178,7 @@ class BasisQueueAdapter(object):
         )
         out = self._execute_command(
             commands=self._list_command_to_be_executed(
-                dependency_list, queue_script_path
+                queue_script_path=queue_script_path
             ),
             working_directory=working_directory,
             split_output=False,
@@ -188,14 +188,8 @@ class BasisQueueAdapter(object):
         else:
             return None
 
-    def _list_command_to_be_executed(
-        self, dependency_list: list[str], queue_script_path: str
-    ) -> list:
-        return (
-            self._commands.submit_job_command
-            + self._commands.dependencies(dependency_list)
-            + [queue_script_path]
-        )
+    def _list_command_to_be_executed(self, queue_script_path: str) -> list:
+        return self._commands.submit_job_command + [queue_script_path]
 
     def enable_reservation(self, process_id: int):
         """
@@ -354,6 +348,7 @@ class BasisQueueAdapter(object):
         cores: Optional[int] = None,
         memory_max: Optional[int] = None,
         run_time_max: Optional[int] = None,
+        dependency_list: Optional[List[int]] = None,
         command: Optional[str] = None,
         **kwargs,
     ):
@@ -380,6 +375,7 @@ class BasisQueueAdapter(object):
             cores=cores,
             memory_max=memory_max,
             run_time_max=run_time_max,
+            dependency_list=dependency_list,
             command=command,
             **kwargs,
         )
@@ -398,6 +394,7 @@ class BasisQueueAdapter(object):
         cores: Optional[int] = None,
         memory_max: Optional[int] = None,
         run_time_max: Optional[int] = None,
+        dependency_list: Optional[List[int]] = None,
         command: Optional[str] = None,
         **kwargs,
     ) -> str:
@@ -410,6 +407,7 @@ class BasisQueueAdapter(object):
             cores (int/None):
             memory_max (int/None):
             run_time_max (int/None):
+            dependency_list (list/None):
             command (str/None):
 
         Returns:
@@ -441,6 +439,7 @@ class BasisQueueAdapter(object):
             memory_max=memory_max,
             run_time_max=run_time_max,
             command=command,
+            dependency_list=dependency_list,
             **kwargs,
         )
 

@@ -63,13 +63,14 @@ class ModularQueueAdapter(BasisQueueAdapter):
             cores=cores,
             memory_max=memory_max,
             run_time_max=run_time_max,
+            dependency_list=dependency_list,
             command=command,
             **kwargs,
         )
         cluster_module = self._queue_to_cluster_dict[queue]
         commands = self._switch_cluster_command(
             cluster_module=cluster_module
-        ) + self._list_command_to_be_executed(dependency_list, queue_script_path)
+        ) + self._list_command_to_be_executed(queue_script_path=queue_script_path)
         out = self._execute_command(
             commands=commands,
             working_directory=working_directory,
