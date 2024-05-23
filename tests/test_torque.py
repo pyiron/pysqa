@@ -41,12 +41,12 @@ class TestTorqueQueueAdapter(unittest.TestCase):
     def test__list_command_to_be_executed(self):
         with self.subTest("torque"):
             self.assertEqual(
-                self.torque._adapter._list_command_to_be_executed(None, "here"),
+                self.torque._adapter._list_command_to_be_executed("here"),
                 ["qsub", "here"],
             )
         with self.subTest("torque with dependency"):
             self.assertRaises(
-                NotImplementedError,
+                TypeError,
                 self.torque._adapter._list_command_to_be_executed,
                 [],
                 "here",

@@ -53,12 +53,12 @@ class TestLsfQueueAdapter(unittest.TestCase):
     def test__list_command_to_be_executed(self):
         with self.subTest("lsf"):
             self.assertEqual(
-                self.lsf._adapter._list_command_to_be_executed(None, "here"),
+                self.lsf._adapter._list_command_to_be_executed("here"),
                 ["bsub", "here"],
             )
         with self.subTest("lsf with dependency"):
             self.assertRaises(
-                NotImplementedError,
+                TypeError,
                 self.lsf._adapter._list_command_to_be_executed,
                 [],
                 "here",

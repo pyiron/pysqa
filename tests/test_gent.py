@@ -56,12 +56,12 @@ class TestGentQueueAdapter(unittest.TestCase):
     def test__list_command_to_be_executed(self):
         with self.subTest("gent"):
             self.assertEqual(
-                self.gent._adapter._list_command_to_be_executed(None, "here"),
+                self.gent._adapter._list_command_to_be_executed("here"),
                 ["sbatch", "--parsable", "here"],
             )
         with self.subTest("gent with dependency"):
             self.assertRaises(
-                NotImplementedError,
+                TypeError,
                 self.gent._adapter._list_command_to_be_executed,
                 [],
                 "here",

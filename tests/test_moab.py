@@ -42,13 +42,13 @@ class TestMoabQueueAdapter(unittest.TestCase):
     def test__list_command_to_be_executed(self):
         with self.subTest("moab with dependency"):
             self.assertRaises(
-                NotImplementedError,
+                TypeError,
                 self.moab._adapter._list_command_to_be_executed,
                 [],
                 "here",
             )
         with self.subTest("moab"):
             self.assertEqual(
-                self.moab._adapter._list_command_to_be_executed(None, "here"),
+                self.moab._adapter._list_command_to_be_executed("here"),
                 ["msub", "here"],
             )
