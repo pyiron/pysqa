@@ -1,13 +1,14 @@
 import os
-from typing import Optional
 import sys
+from typing import Optional
 
 from pympipool import Executor
+
 from pysqa.executor.helper import (
-    read_from_file,
     deserialize,
-    write_to_file,
+    read_from_file,
     serialize_result,
+    write_to_file,
 )
 
 

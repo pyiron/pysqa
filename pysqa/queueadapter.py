@@ -2,8 +2,9 @@
 # Copyright (c) Jan Janssen
 
 import os
-import pandas
 from typing import Optional
+
+import pandas
 
 from pysqa.ext.modular import ModularQueueAdapter
 from pysqa.utils.basic import BasisQueueAdapter

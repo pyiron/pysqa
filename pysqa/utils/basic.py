@@ -5,7 +5,7 @@ import getpass
 import importlib
 import os
 import re
-from typing import Optional, List
+from typing import List, Optional
 
 import pandas
 from jinja2 import Template

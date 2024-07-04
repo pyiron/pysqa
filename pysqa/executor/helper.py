@@ -1,9 +1,9 @@
+import hashlib
 import os
-import re
 import queue
+import re
 from concurrent.futures import Future
 
-import hashlib
 import cloudpickle
 
 
