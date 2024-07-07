@@ -21,7 +21,7 @@ jobs:
           sed -i '/paramiko/d' environment.yml
           sed -i '/tqdm/d' environment.yml
       - name: Setup Mambaforge
-        uses: conda-incubator/setup-miniconda@v2
+        uses: conda-incubator/setup-miniconda@v3
         with:
           python-version: '3.12'
           miniforge-variant: Mambaforge
