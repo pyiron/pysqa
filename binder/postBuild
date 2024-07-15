@@ -2,7 +2,7 @@
 mkdir -p /home/jovyan/.local/share/jupyter/kernels/flux
 cp binder/kernel.json /home/jovyan/.local/share/jupyter/kernels/flux
 
-# install pympipool
+# install pysqa
 pip install . --no-deps --no-build-isolation
 
 # copy notebooks

@@ -2,7 +2,7 @@ import os
 import sys
 from typing import Optional
 
-from pympipool import Executor
+from executorlib import Executor
 
 from pysqa.executor.helper import (
     deserialize,
