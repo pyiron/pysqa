@@ -5,7 +5,7 @@ import getpass
 import json
 import os
 import warnings
-from typing import Optional
+from typing import Optional, Union
 
 import pandas
 import paramiko
