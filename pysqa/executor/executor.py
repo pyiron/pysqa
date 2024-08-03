@@ -21,6 +21,14 @@ class Executor(FutureExecutor):
         queue_adapter=None,
         queue_adapter_kwargs: Optional[dict] = None,
     ):
+        """
+        Initialize the Executor.
+
+        Args:
+            cwd (Optional[str]): The current working directory. Defaults to None.
+            queue_adapter: The queue adapter. Defaults to None.
+            queue_adapter_kwargs (Optional[dict]): Additional keyword arguments for the queue adapter. Defaults to None.
+        """
         self._task_queue = queue.Queue()
         self._memory_dict = {}
         self._cache_directory = os.path.abspath(os.path.expanduser(cwd))
@@ -50,7 +58,18 @@ class Executor(FutureExecutor):
         )
         self._process.start()
 
-    def submit(self, fn: callable, *args, **kwargs):
+    def submit(self, fn: callable, *args, **kwargs) -> Future:
+        """
+        Submit a function for execution.
+
+        Args:
+            fn (callable): The function to be executed.
+            *args: Positional arguments to be passed to the function.
+            **kwargs: Keyword arguments to be passed to the function.
+
+        Returns:
+            Future: A Future object representing the execution of the function.
+        """
         funct_dict = serialize_funct(fn, *args, **kwargs)
         key = list(funct_dict.keys())[0]
         if key not in self._memory_dict.keys():
@@ -62,6 +81,13 @@ class Executor(FutureExecutor):
         return self._memory_dict[key]
 
     def shutdown(self, wait: bool = True, *, cancel_futures: bool = False):
+        """
+        Shutdown the Executor.
+
+        Args:
+            wait (bool): Whether to wait for all tasks to complete before shutting down. Defaults to True.
+            cancel_futures (bool): Whether to cancel pending futures. Defaults to False.
+        """
         if cancel_futures:
             cancel_items_in_queue(que=self._task_queue)
         self._task_queue.put({"shutdown": True, "wait": wait})

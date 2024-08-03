@@ -21,14 +21,44 @@ __date__ = "Feb 9, 2019"
 class GentCommands(SlurmCommands):
     @staticmethod
     def get_job_id_from_output(queue_submit_output: str) -> int:
+        """
+        Extracts the job ID from the queue submit output.
+
+        Args:
+            queue_submit_output (str): The output of the queue submit command.
+
+        Returns:
+            int: The job ID.
+
+        """
         return int(queue_submit_output.splitlines()[-1].rstrip().lstrip().split(";")[0])
 
     @staticmethod
     def get_queue_from_output(queue_submit_output: str) -> str:
+        """
+        Extracts the queue name from the queue submit output.
+
+        Args:
+            queue_submit_output (str): The output of the queue submit command.
+
+        Returns:
+            str: The queue name.
+
+        """
         return str(queue_submit_output.splitlines()[-1].rstrip().lstrip().split(";")[1])
 
     @staticmethod
     def convert_queue_status(queue_status_output: str) -> pandas.DataFrame:
+        """
+        Converts the queue status output into a pandas DataFrame.
+
+        Args:
+            queue_status_output (str): The output of the queue status command.
+
+        Returns:
+            pandas.DataFrame: The converted queue status.
+
+        """
         qstat = queue_status_output.splitlines()
         queue = qstat[0].split(":")[1].strip()
         if len(qstat) <= 1:  # first row contains cluster name, check if there are jobs
@@ -52,7 +82,20 @@ class GentCommands(SlurmCommands):
         )
 
     @staticmethod
-    def dependencies(dependency_list: list[str]) -> list:
+    def dependencies(dependency_list: list[str]) -> list[str]:
+        """
+        Returns the dependencies for the job.
+
+        Args:
+            dependency_list (list[str]): The list of job dependencies.
+
+        Returns:
+            list[str]: The dependencies for the job.
+
+        Raises:
+            NotImplementedError: If dependency_list is not None.
+
+        """
         if dependency_list is not None:
             raise NotImplementedError()
         else:

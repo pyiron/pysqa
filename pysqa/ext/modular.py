@@ -9,6 +9,22 @@ from pysqa.utils.execute import execute_command
 
 
 class ModularQueueAdapter(BasisQueueAdapter):
+    """
+    A class representing a modular queue adapter.
+
+    Args:
+        config (dict): The configuration dictionary.
+        directory (str, optional): The directory path. Defaults to "~/.queues".
+        execute_command (callable, optional): The execute command function. Defaults to execute_command.
+
+    Attributes:
+        _queue_to_cluster_dict (dict): A dictionary mapping queues to clusters.
+
+    Raises:
+        ValueError: If a cluster is not found in the list of clusters.
+
+    """
+
     def __init__(
         self,
         config: dict,
@@ -43,19 +59,21 @@ class ModularQueueAdapter(BasisQueueAdapter):
         **kwargs,
     ) -> int:
         """
+        Submit a job to the queue.
 
         Args:
-            queue (str/None):
-            job_name (str/None):
-            working_directory (str/None):
-            cores (int/None):
-            memory_max (int/None):
-            run_time_max (int/None):
-            dependency_list (list/None):
-            command (str/None):
+            queue (str, optional): The queue name. Defaults to None.
+            job_name (str, optional): The job name. Defaults to None.
+            working_directory (str, optional): The working directory. Defaults to None.
+            cores (int, optional): The number of cores. Defaults to None.
+            memory_max (int, optional): The maximum memory. Defaults to None.
+            run_time_max (int, optional): The maximum run time. Defaults to None.
+            dependency_list (list[str], optional): The list of dependencies. Defaults to None.
+            command (str, optional): The command to execute. Defaults to None.
 
         Returns:
-            int:
+            int: The cluster queue ID.
+
         """
         working_directory, queue_script_path = self._write_queue_script(
             queue=queue,
@@ -88,12 +106,14 @@ class ModularQueueAdapter(BasisQueueAdapter):
 
     def enable_reservation(self, process_id: int):
         """
+        Enable reservation for a process.
 
         Args:
-            process_id (int):
+            process_id (int): The process ID.
 
         Returns:
-            str:
+            str: The output of the enable reservation command.
+
         """
         cluster_module, cluster_queue_id = self._resolve_queue_id(
             process_id=process_id, cluster_dict=self._config["cluster"]
@@ -112,12 +132,14 @@ class ModularQueueAdapter(BasisQueueAdapter):
 
     def delete_job(self, process_id: int):
         """
+        Delete a job.
 
         Args:
-            process_id (int):
+            process_id (int): The process ID.
 
         Returns:
-            str:
+            str: The output of the delete job command.
+
         """
         cluster_module, cluster_queue_id = self._resolve_queue_id(
             process_id=process_id, cluster_dict=self._config["cluster"]
@@ -136,12 +158,14 @@ class ModularQueueAdapter(BasisQueueAdapter):
 
     def get_queue_status(self, user: Optional[str] = None) -> pandas.DataFrame:
         """
+        Get the queue status.
 
         Args:
-            user (str):
+            user (str, optional): The user name. Defaults to None.
 
         Returns:
-            pandas.DataFrame:
+            pandas.DataFrame: The queue status.
+
         """
         df_lst = []
         for cluster_module in self._config["cluster"]:
@@ -163,10 +187,31 @@ class ModularQueueAdapter(BasisQueueAdapter):
 
     @staticmethod
     def _resolve_queue_id(process_id: int, cluster_dict: dict):
+        """
+        Resolve the queue ID.
+
+        Args:
+            process_id (int): The process ID.
+            cluster_dict (dict): The cluster dictionary.
+
+        Returns:
+            tuple: The cluster module and cluster queue ID.
+
+        """
         cluster_queue_id = int(process_id / 10)
         cluster_module = cluster_dict[process_id - cluster_queue_id * 10]
         return cluster_module, cluster_queue_id
 
     @staticmethod
     def _switch_cluster_command(cluster_module: str):
+        """
+        Generate the switch cluster command.
+
+        Args:
+            cluster_module (str): The cluster module.
+
+        Returns:
+            list: The switch cluster command.
+
+        """
         return ["module", "--quiet", "swap", "cluster/{};".format(cluster_module)]

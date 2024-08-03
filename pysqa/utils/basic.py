@@ -5,7 +5,7 @@ import getpass
 import importlib
 import os
 import re
-from typing import List, Optional
+from typing import List, Optional, Union, Tuple
 
 import pandas
 from jinja2 import Template
@@ -21,28 +21,15 @@ class BasisQueueAdapter(object):
     locally.
 
     Args:
-        config (dict):
-        directory (str): directory containing the queue.yaml files as well as corresponding jinja2 templates for the
-                         individual queues.
-        execute_command(funct):
+        config (dict): Configuration for the QueueAdapter.
+        directory (str): Directory containing the queue.yaml files as well as corresponding jinja2 templates for the individual queues.
+        execute_command(funct): Function to execute commands.
 
     Attributes:
-
-        .. attribute:: config
-
-            QueueAdapter configuration read from the queue.yaml file.
-
-        .. attribute:: queue_list
-
-            List of available queues
-
-        .. attribute:: queue_view
-
-            Pandas DataFrame representation of the available queues, read from queue.yaml.
-
-        .. attribute:: queues
-
-            Queues available for auto completion QueueAdapter().queues.<queue name> returns the queue name.
+        config (dict): QueueAdapter configuration read from the queue.yaml file.
+        queue_list (list): List of available queues.
+        queue_view (pandas.DataFrame): Pandas DataFrame representation of the available queues, read from queue.yaml.
+        queues: Queues available for auto completion QueueAdapter().queues.<queue name> returns the queue name.
     """
 
     def __init__(
@@ -96,36 +83,51 @@ class BasisQueueAdapter(object):
 
     @property
     def ssh_delete_file_on_remote(self) -> bool:
+        """
+        Get the value of ssh_delete_file_on_remote.
+
+        Returns:
+            bool: The value of ssh_delete_file_on_remote.
+        """
         return self._ssh_delete_file_on_remote
 
     @property
     def remote_flag(self) -> bool:
+        """
+        Get the value of remote_flag.
+
+        Returns:
+            bool: The value of remote_flag.
+        """
         return self._remote_flag
 
     @property
-    def config(self):
+    def config(self) -> dict:
         """
+        Get the QueueAdapter configuration.
 
         Returns:
-            dict:
+            dict: The QueueAdapter configuration.
         """
         return self._config
 
     @property
     def queue_list(self) -> list:
         """
+        Get the list of available queues.
 
         Returns:
-            list:
+            list: The list of available queues.
         """
         return list(self._config["queues"].keys())
 
     @property
     def queue_view(self) -> pandas.DataFrame:
         """
+        Get the Pandas DataFrame representation of the available queues.
 
         Returns:
-            pandas.DataFrame:
+            pandas.DataFrame: The Pandas DataFrame representation of the available queues.
         """
         return pandas.DataFrame(self._config["queues"]).T.drop(
             ["script", "template"], axis=1
@@ -133,6 +135,12 @@ class BasisQueueAdapter(object):
 
     @property
     def queues(self):
+        """
+        Get the available queues.
+
+        Returns:
+            Queues: The available queues.
+        """
         return self._queues
 
     def submit_job(
@@ -143,24 +151,25 @@ class BasisQueueAdapter(object):
         cores: Optional[int] = None,
         memory_max: Optional[int] = None,
         run_time_max: Optional[int] = None,
-        dependency_list: Optional[list[str]] = None,
+        dependency_list: Optional[List[str]] = None,
         command: Optional[str] = None,
         **kwargs,
     ) -> int:
         """
+        Submit a job to the queue.
 
         Args:
-            queue (str/None):
-            job_name (str/None):
-            working_directory (str/None):
-            cores (int/None):
-            memory_max (int/None):
-            run_time_max (int/None):
-            dependency_list (list[str]/None:
-            command (str/None):
+            queue (str/None): The queue to submit the job to.
+            job_name (str/None): The name of the job.
+            working_directory (str/None): The working directory for the job.
+            cores (int/None): The number of cores required for the job.
+            memory_max (int/None): The maximum memory required for the job.
+            run_time_max (int/None): The maximum run time for the job.
+            dependency_list (list[str]/None): List of job dependencies.
+            command (str/None): The command to execute for the job.
 
         Returns:
-            int:
+            int: The job ID.
         """
         if working_directory is not None and " " in working_directory:
             raise ValueError(
@@ -189,16 +198,26 @@ class BasisQueueAdapter(object):
             return None
 
     def _list_command_to_be_executed(self, queue_script_path: str) -> list:
+        """
+        Get the list of commands to be executed.
+
+        Args:
+            queue_script_path (str): The path to the queue script.
+
+        Returns:
+            list: The list of commands to be executed.
+        """
         return self._commands.submit_job_command + [queue_script_path]
 
     def enable_reservation(self, process_id: int):
         """
+        Enable reservation for a process.
 
         Args:
-            process_id (int):
+            process_id (int): The process ID.
 
         Returns:
-            str:
+            str: The result of the enable reservation command.
         """
         out = self._execute_command(
             commands=self._commands.enable_reservation_command + [str(process_id)],
@@ -211,12 +230,13 @@ class BasisQueueAdapter(object):
 
     def delete_job(self, process_id: int) -> str:
         """
+        Delete a job.
 
         Args:
-            process_id (int):
+            process_id (int): The process ID.
 
         Returns:
-            str:
+            str: The result of the delete job command.
         """
         out = self._execute_command(
             commands=self._commands.delete_job_command + [str(process_id)],
@@ -229,12 +249,13 @@ class BasisQueueAdapter(object):
 
     def get_queue_status(self, user: Optional[str] = None) -> pandas.DataFrame:
         """
+        Get the status of the queue.
 
         Args:
-            user (str):
+            user (str): The user to filter the queue status for.
 
         Returns:
-            pandas.DataFrame:
+            pandas.DataFrame: The queue status.
         """
         out = self._execute_command(
             commands=self._commands.get_queue_status_command, split_output=False
@@ -247,20 +268,22 @@ class BasisQueueAdapter(object):
 
     def get_status_of_my_jobs(self) -> pandas.DataFrame:
         """
+        Get the status of the user's jobs.
 
         Returns:
-           pandas.DataFrame:
+            pandas.DataFrame: The status of the user's jobs.
         """
         return self.get_queue_status(user=self._get_user())
 
     def get_status_of_job(self, process_id: int) -> str:
         """
+        Get the status of a job.
 
         Args:
-            process_id:
+            process_id (int): The process ID.
 
         Returns:
-             str: ['running', 'pending', 'error']
+            str: The status of the job.results_lst.append(df_selected.values[0])
         """
         df = self.get_queue_status()
         df_selected = df[df["jobid"] == process_id]["status"]
@@ -269,14 +292,15 @@ class BasisQueueAdapter(object):
         else:
             return None
 
-    def get_status_of_jobs(self, process_id_lst: list[int]) -> list[str]:
+    def get_status_of_jobs(self, process_id_lst: List[int]) -> List[str]:
         """
+        Get the status of multiple jobs.
 
         Args:
-            process_id_lst list[int]:
+            process_id_lst (list[int]): List of process IDs.
 
         Returns:
-             list[str]: ['running', 'pending', 'error', ...]
+            list[str]: List of job statuses.
         """
         df = self.get_queue_status()
         results_lst = []
@@ -288,13 +312,25 @@ class BasisQueueAdapter(object):
                 results_lst.append("finished")
         return results_lst
 
-    def get_job_from_remote(self, working_directory: str):
+    def get_job_from_remote(self, working_directory: str) -> None:
         """
         Get the results of the calculation - this is necessary when the calculation was executed on a remote host.
+
+        Args:
+            working_directory (str): The working directory where the calculation was executed.
         """
         raise NotImplementedError
 
     def convert_path_to_remote(self, path: str):
+        """
+        Converts a local file path to a remote file path.
+
+        Args:
+            path (str): The local file path to be converted.
+
+        Returns:
+            str: The converted remote file path.
+        """
         raise NotImplementedError
 
     def transfer_file(
@@ -303,6 +339,14 @@ class BasisQueueAdapter(object):
         transfer_back: bool = False,
         delete_file_on_remote: bool = False,
     ):
+        """
+        Transfer a file to a remote location.
+
+        Args:
+            file (str): The path of the file to be transferred.
+            transfer_back (bool, optional): Whether to transfer the file back after processing. Defaults to False.
+            delete_file_on_remote (bool, optional): Whether to delete the file on the remote location after transfer. Defaults to False.
+        """
         raise NotImplementedError
 
     def check_queue_parameters(
@@ -314,16 +358,17 @@ class BasisQueueAdapter(object):
         active_queue: Optional[dict] = None,
     ) -> list:
         """
+        Check the parameters of a queue.
 
         Args:
-            queue (str/None):
-            cores (int):
-            run_time_max (int/None):
-            memory_max (int/None):
-            active_queue (dict):
+            queue (str): The queue to check.
+            cores (int, optional): The number of cores. Defaults to 1.
+            run_time_max (int, optional): The maximum run time. Defaults to None.
+            memory_max (int, optional): The maximum memory. Defaults to None.
+            active_queue (dict, optional): The active queue. Defaults to None.
 
         Returns:
-            list: [cores, run_time_max, memory_max]
+            list: A list of queue parameters [cores, run_time_max, memory_max].
         """
         if active_queue is None:
             active_queue = self._config["queues"][queue]
@@ -351,18 +396,22 @@ class BasisQueueAdapter(object):
         dependency_list: Optional[List[int]] = None,
         command: Optional[str] = None,
         **kwargs,
-    ):
+    ) -> Tuple[str, str]:
         """
+        Write the queue script to a file.
 
         Args:
-            queue (str/None):
-            job_name (str/None):
-            working_directory (str/None):
-            cores (int/None):
-            memory_max (int/None):
-            run_time_max (int/None):
-            command (str/None):
+            queue (str/None): The queue name.
+            job_name (str/None): The job name.
+            working_directory (str/None): The working directory.
+            cores (int/None): The number of cores.
+            memory_max (int/None): The maximum memory.
+            run_time_max (int/None): The maximum run time.
+            dependency_list (list/None): The list of dependency job IDs.
+            command (str/None): The command to be executed.
 
+        Returns:
+            Tuple[str, str]: A tuple containing the working directory and the path to the queue script file.
         """
         if isinstance(command, list):
             command = "".join(command)
@@ -399,19 +448,20 @@ class BasisQueueAdapter(object):
         **kwargs,
     ) -> str:
         """
+        Generate the job submission template.
 
         Args:
-            queue (str/None):
-            job_name (str):
-            working_directory (str):
-            cores (int/None):
-            memory_max (int/None):
-            run_time_max (int/None):
-            dependency_list (list/None):
-            command (str/None):
+            queue (str, optional): The queue name. Defaults to None.
+            job_name (str, optional): The job name. Defaults to "job.py".
+            working_directory (str, optional): The working directory. Defaults to ".".
+            cores (int, optional): The number of cores. Defaults to None.
+            memory_max (int, optional): The maximum memory. Defaults to None.
+            run_time_max (int, optional): The maximum run time. Defaults to None.
+            dependency_list (list[int], optional): The list of dependency job IDs. Defaults to None.
+            command (str, optional): The command to be executed. Defaults to None.
 
         Returns:
-            str:
+            str: The job submission template.
         """
         if queue is None:
             queue = self._config["queue_primary"]
@@ -445,23 +495,24 @@ class BasisQueueAdapter(object):
 
     def _execute_command(
         self,
-        commands: str,
+        commands: Union[str, List[str]],
         working_directory: Optional[str] = None,
         split_output: bool = True,
         shell: bool = False,
         error_filename: str = "pysqa.err",
     ) -> str:
         """
+        Execute a command or a list of commands.
 
         Args:
-            commands (list/str):
-            working_directory (str):
-            split_output (bool):
-            shell (bool):
-            error_filename (str):
+            commands (Union[str, List[str]]): The command(s) to be executed.
+            working_directory (Optional[str], optional): The working directory. Defaults to None.
+            split_output (bool, optional): Whether to split the output into lines. Defaults to True.
+            shell (bool, optional): Whether to use the shell to execute the command. Defaults to False.
+            error_filename (str, optional): The name of the error file. Defaults to "pysqa.err".
 
         Returns:
-            str:
+            str: The output of the command(s).
         """
         return self._execute_command_function(
             commands=commands,
@@ -474,18 +525,20 @@ class BasisQueueAdapter(object):
     @staticmethod
     def _get_user() -> str:
         """
+        Get the current user.
 
         Returns:
-            str:
+            str: The current user.
         """
         return getpass.getuser()
 
     @staticmethod
     def _fill_queue_dict(queue_lst_dict: dict):
         """
+        Fill missing keys in the queue dictionary with None values.
 
         Args:
-            queue_lst_dict (dict):
+            queue_lst_dict (dict): The queue dictionary.
         """
         queue_keys = ["cores_min", "cores_max", "run_time_max", "memory_max"]
         for queue_dict in queue_lst_dict.values():
@@ -493,12 +546,13 @@ class BasisQueueAdapter(object):
                 queue_dict[key] = None
 
     @staticmethod
-    def _load_templates(queue_lst_dict: dict, directory: str = "."):
+    def _load_templates(queue_lst_dict: dict, directory: str = ".") -> None:
         """
+        Load the queue templates from files and store them in the queue dictionary.
 
         Args:
-            queue_lst_dict (dict):
-            directory (str):
+            queue_lst_dict (dict): The queue dictionary.
+            directory (str, optional): The directory where the queue template files are located. Defaults to ".".
         """
         for queue_dict in queue_lst_dict.values():
             if "script" in queue_dict.keys():
@@ -515,28 +569,34 @@ class BasisQueueAdapter(object):
                         )
 
     @staticmethod
-    def _value_error_if_none(value: str):
+    def _value_error_if_none(value: str) -> None:
         """
+        Raise a ValueError if the value is None or not a string.
 
         Args:
-            value (str/None):
+            value (str/None): The value to check.
+
+        Raises:
+            ValueError: If the value is None.
+            TypeError: If the value is not a string.
         """
         if value is None:
-            raise ValueError()
+            raise ValueError("Value cannot be None.")
         if not isinstance(value, str):
             raise TypeError()
 
     @classmethod
-    def _value_in_range(cls, value, value_min=None, value_max=None):
+    def _value_in_range(cls, value: Union[int, float, None], value_min: Union[int, float, None] = None, value_max: Union[int, float, None] = None) -> Union[int, float, None]:
         """
+        Check if a value is within a specified range.
 
         Args:
-            value (int/float/None):
-            value_min (int/float/None):
-            value_max (int/float/None):
+            value (int/float/None): The value to check.
+            value_min (int/float/None): The minimum value. Defaults to None.
+            value_max (int/float/None): The maximum value. Defaults to None.
 
         Returns:
-            int/float/None:
+            int/float/None: The value if it is within the range, otherwise the minimum or maximum value.
         """
 
         if value is not None:
@@ -567,14 +627,13 @@ class BasisQueueAdapter(object):
     @staticmethod
     def _is_memory_string(value: str) -> bool:
         """
-        Tests a string if it specifies a certain amount of memory e.g.: '20G', '60b'. Also pure integer strings are
-        also valid.
+        Check if a string specifies a certain amount of memory.
 
         Args:
-            value (str): the string to test
+            value (str): The string to check.
 
         Returns:
-            (bool): A boolean value if the string matches a memory specification
+            bool: True if the string matches a memory specification, False otherwise.
         """
         memory_spec_pattern = r"[0-9]+[bBkKmMgGtT]?"
         return re.findall(memory_spec_pattern, value)[0] == value
@@ -582,19 +641,19 @@ class BasisQueueAdapter(object):
     @classmethod
     def _memory_spec_string_to_value(
         cls, value: str, default_magnitude: str = "m", target_magnitude: str = "b"
-    ):
+    ) -> Union[int, float]:
         """
         Converts a valid memory string (tested by _is_memory_string) into an integer/float value of desired
         magnitude `default_magnitude`. If it is a plain integer string (e.g.: '50000') it will be interpreted with
         the magnitude passed in by the `default_magnitude`. The output will rescaled to `target_magnitude`
 
         Args:
-            value (str): the string
-            default_magnitude (str): magnitude for interpreting plain integer strings [b, B, k, K, m, M, g, G, t, T]
-            target_magnitude (str): to which the output value should be converted [b, B, k, K, m, M, g, G, t, T]
+            value (str): The string to convert.
+            default_magnitude (str): The magnitude for interpreting plain integer strings [b, B, k, K, m, M, g, G, t, T]. Defaults to "m".
+            target_magnitude (str): The magnitude to which the output value should be converted [b, B, k, K, m, M, g, G, t, T]. Defaults to "b".
 
         Returns:
-            (float/int): the value of the string in `target_magnitude` units
+            Union[int, float]: The value of the string in `target_magnitude` units.
         """
         magnitude_mapping = {"b": 0, "k": 1, "m": 2, "g": 3, "t": 4}
         if cls._is_memory_string(value):

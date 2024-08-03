@@ -10,14 +10,16 @@ from pysqa.utils.execute import execute_command
 
 def command_line(
     arguments_lst: Optional[list] = None, execute_command: callable = execute_command
-):
+) -> None:
     """
     Parse the command line arguments.
 
     Args:
-        argv: Command line arguments
-        execute_command: function to comunicate with shell process
+        arguments_lst (Optional[list]): Command line arguments
+        execute_command (callable): Function to communicate with shell process
 
+    Returns:
+        None
     """
     directory = "~/.queues"
     queue = None

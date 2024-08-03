@@ -21,22 +21,27 @@ __date__ = "Feb 9, 2019"
 class SlurmCommands(SchedulerCommands):
     @property
     def submit_job_command(self) -> list[str]:
+        """Returns the command to submit a job to Slurm."""
         return ["sbatch", "--parsable"]
 
     @property
     def delete_job_command(self) -> list[str]:
+        """Returns the command to delete a job from Slurm."""
         return ["scancel"]
 
     @property
     def get_queue_status_command(self) -> list[str]:
+        """Returns the command to get the queue status from Slurm."""
         return ["squeue", "--format", "%A|%u|%t|%.15j|%Z", "--noheader"]
 
     @staticmethod
     def get_job_id_from_output(queue_submit_output: str) -> int:
+        """Extracts the job ID from the output of the job submission command."""
         return int(queue_submit_output.splitlines()[-1].rstrip().lstrip().split()[-1])
 
     @staticmethod
     def convert_queue_status(queue_status_output: str) -> pandas.DataFrame:
+        """Converts the queue status output from Slurm into a pandas DataFrame."""
         line_split_lst = [line.split("|") for line in queue_status_output.splitlines()]
         if len(line_split_lst) != 0:
             job_id_lst, user_lst, status_lst, job_name_lst, working_directory_lst = zip(
@@ -67,7 +72,8 @@ class SlurmCommands(SchedulerCommands):
         return df
 
     @staticmethod
-    def dependencies(dependency_list: list[str]) -> list:
+    def dependencies(dependency_list: list[str]) -> list[str]:
+        """Returns the dependency options for job submission."""
         if dependency_list is not None:
             return ["--dependency=afterok:" + ",".join(dependency_list)]
         else:

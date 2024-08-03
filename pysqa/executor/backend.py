@@ -15,6 +15,17 @@ from pysqa.executor.helper import (
 def execute_files_from_list(
     tasks_in_progress_dict: dict, cache_directory: str, executor
 ):
+    """
+    Execute files from the given list.
+
+    Args:
+        tasks_in_progress_dict (dict): Dictionary of tasks in progress.
+        cache_directory (str): Directory where the files are stored.
+        executor: Executor object for executing tasks.
+
+    Returns:
+        None
+    """
     file_lst = os.listdir(cache_directory)
     for file_name_in in file_lst:
         key = file_name_in.split(".in.pl")[0]
@@ -42,6 +53,16 @@ def execute_files_from_list(
 
 
 def execute_tasks(cores: int, cache_directory: str):
+    """
+    Execute tasks from the given cache directory using the specified number of cores.
+
+    Args:
+        cores (int): Number of cores to use for execution.
+        cache_directory (str): Directory where the files are stored.
+
+    Returns:
+        None
+    """
     tasks_in_progress_dict = {}
     with Executor(
         max_cores=cores,
@@ -61,9 +82,18 @@ def execute_tasks(cores: int, cache_directory: str):
             )
 
 
-def command_line(arguments_lst: Optional[list] = None):
+def command_line(arguments_lst: Optional[list] = None) -> None:
+    """
+    Execute tasks from the command line.
+
+    Args:
+        arguments_lst (Optional[list]): List of command line arguments.
+
+    Returns:
+        None
+    """
     if arguments_lst is None:
         arguments_lst = sys.argv[1:]
     cores_arg = arguments_lst[arguments_lst.index("--cores") + 1]
     path_arg = arguments_lst[arguments_lst.index("--path") + 1]
-    execute_tasks(cores=cores_arg, cache_directory=path_arg)
+    execute_tasks(cores=int(cores_arg), cache_directory=path_arg)

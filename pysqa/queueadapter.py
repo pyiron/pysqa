@@ -2,7 +2,7 @@
 # Copyright (c) Jan Janssen
 
 import os
-from typing import Optional
+from typing import Optional, List
 
 import pandas
 
@@ -51,6 +51,13 @@ class QueueAdapter(object):
     def __init__(
         self, directory: str = "~/.queues", execute_command: callable = execute_command
     ):
+        """
+        Initialize the QueueAdapter.
+
+        Args:
+            directory (str): Directory containing the queue.yaml files and corresponding templates.
+            execute_command (callable): Function to execute commands.
+        """
         queue_yaml = os.path.join(directory, "queue.yaml")
         clusters_yaml = os.path.join(directory, "clusters.yaml")
         self._adapter = None
@@ -81,12 +88,12 @@ class QueueAdapter(object):
             )
         self._adapter = self._queue_dict[primary_queue]
 
-    def list_clusters(self) -> list[str]:
+    def list_clusters(self) -> List[str]:
         """
         List available computing clusters for remote submission
 
         Returns:
-            list: List of computing clusters
+            List of computing clusters
         """
         return list(self._queue_dict.keys())
 
@@ -100,47 +107,63 @@ class QueueAdapter(object):
         self._adapter = self._queue_dict[cluster_name]
 
     @property
-    def config(self):
+    def config(self) -> dict:
         """
+        Get the QueueAdapter configuration.
 
         Returns:
-            dict:
+            dict: The QueueAdapter configuration.
         """
         return self._adapter.config
 
     @property
     def ssh_delete_file_on_remote(self) -> bool:
+        """
+        Get the value of ssh_delete_file_on_remote property.
+
+        Returns:
+            bool: The value of ssh_delete_file_on_remote property.
+        """
         return self._adapter.ssh_delete_file_on_remote
 
     @property
     def remote_flag(self) -> bool:
         """
+        Get the value of remote_flag property.
 
         Returns:
-            bool:
+            bool: The value of remote_flag property.
         """
         return self._adapter.remote_flag
 
     @property
-    def queue_list(self) -> list[str]:
+    def queue_list(self) -> List[str]:
         """
+        Get the list of available queues.
 
         Returns:
-            list:
+            List[str]: The list of available queues.
         """
         return self._adapter.queue_list
 
     @property
     def queue_view(self) -> pandas.DataFrame:
         """
+        Get the Pandas DataFrame representation of the available queues.
 
         Returns:
-            pandas.DataFrame:
+            pandas.DataFrame: The Pandas DataFrame representation of the available queues.
         """
         return self._adapter.queue_view
 
     @property
-    def queues(self) -> list[str]:
+    def queues(self) -> List[str]:
+        """
+        Get the list of available queues.
+
+        Returns:
+            List[str]: The list of available queues.
+        """
         return self._adapter.queues
 
     def submit_job(
@@ -151,7 +174,7 @@ class QueueAdapter(object):
         cores: Optional[int] = None,
         memory_max: Optional[int] = None,
         run_time_max: Optional[int] = None,
-        dependency_list: Optional[list[str]] = None,
+        dependency_list: Optional[List[str]] = None,
         command: Optional[str] = None,
         **kwargs,
     ) -> int:
@@ -172,7 +195,7 @@ class QueueAdapter(object):
                       corresponding template.
 
         Returns:
-            int: Job id received from the queuing system for the job which was submitted \
+            int: Job id received from the queuing system for the job which was submitted
         """
         return self._adapter.submit_job(
             queue=queue,
@@ -188,12 +211,13 @@ class QueueAdapter(object):
 
     def enable_reservation(self, process_id: int) -> str:
         """
+        Enable reservation for a process.
 
         Args:
-            process_id (int):
+            process_id (int): The process id.
 
         Returns:
-            str:
+            str: The result of enabling reservation.
         """
         return self._adapter.enable_reservation(process_id=process_id)
 
@@ -202,7 +226,7 @@ class QueueAdapter(object):
         Get the results of the calculation - this is necessary when the calculation was executed on a remote host.
 
         Args:
-            working_directory (str):
+            working_directory (str): The working directory.
         """
         self._adapter.get_job_from_remote(working_directory=working_directory)
 
@@ -213,12 +237,12 @@ class QueueAdapter(object):
         delete_file_on_remote: bool = False,
     ):
         """
-        Transfer file from remote host to local host
+        Transfer file from remote host to local host.
 
         Args:
-            file (str):
-            transfer_back (bool):
-            delete_file_on_remote (bool):
+            file (str): The file to transfer.
+            transfer_back (bool): Whether to transfer the file back.
+            delete_file_on_remote (bool): Whether to delete the file on the remote host.
         """
         self._adapter.transfer_file(
             file=file,
@@ -228,64 +252,70 @@ class QueueAdapter(object):
 
     def convert_path_to_remote(self, path: str) -> str:
         """
+        Convert a local path to a remote path.
 
         Args:
-            path (str):
+            path (str): The local path.
 
         Returns:
-            str:
+            str: The remote path.
         """
         return self._adapter.convert_path_to_remote(path=path)
 
     def delete_job(self, process_id: int) -> str:
         """
+        Delete a job.
 
         Args:
-            process_id (int):
+            process_id (int): The process id.
 
         Returns:
-            str:
+            str: The result of deleting the job.
         """
         return self._adapter.delete_job(process_id=process_id)
 
     def get_queue_status(self, user: Optional[str] = None) -> pandas.DataFrame:
         """
+        Get the status of the queue.
 
         Args:
-            user (str):
+            user (str/None): The user.
 
         Returns:
-            pandas.DataFrame:
+            pandas.DataFrame: The status of the queue.
         """
         return self._adapter.get_queue_status(user=user)
 
     def get_status_of_my_jobs(self) -> pandas.DataFrame:
         """
+        Get the status of the user's jobs.
 
         Returns:
-           pandas.DataFrame:
+           pandas.DataFrame: The status of the user's jobs.
         """
         return self._adapter.get_status_of_my_jobs()
 
     def get_status_of_job(self, process_id: int) -> str:
         """
+        Get the status of a job.
 
         Args:
-            process_id:
+            process_id: The process id.
 
         Returns:
-             str: ['running', 'pending', 'error']
+             str: The status of the job. Possible values are ['running', 'pending', 'error'].
         """
         return self._adapter.get_status_of_job(process_id=process_id)
 
-    def get_status_of_jobs(self, process_id_lst: list[int]) -> list[str]:
+    def get_status_of_jobs(self, process_id_lst: List[int]) -> List[str]:
         """
+        Get the status of multiple jobs.
 
         Args:
-            process_id_lst:
+            process_id_lst: The list of process ids.
 
         Returns:
-             list: ['running', 'pending', 'error', ...]
+             List[str]: The status of the jobs. Possible values are ['running', 'pending', 'error', ...].
         """
         return self._adapter.get_status_of_jobs(process_id_lst=process_id_lst)
 
@@ -296,18 +326,19 @@ class QueueAdapter(object):
         run_time_max: Optional[int] = None,
         memory_max: Optional[int] = None,
         active_queue: Optional[dict] = None,
-    ):
+    ) -> List:
         """
+        Check the parameters of a queue.
 
         Args:
-            queue (str/None):
-            cores (int):
-            run_time_max (int/None):
-            memory_max (int/None):
-            active_queue (dict):
+            queue (str/None): The queue name.
+            cores (int): The number of cores.
+            run_time_max (int/None): The maximum runtime.
+            memory_max (int/None): The maximum memory.
+            active_queue (dict/None): The active queue.
 
         Returns:
-            list: [cores, run_time_max, memory_max]
+            List: A list containing the checked parameters [cores, run_time_max, memory_max].
         """
         return self._adapter.check_queue_parameters(
             queue=queue,

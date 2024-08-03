@@ -1,6 +1,6 @@
 import os
 import subprocess
-from typing import Optional
+from typing import Optional, Union, List
 
 
 def execute_command(
@@ -9,19 +9,19 @@ def execute_command(
     split_output: bool = True,
     shell: bool = False,
     error_filename: str = "pysqa.err",
-) -> str:
+) -> Union[str, List[str]]:
     """
     A wrapper around the subprocess.check_output function.
 
     Args:
-        commands (list/str): These commands are executed on the command line
-        working_directory (str/None): The directory where the command is executed
-        split_output (bool): Boolean flag to split newlines in the output
-        shell (bool): Additional switch to convert list of commands to one string
-        error_filename (str): In case the execution fails the output is written to this file
+        commands (str): The command(s) to be executed on the command line
+        working_directory (str, optional): The directory where the command is executed. Defaults to None.
+        split_output (bool, optional): Boolean flag to split newlines in the output. Defaults to True.
+        shell (bool, optional): Additional switch to convert commands to a single string. Defaults to False.
+        error_filename (str, optional): In case the execution fails, the output is written to this file. Defaults to "pysqa.err".
 
     Returns:
-        str/list: output of the shell command either as string or as a list of strings
+        Union[str, List[str]]: Output of the shell command either as a string or as a list of strings
     """
     if shell and isinstance(commands, list):
         commands = " ".join(commands)

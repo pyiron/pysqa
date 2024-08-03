@@ -23,37 +23,47 @@ __date__ = "Feb 9, 2019"
 class TorqueCommands(SchedulerCommands):
     @property
     def submit_job_command(self) -> list[str]:
+        """Returns the command to submit a job."""
         return ["qsub"]
 
     @property
     def delete_job_command(self) -> list[str]:
+        """Returns the command to delete a job."""
         return ["qdel"]
 
     @property
     def get_queue_status_command(self) -> list[str]:
+        """Returns the command to get the queue status."""
         return ["qstat", "-f"]
 
     @staticmethod
     def get_job_id_from_output(queue_submit_output: str) -> int:
-        # strip last line from output, leading and trailing whitespaces,
-        # and separates the queue id from the stuff after "."
-        # Adjust if your system doesn't have output like below!
-        # e.g. qsub run_queue.sh -> "12347673.gadi-pbs", the below returns 12347673
-        # It must return an integer for it to not raise an exception later.
+        """Extracts the job ID from the queue submit output.
+
+        Args:
+            queue_submit_output (str): The output of the queue submit command.
+
+        Returns:
+            int: The job ID.
+
+        Raises:
+            ValueError: If the job ID cannot be extracted.
+        """
         return int(
             queue_submit_output.splitlines()[-1].rstrip().lstrip().split(sep=".")[0]
         )
 
     @staticmethod
     def convert_queue_status(queue_status_output: str) -> pandas.DataFrame:
-        # # Run the qstat -f command and capture its output
-        # output = subprocess.check_output(["qstat", "-f"]) -> output is the
-        # queue_status_output that goes into this function
+        """Converts the queue status output into a pandas DataFrame.
 
-        # Split the output into lines
-        lines = queue_status_output.split("\n")  # .decode().split("\n")
+        Args:
+            queue_status_output (str): The output of the queue status command.
 
-        # concatenate all lines into a single string
+        Returns:
+            pandas.DataFrame: The queue status as a DataFrame.
+        """
+        lines = queue_status_output.split("\n")
         input_string = "".join(lines)
         # remove all whitespaces
         input_string = "".join(input_string.split())
