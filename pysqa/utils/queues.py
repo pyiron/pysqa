@@ -1,5 +1,4 @@
-# coding: utf-8
-# Copyright (c) Jan Janssen
+from typing import List
 
 
 class Queues(object):
