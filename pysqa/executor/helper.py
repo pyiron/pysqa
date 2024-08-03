@@ -3,6 +3,7 @@ import os
 import queue
 import re
 from concurrent.futures import Future
+from typing import List
 
 import cloudpickle
 
