@@ -51,6 +51,7 @@ class SunGridEngineCommands(SchedulerCommands):
             A pandas DataFrame containing the converted queue status.
 
         """
+
         def leaf_to_dict(leaf):
             return [
                 {sub_child.tag: sub_child.text for sub_child in child} for child in leaf

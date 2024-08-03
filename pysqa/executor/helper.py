@@ -200,7 +200,9 @@ def _set_future(file_name: str, future: Future) -> None:
         future.set_result(list(values)[0])
 
 
-def _update_task_dict(task_dict: dict, task_memory_dict: dict, cache_directory: str) -> None:
+def _update_task_dict(
+    task_dict: dict, task_memory_dict: dict, cache_directory: str
+) -> None:
     """
     Update the task memory dictionary with the futures from the task dictionary.
 

@@ -5,7 +5,7 @@ import getpass
 import importlib
 import os
 import re
-from typing import List, Optional, Union, Tuple
+from typing import List, Optional, Tuple, Union
 
 import pandas
 from jinja2 import Template
@@ -586,7 +586,12 @@ class BasisQueueAdapter(object):
             raise TypeError()
 
     @classmethod
-    def _value_in_range(cls, value: Union[int, float, None], value_min: Union[int, float, None] = None, value_max: Union[int, float, None] = None) -> Union[int, float, None]:
+    def _value_in_range(
+        cls,
+        value: Union[int, float, None],
+        value_min: Union[int, float, None] = None,
+        value_max: Union[int, float, None] = None,
+    ) -> Union[int, float, None]:
         """
         Check if a value is within a specified range.
 
