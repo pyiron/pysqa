@@ -5,7 +5,7 @@ import getpass
 import json
 import os
 import warnings
-from typing import Optional
+from typing import List, Optional, Union
 
 import pandas
 import paramiko
@@ -16,6 +16,72 @@ from pysqa.utils.execute import execute_command
 
 
 class RemoteQueueAdapter(BasisQueueAdapter):
+    """
+    A class representing a remote queue adapter.
+
+    Args:
+        config (dict): The configuration dictionary.
+        directory (str, optional): The directory path. Defaults to "~/.queues".
+        execute_command (callable, optional): The execute command function. Defaults to execute_command.
+
+    Attributes:
+        _ssh_host (str): The SSH host.
+        _ssh_username (str): The SSH username.
+        _ssh_known_hosts (str): The path to the known hosts file.
+        _ssh_key (str): The path to the SSH key file.
+        _ssh_ask_for_password (bool): Flag indicating whether to ask for SSH password.
+        _ssh_password (str): The SSH password.
+        _ssh_key_passphrase (str): The SSH key passphrase.
+        _ssh_two_factor_authentication (bool): Flag indicating whether to use two-factor authentication.
+        _ssh_authenticator_service (str): The SSH authenticator service.
+        _ssh_proxy_host (str): The SSH proxy host.
+        _ssh_remote_config_dir (str): The remote configuration directory.
+        _ssh_remote_path (str): The remote path.
+        _ssh_local_path (str): The local path.
+        _ssh_delete_file_on_remote (bool): Flag indicating whether to delete files on the remote host.
+        _ssh_port (int): The SSH port.
+        _ssh_continous_connection (bool): Flag indicating whether to use continuous SSH connection.
+        _ssh_connection (None or paramiko.SSHClient): The SSH connection object.
+        _ssh_proxy_connection (None or paramiko.SSHClient): The SSH proxy connection object.
+        _remote_flag (bool): Flag indicating whether the adapter is for remote queue.
+
+    Methods:
+        convert_path_to_remote(path: str) -> str:
+            Converts a local path to a remote path.
+
+        submit_job(queue: Optional[str] = None, job_name: Optional[str] = None, working_directory: Optional[str] = None,
+                   cores: Optional[int] = None, memory_max: Optional[int] = None, run_time_max: Optional[int] = None,
+                   dependency_list: Optional[list[str]] = None, command: Optional[str] = None, **kwargs) -> int:
+            Submits a job to the remote queue.
+
+        enable_reservation(process_id: int) -> str:
+            Enables a reservation for a job.
+
+        delete_job(process_id: int) -> str:
+            Deletes a job from the remote queue.
+
+        get_queue_status(user: Optional[str] = None) -> pandas.DataFrame:
+            Retrieves the queue status.
+
+        get_job_from_remote(working_directory: str):
+            Retrieves the results of a calculation executed on a remote host.
+
+        transfer_file(file: str, transfer_back: bool = False, delete_file_on_remote: bool = False):
+            Transfers a file to/from the remote host.
+
+        __del__():
+            Closes the SSH connections.
+
+        _check_ssh_connection():
+            Checks if an SSH connection is open.
+
+        _transfer_files(file_dict: dict, sftp=None, transfer_back: bool = False):
+            Transfers files to/from the remote host.
+
+        _open_ssh_connection() -> paramiko.SSHClient:
+            Opens an SSH connection.
+    """
+
     def __init__(
         self,
         config: dict,
@@ -84,7 +150,16 @@ class RemoteQueueAdapter(BasisQueueAdapter):
         self._ssh_proxy_connection = None
         self._remote_flag = True
 
-    def convert_path_to_remote(self, path: str):
+    def convert_path_to_remote(self, path: str) -> str:
+        """
+        Converts a local path to a remote path.
+
+        Args:
+            path (str): The local path.
+
+        Returns:
+            str: The remote path.
+        """
         working_directory = os.path.abspath(os.path.expanduser(path))
         return self._get_remote_working_dir(working_directory=working_directory)
 
@@ -101,19 +176,20 @@ class RemoteQueueAdapter(BasisQueueAdapter):
         **kwargs,
     ) -> int:
         """
+        Submits a job to the remote queue.
 
         Args:
-            queue (str/None):
-            job_name (str/None):
-            working_directory (str/None):
-            cores (int/None):
-            memory_max (int/None):
-            run_time_max (int/None):
-            dependency_list (list/None):
-            command (str/None):
+            queue (str, optional): The queue name.
+            job_name (str, optional): The job name.
+            working_directory (str, optional): The working directory.
+            cores (int, optional): The number of cores.
+            memory_max (int, optional): The maximum memory.
+            run_time_max (int, optional): The maximum run time.
+            dependency_list (list[str], optional): The list of job dependencies.
+            command (str, optional): The command to execute.
 
         Returns:
-            int:
+            int: The process ID of the submitted job.
         """
         if dependency_list is not None:
             raise NotImplementedError(
@@ -125,12 +201,13 @@ class RemoteQueueAdapter(BasisQueueAdapter):
 
     def enable_reservation(self, process_id: int) -> str:
         """
+        Enables a reservation for a job.
 
         Args:
-            process_id (int):
+            process_id (int): The process ID.
 
         Returns:
-            str:
+            str: The output of the reservation command.
         """
         return self._execute_remote_command(
             command=self._reservation_command(job_id=process_id)
@@ -138,12 +215,13 @@ class RemoteQueueAdapter(BasisQueueAdapter):
 
     def delete_job(self, process_id: int) -> str:
         """
+        Deletes a job from the remote queue.
 
         Args:
-            process_id (int):
+            process_id (int): The process ID.
 
         Returns:
-            str:
+            str: The output of the delete command.
         """
         return self._execute_remote_command(
             command=self._delete_command(job_id=process_id)
@@ -151,12 +229,13 @@ class RemoteQueueAdapter(BasisQueueAdapter):
 
     def get_queue_status(self, user: Optional[str] = None) -> pandas.DataFrame:
         """
+        Retrieves the queue status.
 
         Args:
-            user (str):
+            user (str, optional): The username.
 
         Returns:
-            pandas.DataFrame:
+            pandas.DataFrame: The queue status.
         """
         df = pandas.DataFrame(
             json.loads(
@@ -170,7 +249,10 @@ class RemoteQueueAdapter(BasisQueueAdapter):
 
     def get_job_from_remote(self, working_directory: str):
         """
-        Get the results of the calculation - this is necessary when the calculation was executed on a remote host.
+        Retrieves the results of a calculation executed on a remote host.
+
+        Args:
+            working_directory (str): The local working directory.
         """
         working_directory = os.path.abspath(os.path.expanduser(working_directory))
         remote_working_directory = self._get_remote_working_dir(
@@ -203,6 +285,14 @@ class RemoteQueueAdapter(BasisQueueAdapter):
         transfer_back: bool = False,
         delete_file_on_remote: bool = False,
     ):
+        """
+        Transfers a file to/from the remote host.
+
+        Args:
+            file (str): The file path.
+            transfer_back (bool, optional): Flag indicating whether to transfer the file back to the local host.
+            delete_file_on_remote (bool, optional): Flag indicating whether to delete the file on the remote host.
+        """
         working_directory = os.path.abspath(os.path.expanduser(file))
         remote_working_directory = self._get_remote_working_dir(
             working_directory=working_directory
@@ -217,16 +307,30 @@ class RemoteQueueAdapter(BasisQueueAdapter):
             self._execute_remote_command(command="rm " + remote_working_directory)
 
     def __del__(self):
+        """
+        Closes the SSH connections.
+        """
         if self._ssh_connection is not None:
             self._ssh_connection.close()
         if self._ssh_proxy_connection is not None:
             self._ssh_proxy_connection.close()
 
     def _check_ssh_connection(self):
+        """
+        Checks if an SSH connection is open.
+        """
         if self._ssh_connection is None:
             self._ssh_connection = self._open_ssh_connection()
 
     def _transfer_files(self, file_dict: dict, sftp=None, transfer_back: bool = False):
+        """
+        Transfers files to/from the remote host.
+
+        Args:
+            file_dict (dict): The dictionary containing the file paths.
+            sftp (None or paramiko.SFTPClient, optional): The SFTP client object.
+            transfer_back (bool, optional): Flag indicating whether to transfer the files back to the local host.
+        """
         if sftp is None:
             if self._ssh_continous_connection:
                 self._check_ssh_connection()
@@ -251,7 +355,13 @@ class RemoteQueueAdapter(BasisQueueAdapter):
         if sftp is None:
             sftp_client.close()
 
-    def _open_ssh_connection(self):
+    def _open_ssh_connection(self) -> paramiko.SSHClient:
+        """
+        Opens an SSH connection.
+
+        Returns:
+            paramiko.SSHClient: The SSH connection object.
+        """
         ssh = paramiko.SSHClient()
         ssh.load_host_keys(self._ssh_known_hosts)
         if (
@@ -364,10 +474,22 @@ class RemoteQueueAdapter(BasisQueueAdapter):
         else:
             return ssh
 
-    def _remote_command(self):
+    def _remote_command(self) -> str:
+        """
+        Returns the command to execute on the remote host.
+
+        Returns:
+            str: The remote command.
+        """
         return "python -m pysqa --config_directory " + self._ssh_remote_config_dir + " "
 
-    def _get_queue_status_command(self):
+    def _get_queue_status_command(self) -> str:
+        """
+        Returns the command to get the queue status on the remote host.
+
+        Returns:
+            str: The queue status command.
+        """
         return self._remote_command() + "--status"
 
     def _submit_command(
@@ -379,7 +501,22 @@ class RemoteQueueAdapter(BasisQueueAdapter):
         memory_max: Optional[int] = None,
         run_time_max: Optional[int] = None,
         command_str: Optional[str] = None,
-    ):
+    ) -> str:
+        """
+        Generates the command to submit a job to the remote host.
+
+        Args:
+            queue (str, optional): The queue to submit the job to.
+            job_name (str, optional): The name of the job.
+            working_directory (str, optional): The working directory for the job.
+            cores (int, optional): The number of cores required for the job.
+            memory_max (int, optional): The maximum memory required for the job.
+            run_time_max (int, optional): The maximum run time for the job.
+            command_str (str, optional): The command to be executed by the job.
+
+        Returns:
+            str: The submit command.
+        """
         command = self._remote_command() + "--submit "
         if queue is not None:
             command += "--queue " + queue + " "
@@ -388,22 +525,49 @@ class RemoteQueueAdapter(BasisQueueAdapter):
         if working_directory is not None:
             command += "--working_directory " + working_directory + " "
         if cores is not None:
-            command += "--cores " + cores + " "
+            command += "--cores " + str(cores) + " "
         if memory_max is not None:
-            command += "--memory " + memory_max + " "
+            command += "--memory " + str(memory_max) + " "
         if run_time_max is not None:
-            command += "--run_time " + run_time_max + " "
+            command += "--run_time " + str(run_time_max) + " "
         if command_str is not None:
             command += '--command "' + command_str + '" '
         return command
 
     def _delete_command(self, job_id: int) -> str:
+        """
+        Generates the command to delete a job on the remote host.
+
+        Args:
+            job_id (int): The ID of the job to delete.
+
+        Returns:
+            str: The delete command.
+        """
         return self._remote_command() + "--delete --id " + str(job_id)
 
     def _reservation_command(self, job_id: int) -> str:
+        """
+        Generates the command to reserve a job on the remote host.
+
+        Args:
+            job_id (int): The ID of the job to reserve.
+
+        Returns:
+            str: The reservation command.
+        """
         return self._remote_command() + "--reservation --id " + str(job_id)
 
-    def _execute_remote_command(self, command: str):
+    def _execute_remote_command(self, command: str) -> str:
+        """
+        Executes a remote command on the SSH connection.
+
+        Args:
+            command (str): The command to execute.
+
+        Returns:
+            str: The output of the command.
+        """
         if self._ssh_continous_connection:
             self._check_ssh_connection()
             ssh = self._ssh_connection
@@ -416,13 +580,31 @@ class RemoteQueueAdapter(BasisQueueAdapter):
             ssh.close()
         return output
 
-    def _get_remote_working_dir(self, working_directory: str):
+    def _get_remote_working_dir(self, working_directory: str) -> str:
+        """
+        Get the remote working directory path.
+
+        Args:
+            working_directory (str): The local working directory path.
+
+        Returns:
+            str: The remote working directory path.
+        """
         return os.path.join(
             self._ssh_remote_path,
             os.path.relpath(working_directory, self._ssh_local_path),
         )
 
-    def _create_remote_dir(self, directory: str):
+    def _create_remote_dir(self, directory: Union[str, List[str]]) -> None:
+        """
+        Creates a remote directory on the SSH server.
+
+        Args:
+            directory (Union[str, List[str]]): The directory or list of directories to create.
+
+        Raises:
+            TypeError: If the directory argument is not a string or a list.
+        """
         if isinstance(directory, str):
             self._execute_remote_command(command="mkdir -p " + directory)
         elif isinstance(directory, list):
@@ -431,9 +613,18 @@ class RemoteQueueAdapter(BasisQueueAdapter):
                 command += d + " "
             self._execute_remote_command(command=command)
         else:
-            raise TypeError()
+            raise TypeError("Invalid directory argument type.")
 
-    def _transfer_data_to_remote(self, working_directory: str):
+    def _transfer_data_to_remote(self, working_directory: str) -> None:
+        """
+        Transfers data from the local machine to the remote host.
+
+        Args:
+            working_directory (str): The local working directory path.
+
+        Returns:
+            None
+        """
         working_directory = os.path.abspath(os.path.expanduser(working_directory))
         remote_working_directory = self._get_remote_working_dir(
             working_directory=working_directory
@@ -460,14 +651,26 @@ class RemoteQueueAdapter(BasisQueueAdapter):
 
     def _get_user(self) -> str:
         """
+        Get the username used for SSH connection.
 
         Returns:
-            str:
+            str: The username.
         """
         return self._ssh_username
 
     @staticmethod
     def _get_file_transfer(file: str, local_dir: str, remote_dir: str) -> str:
+        """
+        Get the absolute path of the file on the remote host.
+
+        Args:
+            file (str): The file path.
+            local_dir (str): The local working directory path.
+            remote_dir (str): The remote working directory path.
+
+        Returns:
+            str: The absolute path of the file on the remote host.
+        """
         return os.path.abspath(
             os.path.join(remote_dir, os.path.relpath(file, local_dir))
         )
