@@ -25,7 +25,7 @@ classifiers = [
 ]
 dependencies = [
     "jinja2==3.1.4",
-    "pandas==2.2.2",
+    "pandas==2.2.3",
     "pyyaml==6.0.2",
 ]
 dynamic = ["version"]
