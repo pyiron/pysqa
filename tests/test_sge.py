@@ -6,6 +6,7 @@ import pandas
 import unittest
 import getpass
 from pysqa import QueueAdapter
+from pysqa.utils.validate import value_in_range
 
 try:
     import defusedxml.ElementTree as ETree
@@ -46,31 +47,23 @@ class TestSGEQueueAdapter(unittest.TestCase):
     def test_value_in_range(self):
         self.assertEqual(
             None,
-            self.sge._adapter._value_in_range(
-                value=None, value_min=None, value_max=None
-            ),
+            value_in_range(value=None, value_min=None, value_max=None),
         )
         self.assertEqual(
             1,
-            self.sge._adapter._value_in_range(value=None, value_min=1, value_max=None),
+            value_in_range(value=None, value_min=1, value_max=None),
         )
         self.assertEqual(
             1,
-            self.sge._adapter._value_in_range(value=None, value_min=None, value_max=1),
+            value_in_range(value=None, value_min=None, value_max=1),
         )
         self.assertEqual(
             1,
-            self.sge._adapter._value_in_range(value=1, value_min=None, value_max=None),
+            value_in_range(value=1, value_min=None, value_max=None),
         )
-        self.assertEqual(
-            1, self.sge._adapter._value_in_range(value=0, value_min=1, value_max=None)
-        )
-        self.assertEqual(
-            1, self.sge._adapter._value_in_range(value=2, value_min=None, value_max=1)
-        )
-        self.assertEqual(
-            1, self.sge._adapter._value_in_range(value=1, value_min=0, value_max=2)
-        )
+        self.assertEqual(1, value_in_range(value=0, value_min=1, value_max=None))
+        self.assertEqual(1, value_in_range(value=2, value_min=None, value_max=1))
+        self.assertEqual(1, value_in_range(value=1, value_min=0, value_max=2))
 
     def test_job_submission_template(self):
         self.assertRaises(
