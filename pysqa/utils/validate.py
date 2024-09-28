@@ -77,7 +77,9 @@ def _is_memory_string(value: str) -> bool:
 
 
 def _memory_spec_string_to_value(
-    value: str, default_magnitude: str = "m", target_magnitude: str = "b"
+    value: Union[str, int, float],
+    default_magnitude: str = "m",
+    target_magnitude: str = "b",
 ) -> Union[int, float]:
     """
     Converts a valid memory string (tested by _is_memory_string) into an integer/float value of desired
