@@ -81,10 +81,11 @@ class CoreQueueAdapter(object):
         execute_command: callable = execute_command,
     ):
         self._commands = get_queue_commands(queue_type=queue_type)
-        self._submission_template = getattr(
-            importlib.import_module(queue_type_dict[queue_type]["module_name"]),
-            "template",
-        )
+        if queue_type_dict[queue_type]["module_name"] is not None:
+            self._submission_template = getattr(
+                importlib.import_module(queue_type_dict[queue_type]["module_name"]),
+                "template"
+            )
         self._execute_command_function = execute_command
 
     def submit_job(
