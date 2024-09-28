@@ -2,7 +2,7 @@
 # Copyright (c) Jan Janssen
 
 import os
-from typing import List, Optional
+from typing import List, Optional, Union, Tuple
 
 import pandas
 
@@ -326,7 +326,9 @@ class QueueAdapter(object):
         run_time_max: Optional[int] = None,
         memory_max: Optional[int] = None,
         active_queue: Optional[dict] = None,
-    ) -> List:
+    ) -> Tuple[
+        Union[float, int, None], Union[float, int, None], Union[float, int, None]
+    ]:
         """
         Check the parameters of a queue.
 
