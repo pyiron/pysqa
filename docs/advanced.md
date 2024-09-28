@@ -1,5 +1,8 @@
 # Advanced Configuration
-Initially `pysqa` was only designed to interact with the local queuing systems of an HPC cluster. This functionality has recently been extended to support remote HPC clusters in addition to local HPC clusters. These two developments, the support for remote HPC clusters and the support for multiple clusters in `pysqa` are discussed in the following. Both of these features are under active development so this part of the interface might change more frequently than the rest.   
+Initially `pysqa` was only designed to interact with the local queuing systems of an HPC cluster. This functionality has
+recently been extended to support remote HPC clusters in addition to local HPC clusters. These two developments, the 
+support for remote HPC clusters and the support for multiple clusters in `pysqa` are discussed in the following. Both of
+these features are under active development so this part of the interface might change more frequently than the rest.   
 
 ## Remote HPC Configuration
 Remote clusters can be defined in the `queue.yaml` file by setting the `queue_type` to `REMOTE`: 
@@ -30,15 +33,18 @@ In addition to `queue_type`, `queue_primary` and `queues` parameters, this also 
 
 And optional keywords: 
 
-* `ssh_delete_file_on_remote` specify whether files on the remote HPC should be deleted after they are transferred back to the local system - defaults to `True`
+* `ssh_delete_file_on_remote` specify whether files on the remote HPC should be deleted after they are transferred back 
+  to the local system - defaults to `True`
 * `ssh_port` the port used for the SSH connection on the remote HPC cluster - defaults to `22`
 
-A definition of the `queues` in the local system is required to enable the parameter checks locally. Still it is sufficient to only store the individual submission script templates only on the remote HPC.  
+A definition of the `queues` in the local system is required to enable the parameter checks locally. Still it is 
+sufficient to only store the individual submission script templates only on the remote HPC.  
 
 ## Access to Multiple HPCs 
 To support multiple remote HPC clusters additional functionality was added to `pysqa`. 
 
-Namely, a `clusters.yaml` file can be defined in the configuration directory, which defines multiple `queue.yaml` files for different clusters: 
+Namely, a `clusters.yaml` file can be defined in the configuration directory, which defines multiple `queue.yaml` files 
+for different clusters: 
 ```
 cluster_primary: local_slurm
 cluster: {
@@ -46,7 +52,8 @@ cluster: {
     remote_slurm: remote_queues.yaml
 }
 ```
-These `queue.yaml` files can again include all the functionality defined previously, including the configuration for remote connection using SSH. 
+These `queue.yaml` files can again include all the functionality defined previously, including the configuration for 
+remote connection using SSH. 
 
 Furthermore, the `QueueAdapter` class was extended with the following two functions: 
 ```
@@ -56,4 +63,5 @@ To list the available clusters in the configuration and:
 ```
 qa.switch_cluster(cluster_name)
 ```
-To switch from one cluster to another, with the `cluster_name` providing the name of the cluster like `local_slurm` and `remote_slurm` in the configuration above. 
+To switch from one cluster to another, with the `cluster_name` providing the name of the cluster like `local_slurm` and
+`remote_slurm` in the configuration above. 

@@ -1,7 +1,11 @@
 # Queuing Systems 
-`pysqa` is based on the idea of reusable templates. These templates are defined in the `jinja2` templating language. By default `pysqa` expects to find these templates in `~/.queues`. Still it is also possible to store them in a different directory. 
+`pysqa` is based on the idea of reusable templates. These templates are defined in the `jinja2` templating language. By 
+default `pysqa` expects to find these templates in `~/.queues`. Still it is also possible to store them in a different 
+directory. 
 
-In this directory `pysqa` expects to find one queue configuration and one jinja template per queue. The `queue.yaml` file which defines the available queues and their restrictions in terms of minimum and maximum number of CPU cores, required memory or run time. In addition, this file defines the type of the queuing system and the default queue. 
+In this directory `pysqa` expects to find one queue configuration and one jinja template per queue. The `queue.yaml` 
+file which defines the available queues and their restrictions in terms of minimum and maximum number of CPU cores, 
+required memory or run time. In addition, this file defines the type of the queuing system and the default queue. 
 
 A typical `queue.yaml` file looks like this: 
 ```
@@ -15,7 +19,8 @@ queues:
      script: <file name of the queue submission script template>
   }
 ```
-The `queue.yaml` files and some templates for the most common queuing systems are defined below. By default `pysqa` supports the following variable for the submission script templates:
+The `queue.yaml` files and some templates for the most common queuing systems are defined below. By default `pysqa` 
+supports the following variable for the submission script templates:
 
 * `job_name` - the name of the calculation which appears on the queuing system 
 * `working_directory` - the directory on the file system the calculation is executed in 
@@ -24,7 +29,8 @@ The `queue.yaml` files and some templates for the most common queuing systems ar
 * `run_time_max` - the run time requested for a given calculation - typically in seconds 
 * `command` - the command which is executed on the queuing system
 
-Beyond these standardized keywords, additional flags can be added to the template which are then available through the python interface. 
+Beyond these standardized keywords, additional flags can be added to the template which are then available through the 
+python interface. 
 
 ## Flux
 For the flux framework the `queue.yaml` file defines the `queue_type` as `FLUX`: 
@@ -48,7 +54,8 @@ The queue named `flux` is defined based on a submission script template named `f
 
 {{command}}
 ```
-In this case only the number of cores `cores`, the name of the job `job_name` , the maximum run time of the job `run_time_max` and the command `command` are communicated. 
+In this case only the number of cores `cores`, the name of the job `job_name` , the maximum run time of the job 
+`run_time_max` and the command `command` are communicated. 
 
 ## LFS
 For the load sharing facility framework from IBM the `queue.yaml` file defines the `queue_type` as `LSF`:
@@ -76,7 +83,10 @@ The queue named `lsf` is defined based on a submission script template named `ls
 
 {{command}}
 ```
-In this case the name of the job `job_name`, the number of cores `cores,` the working directory of the job `working_directory` and the command that is executed `command` are defined as mendatory inputs. Beyond these two optional inputs can be defined, namely the maximum run time for the job `run_time_max` and the maximum memory used by the job `memory_max`. 
+In this case the name of the job `job_name`, the number of cores `cores,` the working directory of the job 
+`working_directory` and the command that is executed `command` are defined as mendatory inputs. Beyond these two 
+optional inputs can be defined, namely the maximum run time for the job `run_time_max` and the maximum memory used by 
+the job `memory_max`. 
 
 ## MOAB
 For the Maui Cluster Scheduler the `queue.yaml` file defines the `queue_type` as `MOAB`: 
@@ -121,7 +131,10 @@ The queue named `sge` is defined based on a submission script template named `sg
 
 {{command}}
 ```
-In this case the name of the job `job_name`, the number of cores `cores,` the working directory of the job `working_directory` and the command that is executed `command` are defined as mendatory inputs. Beyond these two optional inputs can be defined, namely the maximum run time for the job `run_time_max` and the maximum memory used by the job `memory_max`. 
+In this case the name of the job `job_name`, the number of cores `cores,` the working directory of the job 
+`working_directory` and the command that is executed `command` are defined as mendatory inputs. Beyond these two 
+optional inputs can be defined, namely the maximum run time for the job `run_time_max` and the maximum memory used by
+the job `memory_max`. 
 
 ## SLURM
 For the Simple Linux Utility for Resource Management (SLURM) the `queue.yaml` file defines the `queue_type` as `SLURM`: 
@@ -149,10 +162,14 @@ The queue named `slurm` is defined based on a submission script template named `
 
 {{command}}
 ```
-In this case the name of the job `job_name`, the number of cores `cores,` the working directory of the job `working_directory` and the command that is executed `command` are defined as mendatory inputs. Beyond these two optional inputs can be defined, namely the maximum run time for the job `run_time_max` and the maximum memory used by the job `memory_max`. 
+In this case the name of the job `job_name`, the number of cores `cores,` the working directory of the job 
+`working_directory` and the command that is executed `command` are defined as mendatory inputs. Beyond these two 
+optional inputs can be defined, namely the maximum run time for the job `run_time_max` and the maximum memory used by 
+the job `memory_max`. 
 
 ## TORQUE
-For the Terascale Open-source Resource and Queue Manager (TORQUE) the `queue.yaml` file defines the `queue_type` as `TORQUE`: 
+For the Terascale Open-source Resource and Queue Manager (TORQUE) the `queue.yaml` file defines the `queue_type` as 
+`TORQUE`: 
 ```
 queue_type: TORQUE
 queue_primary: torque
@@ -179,4 +196,7 @@ The queue named `torque` is defined based on a submission script template named 
  
 {{command}}
 ```
-In this case the name of the job `job_name`, the number of cores `cores,` the working directory of the job `working_directory` and the command that is executed `command` are defined as mendatory inputs. Beyond these two optional inputs can be defined, namely the maximum run time for the job `run_time_max` and the maximum memory used by the job `memory_max`. 
+In this case the name of the job `job_name`, the number of cores `cores,` the working directory of the job 
+`working_directory` and the command that is executed `command` are defined as mendatory inputs. Beyond these two 
+optional inputs can be defined, namely the maximum run time for the job `run_time_max` and the maximum memory used by 
+the job `memory_max`. 
