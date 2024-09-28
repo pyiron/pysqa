@@ -1,14 +1,59 @@
 import os
 from typing import List, Optional, Tuple, Union
 
-import pandas
 from jinja2 import Template
 from jinja2.exceptions import TemplateSyntaxError
+import pandas
+import yaml
 
-from pysqa.utils.core import QueueAdapterCore
-from pysqa.utils.execute import execute_command
-from pysqa.utils.queues import Queues
-from pysqa.utils.validate import value_error_if_none, value_in_range
+from pysqa.base.core import QueueAdapterCore, execute_command
+from pysqa.base.validate import value_error_if_none, check_queue_parameters
+
+
+class Queues(object):
+    """
+    Queues is an abstract class simply to make the list of queues available for auto completion. This is mainly used in
+    interactive environments like jupyter.
+    """
+
+    def __init__(self, list_of_queues: List[str]):
+        """
+        Initialize the Queues object.
+
+        Args:
+            list_of_queues (List[str]): A list of queue names.
+
+        """
+        self._list_of_queues = list_of_queues
+
+    def __getattr__(self, item: str) -> str:
+        """
+        Get the queue name.
+
+        Args:
+            item (str): The name of the queue.
+
+        Returns:
+            str: The name of the queue.
+
+        Raises:
+            AttributeError: If the queue name is not in the list of queues.
+
+        """
+        if item in self._list_of_queues:
+            return item
+        else:
+            raise AttributeError
+
+    def __dir__(self) -> List[str]:
+        """
+        Get the list of queues.
+
+        Returns:
+            List[str]: The list of queues.
+
+        """
+        return self._list_of_queues
 
 
 class QueueAdapterWithConfig(QueueAdapterCore):
@@ -162,18 +207,12 @@ class QueueAdapterWithConfig(QueueAdapterCore):
         """
         if active_queue is None:
             active_queue = self._config["queues"][queue]
-        cores = value_in_range(
-            value=cores,
-            value_min=active_queue["cores_min"],
-            value_max=active_queue["cores_max"],
+        return check_queue_parameters(
+            active_queue=active_queue,
+            cores=cores,
+            run_time_max=run_time_max,
+            memory_max=memory_max,
         )
-        run_time_max = value_in_range(
-            value=run_time_max, value_max=active_queue["run_time_max"]
-        )
-        memory_max = value_in_range(
-            value=memory_max, value_max=active_queue["memory_max"]
-        )
-        return cores, run_time_max, memory_max
 
     def _job_submission_template(
         self,
@@ -270,3 +309,17 @@ class QueueAdapterWithConfig(QueueAdapterCore):
                             + error.message,
                             lineno=error.lineno,
                         )
+
+
+def read_config(file_name: str = "queue.yaml") -> dict:
+    """
+    Read and parse a YAML configuration file.
+
+    Args:
+        file_name (str): The name of the YAML file to read.
+
+    Returns:
+        dict: The parsed configuration as a dictionary.
+    """
+    with open(file_name, "r") as f:
+        return yaml.load(f, Loader=yaml.FullLoader)

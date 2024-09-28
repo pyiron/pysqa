@@ -1,6 +1,40 @@
 import re
-from typing import Union
+from typing import Union, Tuple, Optional
 
+
+def check_queue_parameters(
+    active_queue: Optional[dict] = None,
+    cores: int = 1,
+    run_time_max: Optional[int] = None,
+    memory_max: Optional[int] = None,
+) -> Tuple[
+    Union[float, int, None], Union[float, int, None], Union[float, int, None]
+]:
+    """
+    Check the parameters of a queue.
+
+    Args:
+
+        cores (int, optional): The number of cores. Defaults to 1.
+        run_time_max (int, optional): The maximum run time. Defaults to None.
+        memory_max (int, optional): The maximum memory. Defaults to None.
+        active_queue (dict, optional): The active queue. Defaults to None.
+
+    Returns:
+        list: A list of queue parameters [cores, run_time_max, memory_max].
+    """
+    cores = value_in_range(
+        value=cores,
+        value_min=active_queue["cores_min"],
+        value_max=active_queue["cores_max"],
+    )
+    run_time_max = value_in_range(
+        value=run_time_max, value_max=active_queue["run_time_max"]
+    )
+    memory_max = value_in_range(
+        value=memory_max, value_max=active_queue["memory_max"]
+    )
+    return cores, run_time_max, memory_max
 
 def value_error_if_none(value: str) -> None:
     """

@@ -6,7 +6,7 @@ import pandas
 import unittest
 import getpass
 from pysqa import QueueAdapter
-from pysqa.utils.validate import value_in_range
+from pysqa.base.validate import value_in_range
 
 try:
     import defusedxml.ElementTree as ETree

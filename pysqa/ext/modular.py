@@ -2,8 +2,8 @@ from typing import Optional, Union
 
 import pandas
 
-from pysqa.utils.basic import QueueAdapterWithConfig
-from pysqa.utils.execute import execute_command
+from pysqa.base.config import QueueAdapterWithConfig
+from pysqa.base.core import execute_command
 
 
 class ModularQueueAdapter(QueueAdapterWithConfig):

@@ -4,9 +4,8 @@ from typing import List, Optional, Tuple, Union
 import pandas
 
 from pysqa.ext.modular import ModularQueueAdapter
-from pysqa.utils.basic import QueueAdapterWithConfig
-from pysqa.utils.config import read_config
-from pysqa.utils.execute import execute_command
+from pysqa.base.config import QueueAdapterWithConfig, read_config
+from pysqa.base.core import execute_command
 
 
 class QueueAdapter(object):
