@@ -8,8 +8,8 @@ import pandas
 import paramiko
 from tqdm import tqdm
 
-from pysqa.utils.basic import QueueAdapterWithConfig
-from pysqa.utils.execute import execute_command
+from pysqa.base.config import QueueAdapterWithConfig
+from pysqa.base.core import execute_command
 
 
 class RemoteQueueAdapter(QueueAdapterWithConfig):

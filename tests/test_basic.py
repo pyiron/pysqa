@@ -5,8 +5,8 @@ import os
 import unittest
 from jinja2.exceptions import TemplateSyntaxError
 from pysqa import QueueAdapter
-from pysqa.utils.basic import QueueAdapterWithConfig
-from pysqa.utils.validate import value_in_range
+from pysqa.base.config import QueueAdapterWithConfig
+from pysqa.base.validate import value_in_range
 
 __author__ = "Jan Janssen"
 __copyright__ = "Copyright 2019, Jan Janssen"

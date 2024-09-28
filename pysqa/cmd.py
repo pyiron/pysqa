@@ -4,8 +4,8 @@ import os
 import sys
 from typing import Optional
 
+from pysqa.base.core import execute_command
 from pysqa.queueadapter import QueueAdapter
-from pysqa.utils.execute import execute_command
 
 
 def command_line(

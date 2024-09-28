@@ -1,6 +1,6 @@
 import os
 import unittest
-from pysqa.utils.execute import execute_command
+from pysqa.base.core import execute_command
 
 
 class TestExecuteCommand(unittest.TestCase):
