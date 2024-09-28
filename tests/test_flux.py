@@ -1,8 +1,4 @@
-# coding: utf-8
-# Copyright (c) Jan Janssen
-
 import os
-from time import sleep
 import unittest
 
 import pandas
