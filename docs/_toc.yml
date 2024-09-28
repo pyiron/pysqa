@@ -3,7 +3,8 @@ root: README
 chapters:
 - file: installation.md
 - file: queue.md
-- file: example.ipynb
+- file: example_queue_type.ipynb
+- file: example_config.ipynb
 - file: command.md
 - file: advanced.md
 - file: debug.md

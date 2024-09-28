@@ -1,11 +1,13 @@
 # Queuing Systems 
-`pysqa` is based on the idea of reusable templates. These templates are defined in the `jinja2` templating language. By 
-default `pysqa` expects to find these templates in `~/.queues`. Still it is also possible to store them in a different 
-directory. 
+The Python simple queuing system adapter `pysqa` is based on the idea of reusable templates. These templates are 
+defined in the `jinja2` templating language. By default `pysqa` expects to find these templates in the configuration
+directory which is specified with the `directory` parameter. Alternatively, they can be defined dynamically by 
+specifying the queuing system type with the `queue_type` parameter. 
 
-In this directory `pysqa` expects to find one queue configuration and one jinja template per queue. The `queue.yaml` 
-file which defines the available queues and their restrictions in terms of minimum and maximum number of CPU cores, 
-required memory or run time. In addition, this file defines the type of the queuing system and the default queue. 
+When using the configuration directory, `pysqa` expects to find one queue configuration and one jinja template per 
+queue. The `queue.yaml` file which defines the available queues and their restrictions in terms of minimum and maximum
+number of CPU cores, required memory or run time. In addition, this file defines the type of the queuing system and the 
+default queue. 
 
 A typical `queue.yaml` file looks like this: 
 ```
@@ -55,7 +57,8 @@ The queue named `flux` is defined based on a submission script template named `f
 {{command}}
 ```
 In this case only the number of cores `cores`, the name of the job `job_name` , the maximum run time of the job 
-`run_time_max` and the command `command` are communicated. 
+`run_time_max` and the command `command` are communicated. The same template is stored in the `pysqa` package and can be
+imported using `from pysqa.wrapper.flux import template`. So the flux interface can be enabled by setting `queue_type="flux"`.
 
 ## LFS
 For the load sharing facility framework from IBM the `queue.yaml` file defines the `queue_type` as `LSF`:
@@ -86,7 +89,8 @@ The queue named `lsf` is defined based on a submission script template named `ls
 In this case the name of the job `job_name`, the number of cores `cores,` the working directory of the job 
 `working_directory` and the command that is executed `command` are defined as mendatory inputs. Beyond these two 
 optional inputs can be defined, namely the maximum run time for the job `run_time_max` and the maximum memory used by 
-the job `memory_max`. 
+the job `memory_max`. The same template is stored in the `pysqa` package and can be imported using 
+`from pysqa.wrapper.lsf import template`. So the flux interface can be enabled by setting `queue_type="lsf"`.
 
 ## MOAB
 For the Maui Cluster Scheduler the `queue.yaml` file defines the `queue_type` as `MOAB`: 
@@ -102,7 +106,9 @@ The queue named `moab` is defined based on a submission script template named `m
 
 {{command}}
 ```
-Currently, no template for the Maui Cluster Scheduler is available. 
+Currently, no template for the Maui Cluster Scheduler is available. The same template is stored in the `pysqa` package 
+and can be imported using `from pysqa.wrapper.moab import template`. So the flux interface can be enabled by setting 
+`queue_type="moab"`.
 
 ## SGE
 For the sun grid engine (SGE) the `queue.yaml` file defines the `queue_type` as `SGE`: 
@@ -134,7 +140,8 @@ The queue named `sge` is defined based on a submission script template named `sg
 In this case the name of the job `job_name`, the number of cores `cores,` the working directory of the job 
 `working_directory` and the command that is executed `command` are defined as mendatory inputs. Beyond these two 
 optional inputs can be defined, namely the maximum run time for the job `run_time_max` and the maximum memory used by
-the job `memory_max`. 
+the job `memory_max`. The same template is stored in the `pysqa` package and can be imported using 
+`from pysqa.wrapper.sge import template`. So the flux interface can be enabled by setting `queue_type="sge"`.
 
 ## SLURM
 For the Simple Linux Utility for Resource Management (SLURM) the `queue.yaml` file defines the `queue_type` as `SLURM`: 
@@ -165,7 +172,8 @@ The queue named `slurm` is defined based on a submission script template named `
 In this case the name of the job `job_name`, the number of cores `cores,` the working directory of the job 
 `working_directory` and the command that is executed `command` are defined as mendatory inputs. Beyond these two 
 optional inputs can be defined, namely the maximum run time for the job `run_time_max` and the maximum memory used by 
-the job `memory_max`. 
+the job `memory_max`. The same template is stored in the `pysqa` package and can be imported using 
+`from pysqa.wrapper.sge import template`. So the flux interface can be enabled by setting `queue_type="sge"`.
 
 ## TORQUE
 For the Terascale Open-source Resource and Queue Manager (TORQUE) the `queue.yaml` file defines the `queue_type` as 
@@ -199,4 +207,5 @@ The queue named `torque` is defined based on a submission script template named 
 In this case the name of the job `job_name`, the number of cores `cores,` the working directory of the job 
 `working_directory` and the command that is executed `command` are defined as mendatory inputs. Beyond these two 
 optional inputs can be defined, namely the maximum run time for the job `run_time_max` and the maximum memory used by 
-the job `memory_max`. 
+the job `memory_max`. The same template is stored in the `pysqa` package and can be imported using 
+`from pysqa.wrapper.slurm import template`. So the flux interface can be enabled by setting `queue_type="slurm"`.
