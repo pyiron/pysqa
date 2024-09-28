@@ -31,8 +31,13 @@ jobs:
           pip install . --no-deps --no-build-isolation
           mkdir config
           cp -r tests/config/flux config
-      - name: Notebooks
+      - name: Notebooks with config
         shell: bash -l {0}
         run: >
           flux start
-          papermill notebooks/example.ipynb example-out.ipynb -k "python3"
+          papermill notebooks/example_config.ipynb example-config-out.ipynb -k "python3"
+      - name: Notebooks dynamic
+        shell: bash -l {0}
+        run: >
+          flux start
+          papermill notebooks/example_queue_type.ipynb example-queue-type-out.ipynb -k "python3"

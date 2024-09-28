@@ -14,7 +14,7 @@ On `pypi` the `pysqa` package exists in three different versions:
 * `pip install pysaq` - base version - with minimal requirements only depends on `jinja2`, `pandas` and `pyyaml`.
 * `pip install pysaq[sge]` - sun grid engine (SGE) version - in addition to the base dependencies this installs 
   `defusedxml` which is required to parse the `xml` files from `qstat`. 
-* `pip install pysaq[remote]` - remote version - in addition to the base dependencies this installs `paramiko` and 
+* `pip install pysaq[remote]` - remote version - in addition, to the base dependencies this installs `paramiko` and 
   `tqdm`, to connect to remote HPC clusters using SSH and report the progress of the data transfer visually. 
 
 ## conda-based installation 
