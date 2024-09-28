@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, Union
 
 import pandas
 
@@ -55,7 +55,7 @@ class ModularQueueAdapter(QueueAdapterWithConfig):
         dependency_list: Optional[list[str]] = None,
         command: Optional[str] = None,
         **kwargs,
-    ) -> int:
+    ) -> Union[int, None]:
         """
         Submit a job to the queue.
 

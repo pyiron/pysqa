@@ -1,3 +1,5 @@
+from typing import Union
+
 import pandas
 
 from pysqa.wrapper.slurm import SlurmCommands
@@ -36,7 +38,7 @@ class GentCommands(SlurmCommands):
         return str(queue_submit_output.splitlines()[-1].rstrip().lstrip().split(";")[1])
 
     @staticmethod
-    def convert_queue_status(queue_status_output: str) -> pandas.DataFrame:
+    def convert_queue_status(queue_status_output: str) -> Union[pandas.DataFrame, None]:
         """
         Converts the queue status output into a pandas DataFrame.
 

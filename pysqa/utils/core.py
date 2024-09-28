@@ -72,6 +72,15 @@ def get_queue_commands(queue_type: str) -> Union[SchedulerCommands, None]:
 
 
 class QueueAdapterCore(object):
+    """
+    The goal of the QueueAdapter class is to make submitting to a queue system as easy as starting another sub process
+    locally.
+
+    Args:
+        queue_type (str): Type of the queuing system in capital letters
+        execute_command (funct): Function to execute commands.
+    """
+
     def __init__(
         self,
         queue_type: str,

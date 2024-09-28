@@ -20,12 +20,6 @@ class QueueAdapterWithConfig(QueueAdapterCore):
         config (dict): Configuration for the QueueAdapter.
         directory (str): Directory containing the queue.yaml files as well as corresponding jinja2 templates for the individual queues.
         execute_command(funct): Function to execute commands.
-
-    Attributes:
-        config (dict): QueueAdapter configuration read from the queue.yaml file.
-        queue_list (list): List of available queues.
-        queue_view (pandas.DataFrame): Pandas DataFrame representation of the available queues, read from queue.yaml.
-        queues: Queues available for auto completion QueueAdapter().queues.<queue name> returns the queue name.
     """
 
     def __init__(
