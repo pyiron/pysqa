@@ -13,7 +13,7 @@ from jinja2.exceptions import TemplateSyntaxError
 from pysqa.utils.execute import execute_command
 from pysqa.utils.queues import Queues
 from pysqa.utils.validate import value_error_if_none, value_in_range
-from pysqa.wrapper.generic import SchedulerCommands
+from pysqa.wrapper.abstract import SchedulerCommands
 
 queue_type_dict = {
     "SGE": {

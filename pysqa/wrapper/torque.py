@@ -9,7 +9,7 @@ from typing import List, Optional, Union
 import pandas
 from jinja2 import Template
 
-from pysqa.wrapper.generic import SchedulerCommands
+from pysqa.wrapper.abstract import SchedulerCommands
 
 __author__ = "Jan Janssen"
 __copyright__ = (

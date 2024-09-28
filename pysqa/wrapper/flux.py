@@ -6,7 +6,7 @@ import pandas
 from flux.job import JobID
 from jinja2 import Template
 
-from pysqa.wrapper.generic import SchedulerCommands
+from pysqa.wrapper.abstract import SchedulerCommands
 
 template = """\
 #!/bin/bash
