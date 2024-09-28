@@ -5,30 +5,47 @@
 [![Coverage Status](https://coveralls.io/repos/github/pyiron/pysqa/badge.svg?branch=main)](https://coveralls.io/github/pyiron/pysqa?branch=main)
 [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/pyiron/pysqa/HEAD?labpath=example.ipynb)
 
-High-performance computing (HPC) does not have to be hard. In this context the aim of `pysqa` is to simplify the submission of calculation to an HPC cluster as easy as starting another subprocess locally. This is achieved based on the assumption that even though modern HPC queuing systems offer a wide range of different configuration options, most users submit the majority of their jobs with very similar parameters. 
+High-performance computing (HPC) does not have to be hard. In this context the aim of the Python Simple Queuing System 
+Adapter (`pysqa`) is to simplify the submission of tasks from python to HPC clusters as easy as starting another 
+`subprocess` locally. This is achieved based on the assumption that even though modern HPC queuing systems offer a wide 
+range of different configuration options, most users submit the majority of their jobs with very similar parameters. 
 
-Therefore, in `pysqa` users define submission script templates once and reuse them to submit many different calculations or workflows. These templates are defined in the [jinja2 template language](https://palletsprojects.com/p/jinja/), so current submission scripts can be easily extended to templates. In addition to the submission of new jobs to the queuing system `pysqa` also allows the users to track the progress of their jobs, delete them or enable reservations using the built-in functionality of the queuing system.
+Therefore, in `pysqa` users define submission script templates once and reuse them to submit many different tasks and 
+workflows afterwards. These templates are defined in the [jinja2 template language](https://palletsprojects.com/p/jinja/),
+so current submission scripts can be easily converted to templates. In addition, to the submission of new tasks to HPC
+queuing systems, `pysqa` also allows the users to track the progress of their tasks, delete them or enable reservations 
+using the built-in functionality of the queuing system. Finally, `pysqa` enables remote connections to HPC clusters 
+using SSH including support for two factor authentication via [pyauthenticator](https://github.com/jan-janssen/pyauthenticator), 
+this allows the users to submit task from a python process on their local workstation to remote HPC clusters.
 
-All this functionality is available from both a [Python interface](https://pysqa.readthedocs.io/en/latest/example.html) as well as a [command line interface](https://pysqa.readthedocs.io/en/latest/command.html). 
+All this functionality is available from both the [Python interface](https://pysqa.readthedocs.io/en/latest/example.html) 
+as well as the [command line interface](https://pysqa.readthedocs.io/en/latest/command.html). 
 
-# Features
-The core feature of `pysqa` is the communication to an HPC queuing system ([Flux](https://pysqa.readthedocs.io/en/latest/queue.html#flux), [LFS](https://pysqa.readthedocs.io/en/latest/queue.html#lfs), [MOAB](https://pysqa.readthedocs.io/en/latest/queue.html#moab), [SGE](hhttps://pysqa.readthedocs.io/en/latest/queue.html#sge), [SLURM](https://pysqa.readthedocs.io/en/latest/queue.html#slurm) and [TORQUE](https://pysqa.readthedocs.io/en/latest/queue.html#torque)). This includes: 
+## Features
+The core feature of `pysqa` is the communication to HPC queuing systems including ([Flux](https://pysqa.readthedocs.io/en/latest/queue.html#flux), 
+[LFS](https://pysqa.readthedocs.io/en/latest/queue.html#lfs), [MOAB](https://pysqa.readthedocs.io/en/latest/queue.html#moab), 
+[SGE](hhttps://pysqa.readthedocs.io/en/latest/queue.html#sge), [SLURM](https://pysqa.readthedocs.io/en/latest/queue.html#slurm) 
+and [TORQUE](https://pysqa.readthedocs.io/en/latest/queue.html#torque)). This includes: 
 
-* Submission of new calculation to the queuing system. 
-* List of calculation currently waiting or running on the queuing system. 
-* Deleting calculation which are currently waiting or running on the queuing system. 
-* List of available queue templates created by the user.
-* Restriction of templates to a specific number of cores, run time or other computing resources. With integrated checks if a given calculation follows these restrictions. 
+* `QueueAdapter().submit_job()` - Submission of new tasks to the queuing system. 
+* `QueueAdapter().get_queue_status()` - List of calculation currently waiting or running on the queuing system. 
+* `QueueAdapter().delete_job()` - Deleting calculation which are currently waiting or running on the queuing system. 
+* `QueueAdapter().queue_list` - List of available queue templates created by the user.
+* `QueueAdapter().config` - Templates to a specific number of cores, run time or other computing resources. With 
+  integrated checks if a given submitted task follows these restrictions. 
 
-In addition to these core features, `pysqa` is continuously extended to support more use cases for a larger group of users. These new features include the support for remote queuing systems: 
+In addition to these core features, `pysqa` is continuously extended to support more use cases for a larger group of 
+users. These new features include the support for remote queuing systems: 
 
-* Remote connection via the secure shell protocol to access remote HPC clusters.
-* Transfer of file to and from remote HPC clusters, based on a predefined mapping of the remote file system into the local file system. 
+* Remote connection via the secure shell protocol (SSH) to access remote HPC clusters.
+* Transfer of files to and from remote HPC clusters, based on a predefined mapping of the remote file system into the 
+  local file system. 
 * Support for both individual connections as well as continuous connections depending on the network availability. 
 
-Finally, there is current work in progress to support a combination of [multiple local and remote queuing systems](https://pysqa.readthedocs.io/en/latest/advanced.html) from within `pysqa`, which are represented to the user as a single resource. 
+Finally, there is current work in progress to support a combination of [multiple local and remote queuing systems](https://pysqa.readthedocs.io/en/latest/advanced.html) 
+from within `pysqa`, which are represented to the user as a single resource. 
 
-# Documentation
+## Documentation
 
 * [Installation](https://pysqa.readthedocs.io/en/latest/installation.html)
   * [pypi-based installation](https://pysqa.readthedocs.io/en/latest/installation.html#pypi-based-installation)
@@ -59,8 +76,10 @@ Finally, there is current work in progress to support a combination of [multiple
   * [Local Queuing System](https://pysqa.readthedocs.io/en/latest/debug.html#local-queuing-system)
   * [Remote HPC](https://pysqa.readthedocs.io/en/latest/debug.html#remote-hpc)
 
-# License
-`pysqa` is released under the BSD license https://github.com/pyiron/pysqa/blob/main/LICENSE . It is a spin-off of the `pyiron` project https://github.com/pyiron/pyiron therefore if you use `pysqa` for calculation which result in a scientific publication, please cite: 
+## License
+`pysqa` is released under the BSD license https://github.com/pyiron/pysqa/blob/main/LICENSE . It is a spin-off of the 
+`pyiron` project https://github.com/pyiron/pyiron therefore if you use `pysqa` for calculation which result in a 
+scientific publication, please cite: 
 
     @article{pyiron-paper,
       title = {pyiron: An integrated development environment for computational materials science},
