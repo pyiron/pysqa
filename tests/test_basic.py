@@ -27,7 +27,7 @@ class TestQueueAdapter(unittest.TestCase):
             QueueAdapter(directory=os.path.join(self.path, "config/error"))
 
     def test_no_config(self):
-        with self.assertRaises(TypeError):
+        with self.assertRaises(ValueError):
             QueueAdapter()
 
     def test_bad_queue_template(self):
