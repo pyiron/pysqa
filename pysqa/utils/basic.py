@@ -14,7 +14,6 @@ from jinja2.exceptions import TemplateSyntaxError
 from pysqa.utils.execute import execute_command
 from pysqa.utils.queues import Queues
 
-
 queue_type_dict = {
     "SGE": {
         "class_name": "SunGridEngineCommands",
