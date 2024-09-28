@@ -5,8 +5,8 @@
 import os
 from typing import List, Optional, Union
 
-from jinja2 import Template
 import pandas
+from jinja2 import Template
 
 from pysqa.wrapper.generic import SchedulerCommands
 
@@ -39,6 +39,7 @@ template = """\
 
 {{command}}
 """
+
 
 class LsfCommands(SchedulerCommands):
     @property

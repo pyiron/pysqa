@@ -6,8 +6,8 @@ import os
 import re
 from typing import List, Optional, Union
 
-from jinja2 import Template
 import pandas
+from jinja2 import Template
 
 from pysqa.wrapper.generic import SchedulerCommands
 

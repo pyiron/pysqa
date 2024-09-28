@@ -2,12 +2,11 @@
 import os
 from typing import List, Optional, Union
 
+import pandas
 from flux.job import JobID
 from jinja2 import Template
-import pandas
 
 from pysqa.wrapper.generic import SchedulerCommands
-
 
 template = """\
 #!/bin/bash

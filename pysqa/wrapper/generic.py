@@ -5,8 +5,8 @@
 from abc import ABC, abstractmethod
 from typing import List, Optional, Union
 
-from jinja2 import Template
 import pandas
+from jinja2 import Template
 
 __author__ = "Niklas Siemer"
 __copyright__ = (

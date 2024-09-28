@@ -6,8 +6,8 @@ import os
 from typing import List, Optional, Union
 
 import defusedxml.ElementTree as ETree
-from jinja2 import Template
 import pandas
+from jinja2 import Template
 
 from pysqa.wrapper.generic import SchedulerCommands
 
@@ -41,6 +41,7 @@ template = """\
 
 {{command}}
 """
+
 
 class SunGridEngineCommands(SchedulerCommands):
     @property
