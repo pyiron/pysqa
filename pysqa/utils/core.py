@@ -84,7 +84,7 @@ class CoreQueueAdapter(object):
         if queue_type_dict[queue_type]["module_name"] is not None:
             self._submission_template = getattr(
                 importlib.import_module(queue_type_dict[queue_type]["module_name"]),
-                "template"
+                "template",
             )
         self._execute_command_function = execute_command
 
