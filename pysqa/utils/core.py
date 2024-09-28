@@ -294,7 +294,7 @@ class CoreQueueAdapter(object):
     def _write_queue_script(
         self,
         queue: Optional[str] = None,
-        submission_template: Optional[str, Template] = None,
+        submission_template: Optional[Union[str, Template]] = None,
         job_name: Optional[str] = None,
         working_directory: Optional[str] = None,
         cores: Optional[int] = None,
