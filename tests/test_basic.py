@@ -6,6 +6,7 @@ import unittest
 from jinja2.exceptions import TemplateSyntaxError
 from pysqa import QueueAdapter
 from pysqa.utils.basic import BasisQueueAdapter
+from pysqa.utils.validate import value_in_range
 
 __author__ = "Jan Janssen"
 __copyright__ = "Copyright 2019, Jan Janssen"
@@ -36,45 +37,35 @@ class TestBasisQueueAdapter(unittest.TestCase):
             BasisQueueAdapter(config={"queue_type": "error", "queues": {}})
 
     def test_memory_string_comparison(self):
-        self.assertEqual(BasisQueueAdapter._value_in_range(1023, value_min="1K"), "1K")
-        self.assertEqual(BasisQueueAdapter._value_in_range(1035, value_min="1K"), 1035)
-        self.assertEqual(BasisQueueAdapter._value_in_range(1035, value_max="1K"), "1K")
+        self.assertEqual(value_in_range(1023, value_min="1K"), "1K")
+        self.assertEqual(value_in_range(1035, value_min="1K"), 1035)
+        self.assertEqual(value_in_range(1035, value_max="1K"), "1K")
+        self.assertEqual(value_in_range("1035", value_min="1K"), "1035")
         self.assertEqual(
-            BasisQueueAdapter._value_in_range("1035", value_min="1K"), "1035"
-        )
-        self.assertEqual(
-            BasisQueueAdapter._value_in_range(
-                "60000M", value_min="1K", value_max="50G"
-            ),
+            value_in_range("60000M", value_min="1K", value_max="50G"),
             "50G",
         )
         self.assertEqual(
-            BasisQueueAdapter._value_in_range("60000", value_min="1K", value_max="50G"),
+            value_in_range("60000", value_min="1K", value_max="50G"),
             "50G",
         )
         self.assertEqual(
-            BasisQueueAdapter._value_in_range(
-                "60000M", value_min="1K", value_max="70G"
-            ),
+            value_in_range("60000M", value_min="1K", value_max="70G"),
             "60000M",
         )
         self.assertEqual(
-            BasisQueueAdapter._value_in_range(60000, value_min="1K", value_max="70G"),
+            value_in_range(60000, value_min="1K", value_max="70G"),
             60000,
         )
         self.assertEqual(
-            BasisQueueAdapter._value_in_range(
-                90000 * 1024**2, value_min="1K", value_max="70G"
-            ),
+            value_in_range(90000 * 1024**2, value_min="1K", value_max="70G"),
             "70G",
         )
         self.assertEqual(
-            BasisQueueAdapter._value_in_range("90000", value_min="1K", value_max="70G"),
+            value_in_range("90000", value_min="1K", value_max="70G"),
             "70G",
         )
         self.assertEqual(
-            BasisQueueAdapter._value_in_range(
-                "60000M", value_min="60G", value_max="70G"
-            ),
+            value_in_range("60000M", value_min="60G", value_max="70G"),
             "60G",
         )
