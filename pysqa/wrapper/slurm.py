@@ -1,7 +1,3 @@
-# coding: utf-8
-# Copyright (c) Max-Planck-Institut für Eisenforschung GmbH - Computational Materials Design (CM) Department
-# Distributed under the terms of "New BSD License", see the LICENSE file.
-
 import os
 from typing import List, Optional, Union
 
@@ -9,18 +5,6 @@ import pandas
 from jinja2 import Template
 
 from pysqa.wrapper.abstract import SchedulerCommands
-
-__author__ = "Jan Janssen"
-__copyright__ = (
-    "Copyright 2019, Max-Planck-Institut für Eisenforschung GmbH - "
-    "Computational Materials Design (CM) Department"
-)
-__version__ = "1.0"
-__maintainer__ = "Jan Janssen"
-__email__ = "janssen@mpie.de"
-__status__ = "development"
-__date__ = "Feb 9, 2019"
-
 
 template = """\
 #!/bin/bash

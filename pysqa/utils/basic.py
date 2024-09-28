@@ -1,6 +1,3 @@
-# coding: utf-8
-# Copyright (c) Jan Janssen
-
 import os
 from typing import List, Optional, Tuple, Union
 

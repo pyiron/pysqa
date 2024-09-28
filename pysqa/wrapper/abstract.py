@@ -1,24 +1,9 @@
-# coding: utf-8
-# Copyright (c) Max-Planck-Institut für Eisenforschung GmbH - Computational Materials Design (CM) Department
-# Distributed under the terms of "New BSD License", see the LICENSE file.
-
 import os
 from abc import ABC, abstractmethod
 from typing import List, Optional, Union
 
 import pandas
 from jinja2 import Template
-
-__author__ = "Niklas Siemer"
-__copyright__ = (
-    "Copyright 2022, Max-Planck-Institut für Eisenforschung GmbH - "
-    "Computational Materials Design (CM) Department"
-)
-__version__ = "1.0"
-__maintainer__ = "Niklas Siemer"
-__email__ = "siemer@mpie.de"
-__status__ = "production"
-__date__ = "Aug 15, 2022"
 
 
 class SchedulerCommands(ABC):
