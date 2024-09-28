@@ -153,7 +153,7 @@ class TorqueCommands(SchedulerCommands):
         Returns:
             str: The rendered job submission template.
         """
-        if isinstance(submission_template, Template):
+        if not isinstance(submission_template, Template):
             submission_template = Template(submission_template)
         return submission_template.render(
             command=command,
