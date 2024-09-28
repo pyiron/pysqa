@@ -1,5 +1,5 @@
 import unittest
-from pysqa.wrapper.generic import SchedulerCommands
+from pysqa.wrapper.abstract import SchedulerCommands
 
 
 class TmpSchedularCommands(SchedulerCommands):

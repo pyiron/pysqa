@@ -1,6 +1,9 @@
 import pandas
 
 from pysqa.wrapper.slurm import SlurmCommands
+from pysqa.wrapper.slurm import template as template_slurm
+
+template = template_slurm
 
 
 class GentCommands(SlurmCommands):

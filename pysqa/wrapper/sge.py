@@ -1,7 +1,30 @@
+import os
+from typing import List, Optional, Union
+
 import defusedxml.ElementTree as ETree
 import pandas
+from jinja2 import Template
 
-from pysqa.wrapper.generic import SchedulerCommands
+from pysqa.wrapper.abstract import SchedulerCommands
+
+template = """\
+#!/bin/bash
+#$ -N {{job_name}}
+#$ -wd {{working_directory}}
+{%- if cores %}
+#$ -pe {{partition}} {{cores}}
+{%- endif %}
+{%- if memory_max %}
+#$ -l h_vmem={{memory_max}}
+{%- endif %}
+{%- if run_time_max %}
+#$ -l h_rt={{run_time_max}}
+{%- endif %}
+#$ -o time.out
+#$ -e error.out
+
+{{command}}
+"""
 
 
 class SunGridEngineCommands(SchedulerCommands):
@@ -57,4 +80,44 @@ class SunGridEngineCommands(SchedulerCommands):
                 "status": df_merge.state,
                 "working_directory": [""] * len(df_merge),
             }
+        )
+
+    def render_submission_template(
+        self,
+        command: str,
+        job_name: str = "pysqa",
+        working_directory: str = os.path.abspath("."),
+        cores: int = 1,
+        memory_max: Optional[int] = None,
+        run_time_max: Optional[int] = None,
+        dependency_list: Optional[List[int]] = None,
+        submission_template: Union[str, Template] = template,
+        **kwargs,
+    ) -> str:
+        """
+        Generate the job submission template.
+
+        Args:
+            command (str, optional): The command to be executed.
+            job_name (str, optional): The job name. Defaults to "pysqa".
+            working_directory (str, optional): The working directory. Defaults to ".".
+            cores (int, optional): The number of cores. Defaults to 1.
+            memory_max (int, optional): The maximum memory. Defaults to None.
+            run_time_max (int, optional): The maximum run time. Defaults to None.
+            dependency_list (list[int], optional): The list of dependency job IDs. Defaults to None.
+            submission_template (str): Submission script template pysqa.wrapper.flux.template
+
+        Returns:
+            str: The rendered job submission template.
+        """
+        return super().render_submission_template(
+            command=command,
+            job_name=job_name,
+            working_directory=working_directory,
+            cores=cores,
+            memory_max=memory_max,
+            run_time_max=run_time_max,
+            dependency_list=dependency_list,
+            submission_template=submission_template,
+            **kwargs,
         )

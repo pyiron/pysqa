@@ -1,8 +1,29 @@
+import os
 import re
+from typing import List, Optional, Union
 
 import pandas
+from jinja2 import Template
 
-from pysqa.wrapper.generic import SchedulerCommands
+from pysqa.wrapper.abstract import SchedulerCommands
+
+template = """\
+#!/bin/bash
+#PBS -l ncpus={{cores}}
+#PBS -N {{job_name}}
+{%- if memory_max %}
+#PBS -l mem={{ memory_max| int }}GB
+{%- endif %}
+{%- if run_time_max %}
+#PBS -l walltime={{run_time_max}} 
+{%- endif %}
+#PBS -l wd
+{%- if dependency %}
+#PBS -W depend=afterok:{{ dependency | join(':') }}
+{%- endif %}
+ 
+{{command}}
+"""
 
 
 class TorqueCommands(SchedulerCommands):
@@ -88,3 +109,43 @@ class TorqueCommands(SchedulerCommands):
         )
 
         return df
+
+    def render_submission_template(
+        self,
+        command: str,
+        job_name: str = "pysqa",
+        working_directory: str = os.path.abspath("."),
+        cores: int = 1,
+        memory_max: Optional[int] = None,
+        run_time_max: Optional[int] = None,
+        dependency_list: Optional[List[int]] = None,
+        submission_template: Union[str, Template] = template,
+        **kwargs,
+    ) -> str:
+        """
+        Generate the job submission template.
+
+        Args:
+            command (str, optional): The command to be executed.
+            job_name (str, optional): The job name. Defaults to "pysqa".
+            working_directory (str, optional): The working directory. Defaults to ".".
+            cores (int, optional): The number of cores. Defaults to 1.
+            memory_max (int, optional): The maximum memory. Defaults to None.
+            run_time_max (int, optional): The maximum run time. Defaults to None.
+            dependency_list (list[int], optional): The list of dependency job IDs. Defaults to None.
+            submission_template (str): Submission script template pysqa.wrapper.flux.template
+
+        Returns:
+            str: The rendered job submission template.
+        """
+        return super().render_submission_template(
+            command=command,
+            job_name=job_name,
+            working_directory=working_directory,
+            cores=cores,
+            memory_max=memory_max,
+            run_time_max=run_time_max,
+            dependency_list=dependency_list,
+            submission_template=submission_template,
+            **kwargs,
+        )
