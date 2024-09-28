@@ -15,6 +15,42 @@ from pysqa.utils.execute import execute_command
 from pysqa.utils.queues import Queues
 
 
+queue_type_dict = {
+    "SGE": {
+        "class_name": "SunGridEngineCommands",
+        "module_name": "pysqa.wrapper.sge",
+    },
+    "TORQUE": {
+        "class_name": "TorqueCommands",
+        "module_name": "pysqa.wrapper.torque",
+    },
+    "SLURM": {
+        "class_name": "SlurmCommands",
+        "module_name": "pysqa.wrapper.slurm",
+    },
+    "LSF": {
+        "class_name": "LsfCommands",
+        "module_name": "pysqa.wrapper.lsf",
+    },
+    "MOAB": {
+        "class_name": "MoabCommands",
+        "module_name": "pysqa.wrapper.moab",
+    },
+    "GENT": {
+        "class_name": "GentCommands",
+        "module_name": "pysqa.wrapper.gent",
+    },
+    "REMOTE": {
+        "class_name": None,
+        "module_name": None,
+    },
+    "FLUX": {
+        "class_name": "FluxCommands",
+        "module_name": "pysqa.wrapper.flux",
+    },
+}
+
+
 class BasisQueueAdapter(object):
     """
     The goal of the QueueAdapter class is to make submitting to a queue system as easy as starting another sub process
@@ -41,38 +77,15 @@ class BasisQueueAdapter(object):
         self._config = config
         self._fill_queue_dict(queue_lst_dict=self._config["queues"])
         self._load_templates(queue_lst_dict=self._config["queues"], directory=directory)
-        if self._config["queue_type"] == "SGE":
-            class_name = "SunGridEngineCommands"
-            module_name = "pysqa.wrapper.sge"
-        elif self._config["queue_type"] == "TORQUE":
-            class_name = "TorqueCommands"
-            module_name = "pysqa.wrapper.torque"
-        elif self._config["queue_type"] == "SLURM":
-            class_name = "SlurmCommands"
-            module_name = "pysqa.wrapper.slurm"
-        elif self._config["queue_type"] == "LSF":
-            class_name = "LsfCommands"
-            module_name = "pysqa.wrapper.lsf"
-        elif self._config["queue_type"] == "MOAB":
-            class_name = "MoabCommands"
-            module_name = "pysqa.wrapper.moab"
-        elif self._config["queue_type"] == "GENT":
-            class_name = "GentCommands"
-            module_name = "pysqa.wrapper.gent"
-        elif self._config["queue_type"] == "REMOTE":
-            class_name = None
-            module_name = None
-        elif self._config["queue_type"] == "FLUX":
-            class_name = "FluxCommands"
-            module_name = "pysqa.wrapper.flux"
+        if self._config["queue_type"] in queue_type_dict.keys():
+            class_name = queue_type_dict[self._config["queue_type"]]["class_name"]
+            module_name = queue_type_dict[self._config["queue_type"]]["module_name"]
         else:
             raise ValueError(
                 "The queue_type "
                 + self._config["queue_type"]
                 + " is not found in the list of supported queue types "
-                + str(
-                    ["SGE", "TORQUE", "SLURM", "LSF", "MOAB", "FLUX", "GENT", "REMOTE"]
-                )
+                + str(list(queue_type_dict.keys()))
             )
         if self._config["queue_type"] != "REMOTE":
             self._commands = getattr(importlib.import_module(module_name), class_name)()
