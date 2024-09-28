@@ -1,13 +1,13 @@
 import os
 from typing import List, Optional, Tuple, Union
 
-from jinja2 import Template
-from jinja2.exceptions import TemplateSyntaxError
 import pandas
 import yaml
+from jinja2 import Template
+from jinja2.exceptions import TemplateSyntaxError
 
 from pysqa.base.core import QueueAdapterCore, execute_command
-from pysqa.base.validate import value_error_if_none, check_queue_parameters
+from pysqa.base.validate import check_queue_parameters, value_error_if_none
 
 
 class Queues(object):

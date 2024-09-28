@@ -1,5 +1,5 @@
 import re
-from typing import Union, Tuple, Optional
+from typing import Optional, Tuple, Union
 
 
 def check_queue_parameters(
@@ -7,9 +7,7 @@ def check_queue_parameters(
     cores: int = 1,
     run_time_max: Optional[int] = None,
     memory_max: Optional[int] = None,
-) -> Tuple[
-    Union[float, int, None], Union[float, int, None], Union[float, int, None]
-]:
+) -> Tuple[Union[float, int, None], Union[float, int, None], Union[float, int, None]]:
     """
     Check the parameters of a queue.
 
@@ -31,10 +29,9 @@ def check_queue_parameters(
     run_time_max = value_in_range(
         value=run_time_max, value_max=active_queue["run_time_max"]
     )
-    memory_max = value_in_range(
-        value=memory_max, value_max=active_queue["memory_max"]
-    )
+    memory_max = value_in_range(value=memory_max, value_max=active_queue["memory_max"])
     return cores, run_time_max, memory_max
+
 
 def value_error_if_none(value: str) -> None:
     """
