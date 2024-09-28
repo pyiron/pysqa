@@ -42,9 +42,7 @@ class TestBasisQueueAdapter(unittest.TestCase):
         self.assertEqual(value_in_range(1035, value_max="1K"), "1K")
         self.assertEqual(value_in_range("1035", value_min="1K"), "1035")
         self.assertEqual(
-            value_in_range(
-                "60000M", value_min="1K", value_max="50G"
-            ),
+            value_in_range("60000M", value_min="1K", value_max="50G"),
             "50G",
         )
         self.assertEqual(
@@ -52,9 +50,7 @@ class TestBasisQueueAdapter(unittest.TestCase):
             "50G",
         )
         self.assertEqual(
-            value_in_range(
-                "60000M", value_min="1K", value_max="70G"
-            ),
+            value_in_range("60000M", value_min="1K", value_max="70G"),
             "60000M",
         )
         self.assertEqual(
@@ -62,9 +58,7 @@ class TestBasisQueueAdapter(unittest.TestCase):
             60000,
         )
         self.assertEqual(
-            value_in_range(
-                90000 * 1024**2, value_min="1K", value_max="70G"
-            ),
+            value_in_range(90000 * 1024**2, value_min="1K", value_max="70G"),
             "70G",
         )
         self.assertEqual(
@@ -72,8 +66,6 @@ class TestBasisQueueAdapter(unittest.TestCase):
             "70G",
         )
         self.assertEqual(
-            value_in_range(
-                "60000M", value_min="60G", value_max="70G"
-            ),
+            value_in_range("60000M", value_min="60G", value_max="70G"),
             "60G",
         )

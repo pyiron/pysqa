@@ -12,7 +12,7 @@ from jinja2.exceptions import TemplateSyntaxError
 
 from pysqa.utils.execute import execute_command
 from pysqa.utils.queues import Queues
-from pysqa.utils.validate import value_in_range, value_error_if_none
+from pysqa.utils.validate import value_error_if_none, value_in_range
 
 
 class BasisQueueAdapter(object):
