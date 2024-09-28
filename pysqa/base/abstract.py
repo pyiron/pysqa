@@ -1,8 +1,8 @@
 from abc import ABC, abstractmethod
-from typing import Optional, List, Union
+from typing import List, Optional, Union
 
-from jinja2 import Template
 import pandas
+from jinja2 import Template
 
 
 class QueueAdapterAbstractClass(ABC):

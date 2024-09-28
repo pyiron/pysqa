@@ -1,8 +1,8 @@
 import os
 from typing import List, Optional, Tuple, Union
 
-from jinja2 import Template
 import pandas
+from jinja2 import Template
 
 from pysqa.base.abstract import QueueAdapterAbstractClass
 from pysqa.base.config import QueueAdapterWithConfig, read_config
