@@ -2,13 +2,15 @@ import os
 from typing import List, Optional, Tuple, Union
 
 import pandas
+from jinja2 import Template
 
+from pysqa.base.abstract import QueueAdapterAbstractClass
 from pysqa.base.config import QueueAdapterWithConfig, read_config
 from pysqa.base.core import execute_command
 from pysqa.base.modular import ModularQueueAdapter
 
 
-class QueueAdapter(object):
+class QueueAdapter(QueueAdapterAbstractClass):
     """
     The goal of the QueueAdapter class is to make submitting to a queue system as easy as starting another sub process
     locally.
@@ -164,6 +166,7 @@ class QueueAdapter(object):
         run_time_max: Optional[int] = None,
         dependency_list: Optional[List[str]] = None,
         command: Optional[str] = None,
+        submission_template: Optional[Union[str, Template]] = None,
         **kwargs,
     ) -> int:
         """
@@ -194,6 +197,7 @@ class QueueAdapter(object):
             run_time_max=run_time_max,
             dependency_list=dependency_list,
             command=command,
+            submission_template=submission_template,
             **kwargs,
         )
 

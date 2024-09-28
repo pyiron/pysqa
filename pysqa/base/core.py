@@ -7,6 +7,7 @@ from typing import List, Optional, Tuple, Union
 import pandas
 from jinja2 import Template
 
+from pysqa.base.abstract import QueueAdapterAbstractClass
 from pysqa.wrapper.abstract import SchedulerCommands
 
 queue_type_dict = {
@@ -111,7 +112,7 @@ def get_queue_commands(queue_type: str) -> Union[SchedulerCommands, None]:
         )
 
 
-class QueueAdapterCore(object):
+class QueueAdapterCore(QueueAdapterAbstractClass):
     """
     The goal of the QueueAdapter class is to make submitting to a queue system as easy as starting another sub process
     locally.
