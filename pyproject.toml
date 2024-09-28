@@ -41,15 +41,10 @@ remote = [
     "paramiko==3.5.0",
     "tqdm==4.66.5",
 ]
-executor = [
-    "executorlib==0.0.2",
-    "cloudpickle==3.0.0",
-]
 twofactor = ["pyauthenticator==0.2.0"]
 
 [project.scripts]
 pysqa = "pysqa.cmd:command_line"
-pysqa-executor = "pysqa.executor.backend:command_line"
 
 [tool.setuptools.packages.find]
 include = ["pysqa*"]

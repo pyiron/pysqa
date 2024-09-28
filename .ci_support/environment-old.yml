@@ -7,5 +7,3 @@ dependencies:
 - jinja2 =2.11.3
 - paramiko =2.7.1
 - tqdm =4.66.1
-- executorlib =0.0.1
-- cloudpickle =2.2.1
