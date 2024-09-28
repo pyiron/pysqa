@@ -1,6 +1,6 @@
 # pysqa
 
-[![Python package](https://github.com/pyiron/pysqa/workflows/Python%20package/badge.svg)](https://github.com/pyiron/pysqa/actions)
+[![Unittests](https://github.com/pyiron/pysqa/actions/workflows/unittest.yml/badge.svg)](https://github.com/pyiron/pysqa/actions/workflows/unittest.yml)
 [![Documentation Status](https://readthedocs.org/projects/pysqa/badge/?version=latest)](https://pysqa.readthedocs.io/en/latest/?badge=latest)
 [![Coverage Status](https://coveralls.io/repos/github/pyiron/pysqa/badge.svg?branch=main)](https://coveralls.io/github/pyiron/pysqa?branch=main)
 [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/pyiron/pysqa/HEAD?labpath=example.ipynb)
@@ -24,7 +24,7 @@ as well as the [command line interface](https://pysqa.readthedocs.io/en/latest/c
 ## Features
 The core feature of `pysqa` is the communication to HPC queuing systems including ([Flux](https://pysqa.readthedocs.io/en/latest/queue.html#flux), 
 [LFS](https://pysqa.readthedocs.io/en/latest/queue.html#lfs), [MOAB](https://pysqa.readthedocs.io/en/latest/queue.html#moab), 
-[SGE](hhttps://pysqa.readthedocs.io/en/latest/queue.html#sge), [SLURM](https://pysqa.readthedocs.io/en/latest/queue.html#slurm) 
+[SGE](https://pysqa.readthedocs.io/en/latest/queue.html#sge), [SLURM](https://pysqa.readthedocs.io/en/latest/queue.html#slurm) 
 and [TORQUE](https://pysqa.readthedocs.io/en/latest/queue.html#torque)). This includes: 
 
 * `QueueAdapter().submit_job()` - Submission of new tasks to the queuing system. 
