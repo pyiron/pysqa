@@ -88,16 +88,16 @@ class LsfCommands(SchedulerCommands):
         return df
 
     def render_submission_template(
-            self,
-            command: str,
-            job_name: str = "pysqa",
-            working_directory: str = os.path.abspath("."),
-            cores: int = 1,
-            memory_max: Optional[int] = None,
-            run_time_max: Optional[int] = None,
-            dependency_list: Optional[List[int]] = None,
-            submission_template: Union[str, Template] = template,
-            **kwargs,
+        self,
+        command: str,
+        job_name: str = "pysqa",
+        working_directory: str = os.path.abspath("."),
+        cores: int = 1,
+        memory_max: Optional[int] = None,
+        run_time_max: Optional[int] = None,
+        dependency_list: Optional[List[int]] = None,
+        submission_template: Union[str, Template] = template,
+        **kwargs,
     ) -> str:
         """
         Generate the job submission template.

@@ -2,8 +2,8 @@
 # Copyright (c) Max-Planck-Institut für Eisenforschung GmbH - Computational Materials Design (CM) Department
 # Distributed under the terms of "New BSD License", see the LICENSE file.
 
-from abc import ABC, abstractmethod
 import os
+from abc import ABC, abstractmethod
 from typing import List, Optional, Union
 
 import pandas
