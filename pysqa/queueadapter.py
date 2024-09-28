@@ -5,7 +5,7 @@ import pandas
 
 from pysqa.base.config import QueueAdapterWithConfig, read_config
 from pysqa.base.core import execute_command
-from pysqa.ext.modular import ModularQueueAdapter
+from pysqa.base.modular import ModularQueueAdapter
 
 
 class QueueAdapter(object):
@@ -361,7 +361,7 @@ def set_queue_adapter(
         # The RemoteQueueAdapter has additional dependencies, namely paramiko and tqdm.
         # By moving the import to this line it only fails when the user specifies the
         # RemoteQueueAdapter in their pysqa configuration.
-        from pysqa.ext.remote import RemoteQueueAdapter
+        from pysqa.base.remote import RemoteQueueAdapter
 
         return RemoteQueueAdapter(
             config=config, directory=directory, execute_command=execute_command
