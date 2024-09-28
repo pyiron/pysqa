@@ -1,4 +1,3 @@
-# coding: utf-8
 import pandas
 from flux.job import JobID
 
