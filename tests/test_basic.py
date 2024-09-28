@@ -15,6 +15,10 @@ class TestQueueAdapter(unittest.TestCase):
         with self.assertRaises(ValueError):
             QueueAdapter(directory=os.path.join(self.path, "config/error"))
 
+    def test_no_config(self):
+        with self.assertRaises(ValueError):
+            QueueAdapter()
+
     def test_bad_queue_template(self):
         with self.assertRaises(TemplateSyntaxError):
             QueueAdapter(directory=os.path.join(self.path, "config/bad_template"))
