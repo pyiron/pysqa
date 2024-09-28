@@ -384,7 +384,9 @@ class BasisQueueAdapter(object):
         run_time_max: Optional[int] = None,
         memory_max: Optional[int] = None,
         active_queue: Optional[dict] = None,
-    ) -> Tuple[Union[float, int, None], Union[float, int, None], Union[float, int, None]]:
+    ) -> Tuple[
+        Union[float, int, None], Union[float, int, None], Union[float, int, None]
+    ]:
         """
         Check the parameters of a queue.
 
