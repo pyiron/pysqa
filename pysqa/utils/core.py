@@ -346,7 +346,7 @@ class CoreQueueAdapter(object):
     def _job_submission_template(
         self,
         queue: Optional[str] = None,
-        submission_template: Optional[str, Template] = None,
+        submission_template: Optional[Union[str, Template]] = None,
         job_name: str = "job.py",
         working_directory: str = ".",
         cores: Optional[int] = None,
