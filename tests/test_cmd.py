@@ -1,9 +1,8 @@
 import os
 import io
 import json
-import unittest
 import unittest.mock
-from pysqa.cmd import command_line
+from pysqa.base.cmd import command_line
 
 
 class TestCMD(unittest.TestCase):
