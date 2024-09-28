@@ -4,7 +4,7 @@
 
 import pandas
 
-from pysqa.wrapper.slurm import SlurmCommands
+from pysqa.wrapper.slurm import SlurmCommands, template as template_slurm
 
 __author__ = "Jan Janssen"
 __copyright__ = (
@@ -16,6 +16,8 @@ __maintainer__ = "Jan Janssen"
 __email__ = "janssen@mpie.de"
 __status__ = "development"
 __date__ = "Feb 9, 2019"
+
+template = template_slurm
 
 
 class GentCommands(SlurmCommands):
