@@ -77,9 +77,9 @@ from within `pysqa`, which are represented to the user as a single resource.
   * [Remote HPC](https://pysqa.readthedocs.io/en/latest/debug.html#remote-hpc)
 
 ## License
-`pysqa` is released under the BSD license https://github.com/pyiron/pysqa/blob/main/LICENSE . It is a spin-off of the 
-`pyiron` project https://github.com/pyiron/pyiron therefore if you use `pysqa` for calculation which result in a 
-scientific publication, please cite: 
+`pysqa` is released under the [BSD license](https://github.com/pyiron/pysqa/blob/main/LICENSE) . It is a spin-off of the 
+[pyiron project](https://pyiron.org) therefore if you use `pysqa` for calculation which result in a scientific 
+publication, please cite: 
 
     @article{pyiron-paper,
       title = {pyiron: An integrated development environment for computational materials science},
