@@ -295,7 +295,7 @@ class TestSlurmQueueAdapterDefault(unittest.TestCase):
             working_directory=None,
             cores=10,
             memory_max=None,
-            run_time_max=4320*60,
+            run_time_max=4320 * 60,
             command='echo "hello"',
             partition="slurm",
         )
@@ -321,7 +321,7 @@ echo \"hello\""""
             working_directory=None,
             cores=10,
             memory_max=None,
-            run_time_max=4320*60,
+            run_time_max=4320 * 60,
             command='echo "hello"',
             partition="slurm",
         )
