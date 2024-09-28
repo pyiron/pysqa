@@ -83,7 +83,7 @@ class QueueAdapter(QueueAdapterAbstractClass):
             self._adapter = self._queue_dict[primary_queue]
         elif queue_type is not None:
             self._queue_dict = {}
-            self._adapter = QueueAdapterCore(queue_type=queue_type)
+            self._adapter = QueueAdapterCore(queue_type=queue_type.upper())
         else:
             raise ValueError()
 
