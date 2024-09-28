@@ -8,10 +8,10 @@ import pandas
 from jinja2 import Template
 from jinja2.exceptions import TemplateSyntaxError
 
+from pysqa.utils.core import CoreQueueAdapter
 from pysqa.utils.execute import execute_command
 from pysqa.utils.queues import Queues
 from pysqa.utils.validate import value_error_if_none, value_in_range
-from pysqa.utils.core import CoreQueueAdapter
 
 
 class BasisQueueAdapter(CoreQueueAdapter):
@@ -38,8 +38,7 @@ class BasisQueueAdapter(CoreQueueAdapter):
         execute_command: callable = execute_command,
     ):
         super().__init__(
-            queue_type=config["queue_type"],
-            execute_command=execute_command
+            queue_type=config["queue_type"], execute_command=execute_command
         )
         self._config = config
         self._fill_queue_dict(queue_lst_dict=self._config["queues"])
