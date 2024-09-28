@@ -2,8 +2,11 @@
 # Copyright (c) Max-Planck-Institut für Eisenforschung GmbH - Computational Materials Design (CM) Department
 # Distributed under the terms of "New BSD License", see the LICENSE file.
 
+import os
 import re
+from typing import List, Optional, Union
 
+from jinja2 import Template
 import pandas
 
 from pysqa.wrapper.generic import SchedulerCommands
@@ -18,6 +21,24 @@ __maintainer__ = "Jan Janssen"
 __email__ = "janssen@mpie.de"
 __status__ = "development"
 __date__ = "Feb 9, 2019"
+
+template = """\
+#!/bin/bash
+#PBS -l ncpus={{cores}}
+#PBS -N {{job_name}}
+{%- if memory_max %}
+#PBS -l mem={{ memory_max| int }}GB
+{%- endif %}
+{%- if run_time_max %}
+#PBS -l walltime={{run_time_max}} 
+{%- endif %}
+#PBS -l wd
+{%- if dependency %}
+#PBS -W depend=afterok:{{ dependency | join(':') }}
+{%- endif %}
+ 
+{{command}}
+"""
 
 
 class TorqueCommands(SchedulerCommands):
@@ -103,3 +124,44 @@ class TorqueCommands(SchedulerCommands):
         )
 
         return df
+
+    @staticmethod
+    def render_submission_template(
+        command: str,
+        job_name: str = "pysqa",
+        working_directory: str = os.path.abspath("."),
+        cores: int = 1,
+        memory_max: Optional[int] = None,
+        run_time_max: Optional[int] = None,
+        dependency_list: Optional[List[int]] = None,
+        submission_template: Union[str, Template] = template,
+        **kwargs,
+    ) -> str:
+        """
+        Generate the job submission template.
+
+        Args:
+            command (str, optional): The command to be executed.
+            job_name (str, optional): The job name. Defaults to "pysqa".
+            working_directory (str, optional): The working directory. Defaults to ".".
+            cores (int, optional): The number of cores. Defaults to 1.
+            memory_max (int, optional): The maximum memory. Defaults to None.
+            run_time_max (int, optional): The maximum run time. Defaults to None.
+            dependency_list (list[int], optional): The list of dependency job IDs. Defaults to None.
+            submission_template (str): Submission script template pysqa.wrapper.torque.template
+
+        Returns:
+            str: The rendered job submission template.
+        """
+        if isinstance(submission_template, Template):
+            submission_template = Template(submission_template)
+        return submission_template.render(
+            command=command,
+            job_name=job_name,
+            working_directory=working_directory,
+            cores=cores,
+            memory_max=memory_max,
+            run_time_max=run_time_max,
+            dependency_list=dependency_list,
+            **kwargs,
+        )

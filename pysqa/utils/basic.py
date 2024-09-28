@@ -511,14 +511,14 @@ class BasisQueueAdapter(object):
             memory_max=memory_max,
             active_queue=active_queue,
         )
-        template = active_queue["template"]
-        return template.render(
-            job_name=job_name,
+        return self._commands.render_submission_template(
+            command=command,
+            submission_template=active_queue["template"],
             working_directory=working_directory,
+            job_name=job_name,
             cores=cores,
             memory_max=memory_max,
             run_time_max=run_time_max,
-            command=command,
             dependency_list=dependency_list,
             **kwargs,
         )
