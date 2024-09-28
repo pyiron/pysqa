@@ -13,6 +13,68 @@ from jinja2.exceptions import TemplateSyntaxError
 from pysqa.utils.execute import execute_command
 from pysqa.utils.queues import Queues
 from pysqa.utils.validate import value_error_if_none, value_in_range
+from pysqa.wrapper.generic import SchedulerCommands
+
+queue_type_dict = {
+    "SGE": {
+        "class_name": "SunGridEngineCommands",
+        "module_name": "pysqa.wrapper.sge",
+    },
+    "TORQUE": {
+        "class_name": "TorqueCommands",
+        "module_name": "pysqa.wrapper.torque",
+    },
+    "SLURM": {
+        "class_name": "SlurmCommands",
+        "module_name": "pysqa.wrapper.slurm",
+    },
+    "LSF": {
+        "class_name": "LsfCommands",
+        "module_name": "pysqa.wrapper.lsf",
+    },
+    "MOAB": {
+        "class_name": "MoabCommands",
+        "module_name": "pysqa.wrapper.moab",
+    },
+    "GENT": {
+        "class_name": "GentCommands",
+        "module_name": "pysqa.wrapper.gent",
+    },
+    "REMOTE": {
+        "class_name": None,
+        "module_name": None,
+    },
+    "FLUX": {
+        "class_name": "FluxCommands",
+        "module_name": "pysqa.wrapper.flux",
+    },
+}
+
+
+def get_queue_commands(queue_type: str) -> Union[SchedulerCommands, None]:
+    """
+    Load queuing system commands class
+
+    Args:
+        queue_type (str): Type of the queuing system in capital letters
+
+    Returns:
+        SchedulerCommands: queuing system commands class instance
+    """
+    if queue_type in queue_type_dict.keys():
+        class_name = queue_type_dict[queue_type]["class_name"]
+        module_name = queue_type_dict[queue_type]["module_name"]
+        if module_name is not None and class_name is not None:
+            return getattr(importlib.import_module(module_name), class_name)()
+        else:
+            return None
+    else:
+        raise ValueError(
+            "The queue_type "
+            + queue_type
+            + " is not found in the list of supported queue types "
+            + str(list(queue_type_dict.keys()))
+        )
 
 
 class BasisQueueAdapter(object):
@@ -41,41 +103,7 @@ class BasisQueueAdapter(object):
         self._config = config
         self._fill_queue_dict(queue_lst_dict=self._config["queues"])
         self._load_templates(queue_lst_dict=self._config["queues"], directory=directory)
-        if self._config["queue_type"] == "SGE":
-            class_name = "SunGridEngineCommands"
-            module_name = "pysqa.wrapper.sge"
-        elif self._config["queue_type"] == "TORQUE":
-            class_name = "TorqueCommands"
-            module_name = "pysqa.wrapper.torque"
-        elif self._config["queue_type"] == "SLURM":
-            class_name = "SlurmCommands"
-            module_name = "pysqa.wrapper.slurm"
-        elif self._config["queue_type"] == "LSF":
-            class_name = "LsfCommands"
-            module_name = "pysqa.wrapper.lsf"
-        elif self._config["queue_type"] == "MOAB":
-            class_name = "MoabCommands"
-            module_name = "pysqa.wrapper.moab"
-        elif self._config["queue_type"] == "GENT":
-            class_name = "GentCommands"
-            module_name = "pysqa.wrapper.gent"
-        elif self._config["queue_type"] == "REMOTE":
-            class_name = None
-            module_name = None
-        elif self._config["queue_type"] == "FLUX":
-            class_name = "FluxCommands"
-            module_name = "pysqa.wrapper.flux"
-        else:
-            raise ValueError(
-                "The queue_type "
-                + self._config["queue_type"]
-                + " is not found in the list of supported queue types "
-                + str(
-                    ["SGE", "TORQUE", "SLURM", "LSF", "MOAB", "FLUX", "GENT", "REMOTE"]
-                )
-            )
-        if self._config["queue_type"] != "REMOTE":
-            self._commands = getattr(importlib.import_module(module_name), class_name)()
+        self._commands = get_queue_commands(queue_type=self._config["queue_type"])
         self._queues = Queues(self.queue_list)
         self._remote_flag = False
         self._ssh_delete_file_on_remote = True
@@ -154,7 +182,7 @@ class BasisQueueAdapter(object):
         dependency_list: Optional[List[str]] = None,
         command: Optional[str] = None,
         **kwargs,
-    ) -> int:
+    ) -> Union[int, None]:
         """
         Submit a job to the queue.
 
@@ -228,7 +256,7 @@ class BasisQueueAdapter(object):
         else:
             return None
 
-    def delete_job(self, process_id: int) -> str:
+    def delete_job(self, process_id: int) -> Union[str, None]:
         """
         Delete a job.
 
@@ -275,7 +303,7 @@ class BasisQueueAdapter(object):
         """
         return self.get_queue_status(user=self._get_user())
 
-    def get_status_of_job(self, process_id: int) -> str:
+    def get_status_of_job(self, process_id: int) -> Union[str, None]:
         """
         Get the status of a job.
 
@@ -351,12 +379,14 @@ class BasisQueueAdapter(object):
 
     def check_queue_parameters(
         self,
-        queue: str,
+        queue: Optional[str],
         cores: int = 1,
         run_time_max: Optional[int] = None,
         memory_max: Optional[int] = None,
         active_queue: Optional[dict] = None,
-    ) -> list:
+    ) -> Tuple[
+        Union[float, int, None], Union[float, int, None], Union[float, int, None]
+    ]:
         """
         Check the parameters of a queue.
 
