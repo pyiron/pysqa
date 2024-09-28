@@ -4,7 +4,8 @@
 
 import pandas
 
-from pysqa.wrapper.slurm import SlurmCommands, template as template_slurm
+from pysqa.wrapper.slurm import SlurmCommands
+from pysqa.wrapper.slurm import template as template_slurm
 
 __author__ = "Jan Janssen"
 __copyright__ = (
