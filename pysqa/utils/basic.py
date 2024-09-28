@@ -5,13 +5,13 @@ import pandas
 from jinja2 import Template
 from jinja2.exceptions import TemplateSyntaxError
 
-from pysqa.utils.core import CoreQueueAdapter
+from pysqa.utils.core import QueueAdapterCore
 from pysqa.utils.execute import execute_command
 from pysqa.utils.queues import Queues
 from pysqa.utils.validate import value_error_if_none, value_in_range
 
 
-class BasisQueueAdapter(CoreQueueAdapter):
+class QueueAdapterWithConfig(QueueAdapterCore):
     """
     The goal of the QueueAdapter class is to make submitting to a queue system as easy as starting another sub process
     locally.

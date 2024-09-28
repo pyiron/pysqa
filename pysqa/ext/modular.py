@@ -2,11 +2,11 @@ from typing import Optional, Union
 
 import pandas
 
-from pysqa.utils.basic import BasisQueueAdapter
+from pysqa.utils.basic import QueueAdapterWithConfig
 from pysqa.utils.execute import execute_command
 
 
-class ModularQueueAdapter(BasisQueueAdapter):
+class ModularQueueAdapter(QueueAdapterWithConfig):
     """
     A class representing a modular queue adapter.
 
