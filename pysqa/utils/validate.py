@@ -77,7 +77,7 @@ def _is_memory_string(value: str) -> bool:
 
 
 def _memory_spec_string_to_value(
-    cls, value: str, default_magnitude: str = "m", target_magnitude: str = "b"
+    value: str, default_magnitude: str = "m", target_magnitude: str = "b"
 ) -> Union[int, float]:
     """
     Converts a valid memory string (tested by _is_memory_string) into an integer/float value of desired
@@ -93,7 +93,7 @@ def _memory_spec_string_to_value(
         Union[int, float]: The value of the string in `target_magnitude` units.
     """
     magnitude_mapping = {"b": 0, "k": 1, "m": 2, "g": 3, "t": 4}
-    if cls._is_memory_string(value):
+    if _is_memory_string(value):
         integer_pattern = r"[0-9]+"
         magnitude_pattern = r"[bBkKmMgGtT]+"
         integer_value = int(re.findall(integer_pattern, value)[0])
