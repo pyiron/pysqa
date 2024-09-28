@@ -2,7 +2,7 @@
 # Copyright (c) Jan Janssen
 
 import os
-from typing import List, Optional, Union, Tuple
+from typing import List, Optional, Tuple, Union
 
 import pandas
 
