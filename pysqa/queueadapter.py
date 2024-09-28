@@ -39,7 +39,10 @@ class QueueAdapter(QueueAdapterAbstractClass):
     """
 
     def __init__(
-        self, directory: Optional[str] = None, queue_type: Optional[str] = None, execute_command: callable = execute_command
+        self,
+        directory: Optional[str] = None,
+        queue_type: Optional[str] = None,
+        execute_command: callable = execute_command,
     ):
         """
         Initialize the QueueAdapter.
