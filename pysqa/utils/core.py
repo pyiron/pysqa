@@ -98,7 +98,7 @@ class CoreQueueAdapter(object):
         run_time_max: Optional[int] = None,
         dependency_list: Optional[List[str]] = None,
         command: Optional[str] = None,
-        submission_template: Optional[str, Template] = None,
+        submission_template: Optional[Union[str, Template]] = None,
         **kwargs,
     ) -> Union[int, None]:
         """
