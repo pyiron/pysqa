@@ -3,6 +3,7 @@
 # Distributed under the terms of "New BSD License", see the LICENSE file.
 
 from abc import ABC, abstractmethod
+import os
 from typing import List, Optional, Union
 
 import pandas
@@ -65,12 +66,11 @@ class SchedulerCommands(ABC):
         pass
 
     @staticmethod
-    @abstractmethod
     def render_submission_template(
         command: str,
         submission_template: Union[str, Template],
-        working_directory: str,
         job_name: str = "pysqa",
+        working_directory: str = os.path.abspath("."),
         cores: int = 1,
         memory_max: Optional[int] = None,
         run_time_max: Optional[int] = None,
@@ -93,7 +93,18 @@ class SchedulerCommands(ABC):
         Returns:
             str: The rendered job submission template.
         """
-        pass
+        if not isinstance(submission_template, Template):
+            submission_template = Template(submission_template)
+        return submission_template.render(
+            command=command,
+            job_name=job_name,
+            working_directory=working_directory,
+            cores=cores,
+            memory_max=memory_max,
+            run_time_max=run_time_max,
+            dependency_list=dependency_list,
+            **kwargs,
+        )
 
     @staticmethod
     def dependencies(dependency_list: list[str]) -> list:

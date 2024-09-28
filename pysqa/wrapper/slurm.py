@@ -105,17 +105,17 @@ class SlurmCommands(SchedulerCommands):
         else:
             return []
 
-    @staticmethod
     def render_submission_template(
-        command: str,
-        job_name: str = "pysqa",
-        working_directory: str = os.path.abspath("."),
-        cores: int = 1,
-        memory_max: Optional[int] = None,
-        run_time_max: Optional[int] = None,
-        dependency_list: Optional[List[int]] = None,
-        submission_template: Union[str, Template] = template,
-        **kwargs,
+            self,
+            command: str,
+            job_name: str = "pysqa",
+            working_directory: str = os.path.abspath("."),
+            cores: int = 1,
+            memory_max: Optional[int] = None,
+            run_time_max: Optional[int] = None,
+            dependency_list: Optional[List[int]] = None,
+            submission_template: Union[str, Template] = template,
+            **kwargs,
     ) -> str:
         """
         Generate the job submission template.
@@ -128,14 +128,12 @@ class SlurmCommands(SchedulerCommands):
             memory_max (int, optional): The maximum memory. Defaults to None.
             run_time_max (int, optional): The maximum run time. Defaults to None.
             dependency_list (list[int], optional): The list of dependency job IDs. Defaults to None.
-            submission_template (str): Submission script template pysqa.wrapper.torque.template
+            submission_template (str): Submission script template pysqa.wrapper.flux.template
 
         Returns:
             str: The rendered job submission template.
         """
-        if not isinstance(submission_template, Template):
-            submission_template = Template(submission_template)
-        return submission_template.render(
+        return super().render_submission_template(
             command=command,
             job_name=job_name,
             working_directory=working_directory,
@@ -143,5 +141,6 @@ class SlurmCommands(SchedulerCommands):
             memory_max=memory_max,
             run_time_max=run_time_max,
             dependency_list=dependency_list,
+            submission_template=submission_template,
             **kwargs,
         )

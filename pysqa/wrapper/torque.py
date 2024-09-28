@@ -125,8 +125,8 @@ class TorqueCommands(SchedulerCommands):
 
         return df
 
-    @staticmethod
     def render_submission_template(
+        self,
         command: str,
         job_name: str = "pysqa",
         working_directory: str = os.path.abspath("."),
@@ -148,14 +148,12 @@ class TorqueCommands(SchedulerCommands):
             memory_max (int, optional): The maximum memory. Defaults to None.
             run_time_max (int, optional): The maximum run time. Defaults to None.
             dependency_list (list[int], optional): The list of dependency job IDs. Defaults to None.
-            submission_template (str): Submission script template pysqa.wrapper.torque.template
+            submission_template (str): Submission script template pysqa.wrapper.flux.template
 
         Returns:
             str: The rendered job submission template.
         """
-        if not isinstance(submission_template, Template):
-            submission_template = Template(submission_template)
-        return submission_template.render(
+        return super().render_submission_template(
             command=command,
             job_name=job_name,
             working_directory=working_directory,
@@ -163,5 +161,6 @@ class TorqueCommands(SchedulerCommands):
             memory_max=memory_max,
             run_time_max=run_time_max,
             dependency_list=dependency_list,
+            submission_template=submission_template,
             **kwargs,
         )

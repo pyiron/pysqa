@@ -98,8 +98,8 @@ class SunGridEngineCommands(SchedulerCommands):
             }
         )
 
-    @staticmethod
     def render_submission_template(
+        self,
         command: str,
         job_name: str = "pysqa",
         working_directory: str = os.path.abspath("."),
@@ -126,9 +126,7 @@ class SunGridEngineCommands(SchedulerCommands):
         Returns:
             str: The rendered job submission template.
         """
-        if not isinstance(submission_template, Template):
-            submission_template = Template(submission_template)
-        return submission_template.render(
+        return super().render_submission_template(
             command=command,
             job_name=job_name,
             working_directory=working_directory,
@@ -136,5 +134,6 @@ class SunGridEngineCommands(SchedulerCommands):
             memory_max=memory_max,
             run_time_max=run_time_max,
             dependency_list=dependency_list,
+            submission_template=submission_template,
             **kwargs,
         )

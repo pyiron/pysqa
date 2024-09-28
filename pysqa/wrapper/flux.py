@@ -75,17 +75,17 @@ class FluxCommands(SchedulerCommands):
         df.loc[df.status == "CD", "status"] = "finished"
         return df
 
-    @staticmethod
     def render_submission_template(
-        command: str,
-        job_name: str = "pysqa",
-        working_directory: str = os.path.abspath("."),
-        cores: int = 1,
-        memory_max: Optional[int] = None,
-        run_time_max: Optional[int] = None,
-        dependency_list: Optional[List[int]] = None,
-        submission_template: Union[str, Template] = template,
-        **kwargs,
+            self,
+            command: str,
+            job_name: str = "pysqa",
+            working_directory: str = os.path.abspath("."),
+            cores: int = 1,
+            memory_max: Optional[int] = None,
+            run_time_max: Optional[int] = None,
+            dependency_list: Optional[List[int]] = None,
+            submission_template: Union[str, Template] = template,
+            **kwargs,
     ) -> str:
         """
         Generate the job submission template.
@@ -103,9 +103,7 @@ class FluxCommands(SchedulerCommands):
         Returns:
             str: The rendered job submission template.
         """
-        if not isinstance(submission_template, Template):
-            submission_template = Template(submission_template)
-        return submission_template.render(
+        return super().render_submission_template(
             command=command,
             job_name=job_name,
             working_directory=working_directory,
@@ -113,5 +111,6 @@ class FluxCommands(SchedulerCommands):
             memory_max=memory_max,
             run_time_max=run_time_max,
             dependency_list=dependency_list,
+            submission_template=submission_template,
             **kwargs,
         )
