@@ -71,7 +71,7 @@ def get_queue_commands(queue_type: str) -> Union[SchedulerCommands, None]:
         )
 
 
-class CoreQueueAdapter(object):
+class QueueAdapterCore(object):
     def __init__(
         self,
         queue_type: str,

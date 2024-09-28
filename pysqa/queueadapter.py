@@ -4,7 +4,7 @@ from typing import List, Optional, Tuple, Union
 import pandas
 
 from pysqa.ext.modular import ModularQueueAdapter
-from pysqa.utils.basic import BasisQueueAdapter
+from pysqa.utils.basic import QueueAdapterWithConfig
 from pysqa.utils.config import read_config
 from pysqa.utils.execute import execute_command
 
@@ -351,7 +351,7 @@ def set_queue_adapter(
         directory (str): directory which contains the queue configurations
     """
     if config["queue_type"] in ["SGE", "TORQUE", "SLURM", "LSF", "MOAB", "FLUX"]:
-        return BasisQueueAdapter(
+        return QueueAdapterWithConfig(
             config=config, directory=directory, execute_command=execute_command
         )
     elif config["queue_type"] in ["GENT"]:

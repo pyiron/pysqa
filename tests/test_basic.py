@@ -5,7 +5,7 @@ import os
 import unittest
 from jinja2.exceptions import TemplateSyntaxError
 from pysqa import QueueAdapter
-from pysqa.utils.basic import BasisQueueAdapter
+from pysqa.utils.basic import QueueAdapterWithConfig
 from pysqa.utils.validate import value_in_range
 
 __author__ = "Jan Janssen"
@@ -34,7 +34,7 @@ class TestQueueAdapter(unittest.TestCase):
 class TestBasisQueueAdapter(unittest.TestCase):
     def test_bad_queue_type(self):
         with self.assertRaises(ValueError):
-            BasisQueueAdapter(config={"queue_type": "error", "queues": {}})
+            QueueAdapterWithConfig(config={"queue_type": "error", "queues": {}})
 
     def test_memory_string_comparison(self):
         self.assertEqual(value_in_range(1023, value_min="1K"), "1K")

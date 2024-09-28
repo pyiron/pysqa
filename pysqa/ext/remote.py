@@ -8,11 +8,11 @@ import pandas
 import paramiko
 from tqdm import tqdm
 
-from pysqa.utils.basic import BasisQueueAdapter
+from pysqa.utils.basic import QueueAdapterWithConfig
 from pysqa.utils.execute import execute_command
 
 
-class RemoteQueueAdapter(BasisQueueAdapter):
+class RemoteQueueAdapter(QueueAdapterWithConfig):
     """
     A class representing a remote queue adapter.
 
