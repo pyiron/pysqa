@@ -4,7 +4,6 @@
 import getpass
 import importlib
 import os
-import re
 from typing import List, Optional, Tuple, Union
 
 import pandas
@@ -13,6 +12,69 @@ from jinja2.exceptions import TemplateSyntaxError
 
 from pysqa.utils.execute import execute_command
 from pysqa.utils.queues import Queues
+from pysqa.utils.validate import value_error_if_none, value_in_range
+from pysqa.wrapper.generic import SchedulerCommands
+
+queue_type_dict = {
+    "SGE": {
+        "class_name": "SunGridEngineCommands",
+        "module_name": "pysqa.wrapper.sge",
+    },
+    "TORQUE": {
+        "class_name": "TorqueCommands",
+        "module_name": "pysqa.wrapper.torque",
+    },
+    "SLURM": {
+        "class_name": "SlurmCommands",
+        "module_name": "pysqa.wrapper.slurm",
+    },
+    "LSF": {
+        "class_name": "LsfCommands",
+        "module_name": "pysqa.wrapper.lsf",
+    },
+    "MOAB": {
+        "class_name": "MoabCommands",
+        "module_name": "pysqa.wrapper.moab",
+    },
+    "GENT": {
+        "class_name": "GentCommands",
+        "module_name": "pysqa.wrapper.gent",
+    },
+    "REMOTE": {
+        "class_name": None,
+        "module_name": None,
+    },
+    "FLUX": {
+        "class_name": "FluxCommands",
+        "module_name": "pysqa.wrapper.flux",
+    },
+}
+
+
+def get_queue_commands(queue_type: str) -> Union[SchedulerCommands, None]:
+    """
+    Load queuing system commands class
+
+    Args:
+        queue_type (str): Type of the queuing system in capital letters
+
+    Returns:
+        SchedulerCommands: queuing system commands class instance
+    """
+    if queue_type in queue_type_dict.keys():
+        class_name = queue_type_dict[queue_type]["class_name"]
+        module_name = queue_type_dict[queue_type]["module_name"]
+        if module_name is not None and class_name is not None:
+            return getattr(importlib.import_module(module_name), class_name)()
+        else:
+            return None
+    else:
+        raise ValueError(
+            "The queue_type "
+            + queue_type
+            + " is not found in the list of supported queue types "
+            + str(list(queue_type_dict.keys()))
+        )
 
 
 class BasisQueueAdapter(object):
@@ -41,41 +103,7 @@ class BasisQueueAdapter(object):
         self._config = config
         self._fill_queue_dict(queue_lst_dict=self._config["queues"])
         self._load_templates(queue_lst_dict=self._config["queues"], directory=directory)
-        if self._config["queue_type"] == "SGE":
-            class_name = "SunGridEngineCommands"
-            module_name = "pysqa.wrapper.sge"
-        elif self._config["queue_type"] == "TORQUE":
-            class_name = "TorqueCommands"
-            module_name = "pysqa.wrapper.torque"
-        elif self._config["queue_type"] == "SLURM":
-            class_name = "SlurmCommands"
-            module_name = "pysqa.wrapper.slurm"
-        elif self._config["queue_type"] == "LSF":
-            class_name = "LsfCommands"
-            module_name = "pysqa.wrapper.lsf"
-        elif self._config["queue_type"] == "MOAB":
-            class_name = "MoabCommands"
-            module_name = "pysqa.wrapper.moab"
-        elif self._config["queue_type"] == "GENT":
-            class_name = "GentCommands"
-            module_name = "pysqa.wrapper.gent"
-        elif self._config["queue_type"] == "REMOTE":
-            class_name = None
-            module_name = None
-        elif self._config["queue_type"] == "FLUX":
-            class_name = "FluxCommands"
-            module_name = "pysqa.wrapper.flux"
-        else:
-            raise ValueError(
-                "The queue_type "
-                + self._config["queue_type"]
-                + " is not found in the list of supported queue types "
-                + str(
-                    ["SGE", "TORQUE", "SLURM", "LSF", "MOAB", "FLUX", "GENT", "REMOTE"]
-                )
-            )
-        if self._config["queue_type"] != "REMOTE":
-            self._commands = getattr(importlib.import_module(module_name), class_name)()
+        self._commands = get_queue_commands(queue_type=self._config["queue_type"])
         self._queues = Queues(self.queue_list)
         self._remote_flag = False
         self._ssh_delete_file_on_remote = True
@@ -154,7 +182,7 @@ class BasisQueueAdapter(object):
         dependency_list: Optional[List[str]] = None,
         command: Optional[str] = None,
         **kwargs,
-    ) -> int:
+    ) -> Union[int, None]:
         """
         Submit a job to the queue.
 
@@ -228,7 +256,7 @@ class BasisQueueAdapter(object):
         else:
             return None
 
-    def delete_job(self, process_id: int) -> str:
+    def delete_job(self, process_id: int) -> Union[str, None]:
         """
         Delete a job.
 
@@ -275,7 +303,7 @@ class BasisQueueAdapter(object):
         """
         return self.get_queue_status(user=self._get_user())
 
-    def get_status_of_job(self, process_id: int) -> str:
+    def get_status_of_job(self, process_id: int) -> Union[str, None]:
         """
         Get the status of a job.
 
@@ -351,12 +379,14 @@ class BasisQueueAdapter(object):
 
     def check_queue_parameters(
         self,
-        queue: str,
+        queue: Optional[str],
         cores: int = 1,
         run_time_max: Optional[int] = None,
         memory_max: Optional[int] = None,
         active_queue: Optional[dict] = None,
-    ) -> list:
+    ) -> Tuple[
+        Union[float, int, None], Union[float, int, None], Union[float, int, None]
+    ]:
         """
         Check the parameters of a queue.
 
@@ -372,15 +402,15 @@ class BasisQueueAdapter(object):
         """
         if active_queue is None:
             active_queue = self._config["queues"][queue]
-        cores = self._value_in_range(
+        cores = value_in_range(
             value=cores,
             value_min=active_queue["cores_min"],
             value_max=active_queue["cores_max"],
         )
-        run_time_max = self._value_in_range(
+        run_time_max = value_in_range(
             value=run_time_max, value_max=active_queue["run_time_max"]
         )
-        memory_max = self._value_in_range(
+        memory_max = value_in_range(
             value=memory_max, value_max=active_queue["memory_max"]
         )
         return cores, run_time_max, memory_max
@@ -465,7 +495,7 @@ class BasisQueueAdapter(object):
         """
         if queue is None:
             queue = self._config["queue_primary"]
-        self._value_error_if_none(value=command)
+        value_error_if_none(value=command)
         if queue not in self.queue_list:
             raise ValueError(
                 "The queue "
@@ -567,113 +597,3 @@ class BasisQueueAdapter(object):
                             + error.message,
                             lineno=error.lineno,
                         )
-
-    @staticmethod
-    def _value_error_if_none(value: str) -> None:
-        """
-        Raise a ValueError if the value is None or not a string.
-
-        Args:
-            value (str/None): The value to check.
-
-        Raises:
-            ValueError: If the value is None.
-            TypeError: If the value is not a string.
-        """
-        if value is None:
-            raise ValueError("Value cannot be None.")
-        if not isinstance(value, str):
-            raise TypeError()
-
-    @classmethod
-    def _value_in_range(
-        cls,
-        value: Union[int, float, None],
-        value_min: Union[int, float, None] = None,
-        value_max: Union[int, float, None] = None,
-    ) -> Union[int, float, None]:
-        """
-        Check if a value is within a specified range.
-
-        Args:
-            value (int/float/None): The value to check.
-            value_min (int/float/None): The minimum value. Defaults to None.
-            value_max (int/float/None): The maximum value. Defaults to None.
-
-        Returns:
-            int/float/None: The value if it is within the range, otherwise the minimum or maximum value.
-        """
-
-        if value is not None:
-            value_, value_min_, value_max_ = [
-                (
-                    cls._memory_spec_string_to_value(v)
-                    if v is not None and isinstance(v, str)
-                    else v
-                )
-                for v in (value, value_min, value_max)
-            ]
-            # ATTENTION: '60000' is interpreted as '60000M' since default magnitude is 'M'
-            # ATTENTION: int('60000') is interpreted as '60000B' since _memory_spec_string_to_value return the size in
-            # ATTENTION: bytes, as target_magnitude = 'b'
-            # We want to compare the the actual (k,m,g)byte value if there is any
-            if value_min_ is not None and value_ < value_min_:
-                return value_min
-            if value_max_ is not None and value_ > value_max_:
-                return value_max
-            return value
-        else:
-            if value_min is not None:
-                return value_min
-            if value_max is not None:
-                return value_max
-            return value
-
-    @staticmethod
-    def _is_memory_string(value: str) -> bool:
-        """
-        Check if a string specifies a certain amount of memory.
-
-        Args:
-            value (str): The string to check.
-
-        Returns:
-            bool: True if the string matches a memory specification, False otherwise.
-        """
-        memory_spec_pattern = r"[0-9]+[bBkKmMgGtT]?"
-        return re.findall(memory_spec_pattern, value)[0] == value
-
-    @classmethod
-    def _memory_spec_string_to_value(
-        cls, value: str, default_magnitude: str = "m", target_magnitude: str = "b"
-    ) -> Union[int, float]:
-        """
-        Converts a valid memory string (tested by _is_memory_string) into an integer/float value of desired
-        magnitude `default_magnitude`. If it is a plain integer string (e.g.: '50000') it will be interpreted with
-        the magnitude passed in by the `default_magnitude`. The output will rescaled to `target_magnitude`
-
-        Args:
-            value (str): The string to convert.
-            default_magnitude (str): The magnitude for interpreting plain integer strings [b, B, k, K, m, M, g, G, t, T]. Defaults to "m".
-            target_magnitude (str): The magnitude to which the output value should be converted [b, B, k, K, m, M, g, G, t, T]. Defaults to "b".
-
-        Returns:
-            Union[int, float]: The value of the string in `target_magnitude` units.
-        """
-        magnitude_mapping = {"b": 0, "k": 1, "m": 2, "g": 3, "t": 4}
-        if cls._is_memory_string(value):
-            integer_pattern = r"[0-9]+"
-            magnitude_pattern = r"[bBkKmMgGtT]+"
-            integer_value = int(re.findall(integer_pattern, value)[0])
-
-            magnitude = re.findall(magnitude_pattern, value)
-            if len(magnitude) > 0:
-                magnitude = magnitude[0].lower()
-            else:
-                magnitude = default_magnitude.lower()
-            # Convert it to default magnitude = megabytes
-            return (integer_value * 1024 ** magnitude_mapping[magnitude]) / (
-                1024 ** magnitude_mapping[target_magnitude]
-            )
-        else:
-            return value
