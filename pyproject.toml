@@ -40,7 +40,7 @@ Repository = "https://github.com/pyiron/pysqa"
 sge = ["defusedxml==0.7.1"]
 remote = [
     "paramiko==3.5.0",
-    "tqdm==4.66.6",
+    "tqdm==4.67.0",
 ]
 twofactor = ["pyauthenticator==0.2.0"]
 
