@@ -86,7 +86,7 @@ class QueueAdapter(QueueAdapterAbstractClass):
             self._adapter = QueueAdapterCore(
                 queue_type=queue_type.upper(),
                 execute_command=execute_command,
-        )
+            )
         else:
             raise ValueError()
 
