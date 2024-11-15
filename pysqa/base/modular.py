@@ -73,7 +73,7 @@ class ModularQueueAdapter(QueueAdapterWithConfig):
             int: The cluster queue ID.
 
         """
-        working_directory, queue_script_path = self._write_queue_script(
+        working_directory, submission_script_path = self._write_queue_script(
             queue=queue,
             job_name=job_name,
             working_directory=working_directory,
@@ -87,7 +87,7 @@ class ModularQueueAdapter(QueueAdapterWithConfig):
         cluster_module = self._queue_to_cluster_dict[queue]
         commands = self._switch_cluster_command(
             cluster_module=cluster_module
-        ) + self._list_command_to_be_executed(queue_script_path=queue_script_path)
+        ) + self._list_command_to_be_executed(submission_script_path=submission_script_path)
         out = self._execute_command(
             commands=commands,
             working_directory=working_directory,
