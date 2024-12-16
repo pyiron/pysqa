@@ -407,7 +407,10 @@ def set_queue_adapter(
         # The RemoteQueueAdapter has additional dependencies, namely paramiko and tqdm.
         # By moving the import to this line it only fails when the user specifies the
         # RemoteQueueAdapter in their pysqa configuration.
-        from pysqa.base.remote import RemoteQueueAdapter
+        try:
+            from pysqa.base.remote import RemoteQueueAdapter
+        except ImportError as e:
+            raise ImportError('Failed to instantiate RemoteQueue setup, probably due to missing optional dependencies') from e
 
         return RemoteQueueAdapter(
             config=config, directory=directory, execute_command=execute_command
