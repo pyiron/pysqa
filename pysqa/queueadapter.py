@@ -410,7 +410,9 @@ def set_queue_adapter(
         try:
             from pysqa.base.remote import RemoteQueueAdapter
         except ImportError as e:
-            raise ImportError('Failed to instantiate RemoteQueue setup, probably due to missing optional dependencies') from e
+            raise ImportError(
+                "Failed to instantiate RemoteQueue setup, probably due to missing optional dependencies"
+            ) from e
 
         return RemoteQueueAdapter(
             config=config, directory=directory, execute_command=execute_command
