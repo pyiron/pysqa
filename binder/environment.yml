@@ -5,7 +5,7 @@ dependencies:
 - coverage
 - pandas =2.2.3
 - pyyaml =6.0.2
-- jinja2 =3.1.4
+- jinja2 =3.1.5
 - paramiko =3.5.0
 - tqdm =4.67.1
 - executorlib =0.0.2
