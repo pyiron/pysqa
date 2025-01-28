@@ -82,6 +82,11 @@ class SunGridEngineCommands(SchedulerCommands):
             }
         )
 
+    @staticmethod
+    def get_job_id_from_output(queue_submit_output: str) -> int:
+        """Extracts the job ID from the output of the job submission command."""
+        return int(queue_submit_output.strip().split(".")[0])
+
     def render_submission_template(
         self,
         command: str,
