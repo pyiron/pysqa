@@ -123,7 +123,7 @@ def command_line(
         elif mode_list:
             working_directory = os.path.abspath(os.path.expanduser(working_directory))
             remote_dirs, remote_files = [], []
-            for p, folder, files in os.walk(working_directory):
+            for p, _folder, files in os.walk(working_directory):
                 remote_dirs.append(p)
                 remote_files += [os.path.join(p, f) for f in files]
             print(

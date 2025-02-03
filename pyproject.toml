@@ -53,6 +53,43 @@ include = ["pysqa*"]
 [tool.setuptools.dynamic]
 version = {attr = "pysqa.__version__"}
 
+[tool.ruff]
+exclude = [".ci_support", "docs", "notebooks", "tests", "setup.py", "_version.py"]
+
+[tool.ruff.lint]
+select = [
+    # pycodestyle
+    "E",
+    # Pyflakes
+    "F",
+    # pyupgrade
+    "UP",
+    # flake8-bugbear
+    "B",
+    # flake8-simplify
+    "SIM",
+    # isort
+    "I",
+    # flake8-comprehensions
+    "C4",
+    # eradicate
+    "ERA",
+    # pylint
+    "PL",
+]
+ignore = [
+    # ignore exception naming
+    "B904",
+    # ignore line-length violations
+    "E501",
+    # Too many arguments in function definition
+    "PLR0913",
+    # Too many branches
+    "PLR0912",
+    # Too many statements
+    "PLR0915",
+]
+
 [tool.versioneer]
 VCS = "git"
 style = "pep440-pre"

@@ -2,7 +2,7 @@ import getpass
 import json
 import os
 import warnings
-from typing import List, Optional, Union
+from typing import Optional, Union
 
 import pandas
 import paramiko
@@ -85,7 +85,7 @@ class RemoteQueueAdapter(QueueAdapterWithConfig):
         directory: str = "~/.queues",
         execute_command: callable = execute_command,
     ):
-        super(RemoteQueueAdapter, self).__init__(
+        super().__init__(
             config=config, directory=directory, execute_command=execute_command
         )
         self._ssh_host = config["ssh_host"]
@@ -93,56 +93,38 @@ class RemoteQueueAdapter(QueueAdapterWithConfig):
         self._ssh_known_hosts = os.path.abspath(
             os.path.expanduser(config["known_hosts"])
         )
-        if "ssh_key" in config.keys():
+        if "ssh_key" in config:
             self._ssh_key = os.path.abspath(os.path.expanduser(config["ssh_key"]))
             self._ssh_ask_for_password = False
         else:
             self._ssh_key = None
-        if "ssh_password" in config.keys():
+        if "ssh_password" in config:
             self._ssh_password = config["ssh_password"]
             self._ssh_ask_for_password = False
         else:
             self._ssh_password = None
-        if "ssh_ask_for_password" in config.keys():
-            self._ssh_ask_for_password = config["ssh_ask_for_password"]
-        else:
-            self._ssh_ask_for_password = False
-        if "ssh_key_passphrase" in config.keys():
-            self._ssh_key_passphrase = config["ssh_key_passphrase"]
-        else:
-            self._ssh_key_passphrase = None
-        if "ssh_two_factor_authentication" in config.keys():
+        self._ssh_ask_for_password = config.get("ssh_ask_for_password", False)
+        self._ssh_key_passphrase = config.get("ssh_key_passphrase")
+        if "ssh_two_factor_authentication" in config:
             self._ssh_two_factor_authentication = config[
                 "ssh_two_factor_authentication"
             ]
         else:
             self._ssh_two_factor_authentication = False
-        if "ssh_authenticator_service" in config.keys():
+        if "ssh_authenticator_service" in config:
             self._ssh_authenticator_service = config["ssh_authenticator_service"]
             self._ssh_two_factor_authentication = True
         else:
             self._ssh_authenticator_service = None
-        if "ssh_proxy_host" in config.keys():
-            self._ssh_proxy_host = config["ssh_proxy_host"]
-        else:
-            self._ssh_proxy_host = None
+        self._ssh_proxy_host = config.get("ssh_proxy_host")
         self._ssh_remote_config_dir = config["ssh_remote_config_dir"]
         self._ssh_remote_path = config["ssh_remote_path"]
         self._ssh_local_path = os.path.abspath(
             os.path.expanduser(config["ssh_local_path"])
         )
-        if "ssh_delete_file_on_remote" in config.keys():
-            self._ssh_delete_file_on_remote = config["ssh_delete_file_on_remote"]
-        else:
-            self._ssh_delete_file_on_remote = True
-        if "ssh_port" in config.keys():
-            self._ssh_port = config["ssh_port"]
-        else:
-            self._ssh_port = 22
-        if "ssh_continous_connection" in config.keys():
-            self._ssh_continous_connection = config["ssh_continous_connection"]
-        else:
-            self._ssh_continous_connection = False
+        self._ssh_delete_file_on_remote = config.get("ssh_delete_file_on_remote", True)
+        self._ssh_port = config.get("ssh_port", 22)
+        self._ssh_continous_connection = config.get("ssh_continous_connection", False)
         self._ssh_connection = None
         self._ssh_proxy_connection = None
         self._remote_flag = True
@@ -571,7 +553,7 @@ class RemoteQueueAdapter(QueueAdapterWithConfig):
         else:
             ssh = self._open_ssh_connection()
         stdin, stdout, stderr = ssh.exec_command(command)
-        warnings.warn(stderr.read().decode())
+        warnings.warn(message=stderr.read().decode(), stacklevel=2)
         output = stdout.read().decode()
         if not self._ssh_continous_connection:
             ssh.close()
@@ -592,7 +574,7 @@ class RemoteQueueAdapter(QueueAdapterWithConfig):
             os.path.relpath(working_directory, self._ssh_local_path),
         )
 
-    def _create_remote_dir(self, directory: Union[str, List[str]]) -> None:
+    def _create_remote_dir(self, directory: Union[str, list[str]]) -> None:
         """
         Creates a remote directory on the SSH server.
 
@@ -628,7 +610,7 @@ class RemoteQueueAdapter(QueueAdapterWithConfig):
         )
         file_dict = {}
         new_dir_list = []
-        for p, folder, files in os.walk(working_directory):
+        for p, _folder, files in os.walk(working_directory):
             new_dir_list.append(
                 self._get_file_transfer(
                     file=p,

@@ -2,7 +2,7 @@ import getpass
 import importlib
 import os
 import subprocess
-from typing import List, Optional, Tuple, Union
+from typing import Optional, Union
 
 import pandas
 from jinja2 import Template
@@ -52,7 +52,7 @@ def execute_command(
     split_output: bool = True,
     shell: bool = False,
     error_filename: str = "pysqa.err",
-) -> Union[str, List[str]]:
+) -> Union[str, list[str]]:
     """
     A wrapper around the subprocess.check_output function.
 
@@ -96,7 +96,7 @@ def get_queue_commands(queue_type: str) -> Union[SchedulerCommands, None]:
     Returns:
         SchedulerCommands: queuing system commands class instance
     """
-    if queue_type in queue_type_dict.keys():
+    if queue_type in queue_type_dict:
         class_name = queue_type_dict[queue_type]["class_name"]
         module_name = queue_type_dict[queue_type]["module_name"]
         if module_name is not None and class_name is not None:
@@ -129,10 +129,9 @@ class QueueAdapterCore(QueueAdapterAbstractClass):
     ):
         self._commands = get_queue_commands(queue_type=queue_type)
         if queue_type_dict[queue_type]["module_name"] is not None:
-            self._submission_template = getattr(
-                importlib.import_module(queue_type_dict[queue_type]["module_name"]),
-                "template",
-            )
+            self._submission_template = importlib.import_module(
+                queue_type_dict[queue_type]["module_name"]
+            ).template
         self._execute_command_function = execute_command
 
     def submit_job(
@@ -143,7 +142,7 @@ class QueueAdapterCore(QueueAdapterAbstractClass):
         cores: Optional[int] = None,
         memory_max: Optional[int] = None,
         run_time_max: Optional[int] = None,
-        dependency_list: Optional[List[str]] = None,
+        dependency_list: Optional[list[str]] = None,
         command: Optional[str] = None,
         submission_template: Optional[Union[str, Template]] = None,
         **kwargs,
@@ -277,7 +276,7 @@ class QueueAdapterCore(QueueAdapterAbstractClass):
         else:
             return None
 
-    def get_status_of_jobs(self, process_id_lst: List[int]) -> List[str]:
+    def get_status_of_jobs(self, process_id_lst: list[int]) -> list[str]:
         """
         Get the status of multiple jobs.
 
@@ -311,7 +310,7 @@ class QueueAdapterCore(QueueAdapterAbstractClass):
 
     def _execute_command(
         self,
-        commands: Union[str, List[str]],
+        commands: Union[str, list[str]],
         working_directory: Optional[str] = None,
         split_output: bool = True,
         shell: bool = False,
@@ -347,10 +346,10 @@ class QueueAdapterCore(QueueAdapterAbstractClass):
         cores: Optional[int] = None,
         memory_max: Optional[int] = None,
         run_time_max: Optional[int] = None,
-        dependency_list: Optional[List[int]] = None,
+        dependency_list: Optional[list[int]] = None,
         command: Optional[str] = None,
         **kwargs,
-    ) -> Tuple[str, str]:
+    ) -> tuple[str, str]:
         """
         Write the queue script to a file.
 
@@ -399,7 +398,7 @@ class QueueAdapterCore(QueueAdapterAbstractClass):
         cores: Optional[int] = None,
         memory_max: Optional[int] = None,
         run_time_max: Optional[int] = None,
-        dependency_list: Optional[List[int]] = None,
+        dependency_list: Optional[list[int]] = None,
         command: Optional[str] = None,
         **kwargs,
     ) -> str:

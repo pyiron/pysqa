@@ -29,7 +29,7 @@ class ModularQueueAdapter(QueueAdapterWithConfig):
         directory: str = "~/.queues",
         execute_command: callable = execute_command,
     ):
-        super(ModularQueueAdapter, self).__init__(
+        super().__init__(
             config=config, directory=directory, execute_command=execute_command
         )
         self._queue_to_cluster_dict = {
@@ -212,4 +212,4 @@ class ModularQueueAdapter(QueueAdapterWithConfig):
             list: The switch cluster command.
 
         """
-        return ["module", "--quiet", "swap", "cluster/{};".format(cluster_module)]
+        return ["module", "--quiet", "swap", f"cluster/{cluster_module};"]
