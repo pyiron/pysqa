@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import List, Optional, Union
+from typing import Optional, Union
 
 import pandas
 from jinja2 import Template
@@ -15,7 +15,7 @@ class QueueAdapterAbstractClass(ABC):
         cores: Optional[int] = None,
         memory_max: Optional[int] = None,
         run_time_max: Optional[int] = None,
-        dependency_list: Optional[List[str]] = None,
+        dependency_list: Optional[list[str]] = None,
         command: Optional[str] = None,
         submission_template: Optional[Union[str, Template]] = None,
         **kwargs,
@@ -67,7 +67,7 @@ class QueueAdapterAbstractClass(ABC):
         pass
 
     @abstractmethod
-    def get_status_of_jobs(self, process_id_lst: List[int]) -> List[str]:
+    def get_status_of_jobs(self, process_id_lst: list[int]) -> list[str]:
         """
         Get the status of multiple jobs.
 

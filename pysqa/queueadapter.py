@@ -1,5 +1,5 @@
 import os
-from typing import List, Optional, Tuple, Union
+from typing import Optional, Union
 
 import pandas
 from jinja2 import Template
@@ -90,7 +90,7 @@ class QueueAdapter(QueueAdapterAbstractClass):
         else:
             raise ValueError()
 
-    def list_clusters(self) -> List[str]:
+    def list_clusters(self) -> list[str]:
         """
         List available computing clusters for remote submission
 
@@ -148,7 +148,7 @@ class QueueAdapter(QueueAdapterAbstractClass):
             return False
 
     @property
-    def queue_list(self) -> Union[List[str], None]:
+    def queue_list(self) -> Union[list[str], None]:
         """
         Get the list of available queues.
 
@@ -194,7 +194,7 @@ class QueueAdapter(QueueAdapterAbstractClass):
         cores: Optional[int] = None,
         memory_max: Optional[int] = None,
         run_time_max: Optional[int] = None,
-        dependency_list: Optional[List[str]] = None,
+        dependency_list: Optional[list[str]] = None,
         command: Optional[str] = None,
         submission_template: Optional[Union[str, Template]] = None,
         **kwargs,
@@ -338,7 +338,7 @@ class QueueAdapter(QueueAdapterAbstractClass):
         """
         return self._adapter.get_status_of_job(process_id=process_id)
 
-    def get_status_of_jobs(self, process_id_lst: List[int]) -> List[str]:
+    def get_status_of_jobs(self, process_id_lst: list[int]) -> list[str]:
         """
         Get the status of multiple jobs.
 
@@ -357,7 +357,7 @@ class QueueAdapter(QueueAdapterAbstractClass):
         run_time_max: Optional[int] = None,
         memory_max: Optional[int] = None,
         active_queue: Optional[dict] = None,
-    ) -> Tuple[
+    ) -> tuple[
         Union[float, int, None], Union[float, int, None], Union[float, int, None]
     ]:
         """

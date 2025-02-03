@@ -1,5 +1,5 @@
 import os
-from typing import List, Optional, Tuple, Union
+from typing import Optional, Union
 
 import pandas
 import yaml
@@ -10,13 +10,13 @@ from pysqa.base.core import QueueAdapterCore, execute_command
 from pysqa.base.validate import check_queue_parameters, value_error_if_none
 
 
-class Queues(object):
+class Queues:
     """
     Queues is an abstract class simply to make the list of queues available for auto completion. This is mainly used in
     interactive environments like jupyter.
     """
 
-    def __init__(self, list_of_queues: List[str]):
+    def __init__(self, list_of_queues: list[str]):
         """
         Initialize the Queues object.
 
@@ -45,7 +45,7 @@ class Queues(object):
         else:
             raise AttributeError
 
-    def __dir__(self) -> List[str]:
+    def __dir__(self) -> list[str]:
         """
         Get the list of queues.
 
@@ -189,7 +189,7 @@ class QueueAdapterWithConfig(QueueAdapterCore):
         run_time_max: Optional[int] = None,
         memory_max: Optional[int] = None,
         active_queue: Optional[dict] = None,
-    ) -> Tuple[
+    ) -> tuple[
         Union[float, int, None], Union[float, int, None], Union[float, int, None]
     ]:
         """
@@ -223,7 +223,7 @@ class QueueAdapterWithConfig(QueueAdapterCore):
         cores: Optional[int] = None,
         memory_max: Optional[int] = None,
         run_time_max: Optional[int] = None,
-        dependency_list: Optional[List[int]] = None,
+        dependency_list: Optional[list[int]] = None,
         command: Optional[str] = None,
         **kwargs,
     ) -> str:
@@ -297,8 +297,8 @@ class QueueAdapterWithConfig(QueueAdapterCore):
             directory (str, optional): The directory where the queue template files are located. Defaults to ".".
         """
         for queue_dict in queue_lst_dict.values():
-            if "script" in queue_dict.keys():
-                with open(os.path.join(directory, queue_dict["script"]), "r") as f:
+            if "script" in queue_dict:
+                with open(os.path.join(directory, queue_dict["script"])) as f:
                     try:
                         queue_dict["template"] = Template(f.read())
                     except TemplateSyntaxError as error:
@@ -321,5 +321,5 @@ def read_config(file_name: str = "queue.yaml") -> dict:
     Returns:
         dict: The parsed configuration as a dictionary.
     """
-    with open(file_name, "r") as f:
+    with open(file_name) as f:
         return yaml.load(f, Loader=yaml.FullLoader)

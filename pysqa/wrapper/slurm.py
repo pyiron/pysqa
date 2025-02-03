@@ -1,5 +1,5 @@
 import os
-from typing import List, Optional, Union
+from typing import Optional, Union
 
 import pandas
 from jinja2 import Template
@@ -97,7 +97,7 @@ class SlurmCommands(SchedulerCommands):
         cores: int = 1,
         memory_max: Optional[int] = None,
         run_time_max: Optional[int] = None,
-        dependency_list: Optional[List[int]] = None,
+        dependency_list: Optional[list[int]] = None,
         submission_template: Union[str, Template] = template,
         **kwargs,
     ) -> str:

@@ -1,5 +1,5 @@
 import re
-from typing import Optional, Tuple, Union
+from typing import Optional, Union
 
 
 def check_queue_parameters(
@@ -7,7 +7,7 @@ def check_queue_parameters(
     cores: int = 1,
     run_time_max: Optional[int] = None,
     memory_max: Optional[int] = None,
-) -> Tuple[Union[float, int, None], Union[float, int, None], Union[float, int, None]]:
+) -> tuple[Union[float, int, None], Union[float, int, None], Union[float, int, None]]:
     """
     Check the parameters of a queue.
 
