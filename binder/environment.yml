@@ -6,7 +6,7 @@ dependencies:
 - pandas =2.2.3
 - pyyaml =6.0.2
 - jinja2 =3.1.5
-- paramiko =3.5.0
+- paramiko =3.5.1
 - tqdm =4.67.1
 - executorlib =0.0.2
 - cloudpickle =3.0.0
