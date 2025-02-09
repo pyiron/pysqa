@@ -1,6 +1,6 @@
 # pysqa
 
-[![Unittests](https://github.com/pyiron/pysqa/actions/workflows/unittest.yml/badge.svg)](https://github.com/pyiron/pysqa/actions/workflows/unittest.yml)
+[![Pipeline](https://github.com/pyiron/pysqa/actions/workflows/pipeline.yml/badge.svg)](https://github.com/pyiron/pysqa/actions/workflows/pipeline.yml)
 [![Documentation Status](https://readthedocs.org/projects/pysqa/badge/?version=latest)](https://pysqa.readthedocs.io/en/latest/?badge=latest)
 [![Coverage Status](https://coveralls.io/repos/github/pyiron/pysqa/badge.svg?branch=main)](https://coveralls.io/github/pyiron/pysqa?branch=main)
 [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/pyiron/pysqa/HEAD?labpath=example_config.ipynb)
