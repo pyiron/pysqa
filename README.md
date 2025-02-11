@@ -2,7 +2,7 @@
 
 [![Pipeline](https://github.com/pyiron/pysqa/actions/workflows/pipeline.yml/badge.svg)](https://github.com/pyiron/pysqa/actions/workflows/pipeline.yml)
 [![Documentation Status](https://readthedocs.org/projects/pysqa/badge/?version=latest)](https://pysqa.readthedocs.io/en/latest/?badge=latest)
-[![Coverage Status](https://coveralls.io/repos/github/pyiron/pysqa/badge.svg?branch=main)](https://coveralls.io/github/pyiron/pysqa?branch=main)
+[![codecov](https://codecov.io/gh/pyiron/pysqa/graph/badge.svg?token=N753OWIAUW)](https://codecov.io/gh/pyiron/pysqa)
 [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/pyiron/pysqa/HEAD?labpath=example_config.ipynb)
 
 High-performance computing (HPC) does not have to be hard. In this context the aim of the Python Simple Queuing System 
