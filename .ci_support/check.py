@@ -10,7 +10,7 @@ if __name__ == "__main__":
         for el in sub_lst:
             lst.append(el)
 
-    data["project"]["dependencies"] += list(set(lst))
+    data["project"]["dependencies"] += [el for el in set(lst) if not el.startswith("pyauthenticator")]
 
     with open("pyproject.toml", "w") as f:
         f.writelines(tomlkit.dumps(data))
