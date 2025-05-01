@@ -197,6 +197,7 @@ class QueueAdapter(QueueAdapterAbstractClass):
         dependency_list: Optional[list[str]] = None,
         command: Optional[str] = None,
         submission_template: Optional[Union[str, Template]] = None,
+        submission_script_path: Optional[str] = None,
         **kwargs,
     ) -> int:
         """
@@ -212,6 +213,8 @@ class QueueAdapter(QueueAdapterAbstractClass):
             run_time_max (int/None):  Maximum runtime in seconds (optional)
             dependency_list(list[str]/None: Job ids of jobs to be completed before starting (optional)
             command (str/None): shell command to run in the job
+            submission_template (str/Template): Jinja2 template to write submission script.
+            submission_script_path (str/None): path to write the submission script to.
             **kwargs: allows writing additional parameters to the job submission script if they are available in the
                       corresponding template.
 
@@ -228,6 +231,7 @@ class QueueAdapter(QueueAdapterAbstractClass):
             dependency_list=dependency_list,
             command=command,
             submission_template=submission_template,
+            submission_script_path=submission_script_path,
             **kwargs,
         )
 
