@@ -13,4 +13,4 @@ dependencies:
 - tqdm =4.67.1
 - jupyter-book =1.0.0
 - python =3.12
-- setuptools =80.1.0
+- setuptools =80.3.1
