@@ -12,4 +12,4 @@ dependencies:
 - cloudpickle =3.0.0
 - flux-core =0.59.0
 - versioneer =0.28
-- setuptools =80.1.0
+- setuptools =80.7.1
