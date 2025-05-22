@@ -4,6 +4,7 @@
 [![Documentation Status](https://readthedocs.org/projects/pysqa/badge/?version=latest)](https://pysqa.readthedocs.io/en/latest/?badge=latest)
 [![codecov](https://codecov.io/gh/pyiron/pysqa/graph/badge.svg?token=N753OWIAUW)](https://codecov.io/gh/pyiron/pysqa)
 [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/pyiron/pysqa/HEAD?labpath=example_config.ipynb)
+![GitHub Repo stars](https://img.shields.io/github/stars/pyiron/pysqa)
 
 High-performance computing (HPC) does not have to be hard. In this context the aim of the Python Simple Queuing System 
 Adapter (`pysqa`) is to simplify the submission of tasks from python to HPC clusters as easy as starting another 
