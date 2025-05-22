@@ -1,6 +1,6 @@
 from pysqa.queueadapter import QueueAdapter
 
-from ._version import get_versions
+from . import _version
 
 __all__ = ["QueueAdapter"]
-__version__ = get_versions()["version"]
+__version__ = _version.__version__

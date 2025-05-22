@@ -11,5 +11,5 @@ dependencies:
 - executorlib =0.0.2
 - cloudpickle =3.0.0
 - flux-core =0.59.0
-- versioneer =0.28
-- setuptools =80.8.0
+- hatchling =1.27.0
+- hatch-vcs =0.4.0
