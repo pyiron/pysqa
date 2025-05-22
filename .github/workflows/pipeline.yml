@@ -60,9 +60,7 @@ jobs:
           environment-file: environment.yml
       - name: Install
         shell: bash -l {0}
-        run: |
-          pip install versioneer[toml]==0.29
-          pip install . --no-deps --no-build-isolation
+        run: pip install . --no-deps --no-build-isolation
       - name: Test
         shell: bash -l {0}
         run: >
@@ -98,7 +96,6 @@ jobs:
       - name: Test
         shell: bash -l {0}
         run: |
-          pip install versioneer[toml]==0.29
           pip install . --no-deps --no-build-isolation
           python -m unittest discover tests
 
@@ -122,7 +119,6 @@ jobs:
       - name: Install
         shell: bash -l {0}
         run: |
-          pip install versioneer[toml]==0.29
           pip install . --no-deps --no-build-isolation
           mkdir config
           cp -r tests/config/flux config
@@ -154,7 +150,7 @@ jobs:
       - name: Pip check
         shell: bash -l {0}
         run: |
-          pip install versioneer[toml]==0.29 tomlkit
+          pip install tomlkit
           python .ci_support/check.py
           cat pyproject.toml
           pip install . --no-deps --no-build-isolation
@@ -202,7 +198,6 @@ jobs:
       - name: Test
         shell: bash -l {0}
         run: |
-          pip install versioneer[toml]==0.29
           pip install . --no-deps --no-build-isolation
           python -m unittest discover tests
 
@@ -223,7 +218,6 @@ jobs:
       - name: Test
         shell: bash -l {0}
         run: |
-          pip install versioneer[toml]==0.29
           pip install . --no-deps --no-build-isolation
           python -m unittest discover tests
 

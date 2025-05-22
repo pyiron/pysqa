@@ -3,10 +3,10 @@ requires = [
     "jinja2==3.1.6", 
     "pandas==2.2.3", 
     "pyyaml==6.0.2", 
-    "setuptools==80.8.0",
-    "versioneer[toml]==0.29",
+    "hatchling==1.27.0",
+    "hatch-vcs==0.4.0",
 ]
-build-backend = "setuptools.build_meta"
+build-backend = "hatchling.build"
 
 [project]
 name = "pysqa"
@@ -53,12 +53,6 @@ twofactor = ["pyauthenticator==0.2.0"]
 [project.scripts]
 pysqa = "pysqa.cmd:command_line"
 
-[tool.setuptools.packages.find]
-include = ["pysqa*"]
-
-[tool.setuptools.dynamic]
-version = {attr = "pysqa.__version__"}
-
 [tool.ruff]
 exclude = [".ci_support", "docs", "notebooks", "tests", "setup.py", "_version.py"]
 
@@ -96,9 +90,24 @@ ignore = [
     "PLR0915",
 ]
 
-[tool.versioneer]
-VCS = "git"
-style = "pep440-pre"
-versionfile_source = "pysqa/_version.py"
-parentdir_prefix = "pysqa"
-tag_prefix = "pysqa-"
+[tool.hatch.build]
+include = [
+    "pysqa"
+]
+
+[tool.hatch.build.hooks.vcs]
+version-file = "pysqa/_version.py"
+
+[tool.hatch.build.targets.sdist]
+include = [
+    "pysqa"
+]
+
+[tool.hatch.build.targets.wheel]
+packages = [
+    "pysqa"
+]
+
+[tool.hatch.version]
+source = "vcs"
+path = "pysqa/_version.py"
