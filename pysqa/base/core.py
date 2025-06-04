@@ -145,6 +145,7 @@ class QueueAdapterCore(QueueAdapterAbstractClass):
         dependency_list: Optional[list[str]] = None,
         command: Optional[str] = None,
         submission_template: Optional[Union[str, Template]] = None,
+        submission_script_path: Optional[str] = None,
         **kwargs,
     ) -> Union[int, None]:
         """
@@ -159,6 +160,8 @@ class QueueAdapterCore(QueueAdapterAbstractClass):
             run_time_max (int/None): The maximum run time for the job.
             dependency_list (list[str]/None): List of job dependencies.
             command (str/None): The command to execute for the job.
+            submission_template (str/Template): Jinja2 template to write submission script.
+            submission_script_path (str/None): path to write the submission script to.
 
         Returns:
             int: The job ID.
@@ -169,7 +172,7 @@ class QueueAdapterCore(QueueAdapterAbstractClass):
             )
         if submission_template is None:
             submission_template = self._submission_template
-        working_directory, queue_script_path = self._write_queue_script(
+        working_directory, submission_script_path = self._write_queue_script(
             queue=queue,
             job_name=job_name,
             working_directory=working_directory,
@@ -179,11 +182,12 @@ class QueueAdapterCore(QueueAdapterAbstractClass):
             command=command,
             dependency_list=dependency_list,
             submission_template=submission_template,
+            submission_script_path=submission_script_path,
             **kwargs,
         )
         out = self._execute_command(
             commands=self._list_command_to_be_executed(
-                queue_script_path=queue_script_path
+                submission_script_path=submission_script_path
             ),
             working_directory=working_directory,
             split_output=False,
@@ -296,17 +300,17 @@ class QueueAdapterCore(QueueAdapterAbstractClass):
                 results_lst.append("finished")
         return results_lst
 
-    def _list_command_to_be_executed(self, queue_script_path: str) -> list:
+    def _list_command_to_be_executed(self, submission_script_path: str) -> list:
         """
         Get the list of commands to be executed.
 
         Args:
-            queue_script_path (str): The path to the queue script.
+            submission_script_path (str): The path to the queue script.
 
         Returns:
             list: The list of commands to be executed.
         """
-        return self._commands.submit_job_command + [queue_script_path]
+        return self._commands.submit_job_command + [submission_script_path]
 
     def _execute_command(
         self,
@@ -348,6 +352,7 @@ class QueueAdapterCore(QueueAdapterAbstractClass):
         run_time_max: Optional[int] = None,
         dependency_list: Optional[list[int]] = None,
         command: Optional[str] = None,
+        submission_script_path: Optional[str] = None,
         **kwargs,
     ) -> tuple[str, str]:
         """
@@ -384,10 +389,11 @@ class QueueAdapterCore(QueueAdapterAbstractClass):
         )
         if not os.path.exists(working_directory):
             os.makedirs(working_directory)
-        queue_script_path = os.path.join(working_directory, "run_queue.sh")
-        with open(queue_script_path, "w") as f:
+        if submission_script_path is None:
+            submission_script_path = os.path.join(working_directory, "run_queue.sh")
+        with open(submission_script_path, "w") as f:
             f.writelines(queue_script)
-        return working_directory, queue_script_path
+        return working_directory, submission_script_path
 
     def _job_submission_template(
         self,
