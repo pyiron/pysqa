@@ -240,7 +240,8 @@ class RemoteQueueAdapter(QueueAdapterWithConfig):
         )
         remote_dict = json.loads(
             self._execute_remote_command(
-                command=self._python_executable + " -m pysqa --list --working_directory "
+                command=self._python_executable
+                + " -m pysqa --list --working_directory "
                 + remote_working_directory
             )
         )
@@ -461,7 +462,12 @@ class RemoteQueueAdapter(QueueAdapterWithConfig):
         Returns:
             str: The remote command.
         """
-        return self._python_executable + " -m pysqa --config_directory " + self._ssh_remote_config_dir + " "
+        return (
+            self._python_executable
+            + " -m pysqa --config_directory "
+            + self._ssh_remote_config_dir
+            + " "
+        )
 
     def _get_queue_status_command(self) -> str:
         """
