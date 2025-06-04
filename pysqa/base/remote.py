@@ -98,24 +98,16 @@ class RemoteQueueAdapter(QueueAdapterWithConfig):
             self._ssh_ask_for_password = False
         else:
             self._ssh_key = None
-        if "ssh_password" in config:
-            self._ssh_password = config["ssh_password"]
+        self._ssh_password = config.get("ssh_password", None)
+        if self._ssh_password is not None:
             self._ssh_ask_for_password = False
         else:
-            self._ssh_password = None
-        self._ssh_ask_for_password = config.get("ssh_ask_for_password", False)
+            self._ssh_ask_for_password = config.get("ssh_ask_for_password", False)
         self._ssh_key_passphrase = config.get("ssh_key_passphrase")
-        if "ssh_two_factor_authentication" in config:
-            self._ssh_two_factor_authentication = config[
-                "ssh_two_factor_authentication"
-            ]
-        else:
-            self._ssh_two_factor_authentication = False
-        if "ssh_authenticator_service" in config:
-            self._ssh_authenticator_service = config["ssh_authenticator_service"]
+        self._ssh_two_factor_authentication = config.get("ssh_two_factor_authentication", False)
+        self._ssh_authenticator_service = config.get("ssh_authenticator_service", None)
+        if self._ssh_authenticator_service is not None:
             self._ssh_two_factor_authentication = True
-        else:
-            self._ssh_authenticator_service = None
         self._ssh_proxy_host = config.get("ssh_proxy_host")
         self._ssh_remote_config_dir = config["ssh_remote_config_dir"]
         self._ssh_remote_path = config["ssh_remote_path"]
