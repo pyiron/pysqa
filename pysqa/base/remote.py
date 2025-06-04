@@ -98,7 +98,7 @@ class RemoteQueueAdapter(QueueAdapterWithConfig):
             self._ssh_ask_for_password = False
         else:
             self._ssh_key = None
-        self._ssh_password = config.get("ssh_password", None)
+        self._ssh_password = config.get("ssh_password")
         if self._ssh_password is not None:
             self._ssh_ask_for_password = False
         else:
@@ -107,7 +107,7 @@ class RemoteQueueAdapter(QueueAdapterWithConfig):
         self._ssh_two_factor_authentication = config.get(
             "ssh_two_factor_authentication", False
         )
-        self._ssh_authenticator_service = config.get("ssh_authenticator_service", None)
+        self._ssh_authenticator_service = config.get("ssh_authenticator_service")
         if self._ssh_authenticator_service is not None:
             self._ssh_two_factor_authentication = True
         self._ssh_proxy_host = config.get("ssh_proxy_host")
