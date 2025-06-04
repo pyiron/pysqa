@@ -90,6 +90,7 @@ class RemoteQueueAdapter(QueueAdapterWithConfig):
         )
         self._ssh_host = config["ssh_host"]
         self._ssh_username = config["ssh_username"]
+        self._remote_python = config.get('remote_python_cmd', 'python')
         self._ssh_known_hosts = os.path.abspath(
             os.path.expanduser(config["known_hosts"])
         )
@@ -460,7 +461,7 @@ class RemoteQueueAdapter(QueueAdapterWithConfig):
         Returns:
             str: The remote command.
         """
-        return "python -m pysqa --config_directory " + self._ssh_remote_config_dir + " "
+        return f"{self._remote_python} -m pysqa --config_directory {self._ssh_remote_config_dir} "
 
     def _get_queue_status_command(self) -> str:
         """
