@@ -33,6 +33,7 @@ class TestRemoteQueueAdapter(unittest.TestCase):
 
     def test_remote_flag(self):
         self.assertTrue(self.remote._adapter.remote_flag)
+        self.assertTrue(self.remote_alternative._adapter.remote_flag)
 
     def test_ssh_delete_file_on_remote(self):
         self.assertEqual(self.remote.ssh_delete_file_on_remote, False)
@@ -48,19 +49,34 @@ class TestRemoteQueueAdapter(unittest.TestCase):
             self.remote.submit_job(queue="remote", dependency_list=[])
 
     def test_submit_command(self):
-        command = self.remote._adapter._submit_command(
-            queue="remote",
-            job_name="test",
-            working_directory="/home/localuser/projects/test",
-            cores=str(1),
-            memory_max=str(1),
-            run_time_max=str(1),
-            command_str="/bin/true",
-        )
-        self.assertEqual(
-            command,
-            'python -m pysqa --config_directory /u/share/pysqa/resources/queues/ --submit --queue remote --job_name test --working_directory /home/localuser/projects/test --cores 1 --memory 1 --run_time 1 --command "/bin/true" ',
-        )
+        with self.subTest("remote config"):
+            command = self.remote._adapter._submit_command(
+                queue="remote",
+                job_name="test",
+                working_directory="/home/localuser/projects/test",
+                cores=str(1),
+                memory_max=str(1),
+                run_time_max=str(1),
+                command_str="/bin/true",
+            )
+            self.assertEqual(
+                command,
+                'python -m pysqa --config_directory /u/share/pysqa/resources/queues/ --submit --queue remote --job_name test --working_directory /home/localuser/projects/test --cores 1 --memory 1 --run_time 1 --command "/bin/true" ',
+            )
+        with self.subTest("alternative remote config"):
+            command = self.remote_alternative._adapter._submit_command(
+                queue="remote",
+                job_name="test",
+                working_directory="/home/localuser/projects/test",
+                cores=str(1),
+                memory_max=str(1),
+                run_time_max=str(1),
+                command_str="/bin/true",
+            )
+            self.assertEqual(
+                command,
+                'python3 -m pysqa --config_directory /u/share/pysqa/resources/queues/ --submit --queue remote --job_name test --working_directory /home/localuser/projects/test --cores 1 --memory 1 --run_time 1 --command "/bin/true" ',
+            )
 
     def test_get_queue_status_command(self):
         command = self.remote._adapter._get_queue_status_command()
