@@ -1,7 +1,7 @@
 [build-system]
 requires = [
     "jinja2==3.1.6", 
-    "pandas==2.3.0", 
+    "pandas==2.3.1", 
     "pyyaml==6.0.2", 
     "hatchling==1.27.0",
     "hatch-vcs==0.5.0",
@@ -32,7 +32,7 @@ classifiers = [
 ]
 dependencies = [
     "jinja2==3.1.6",
-    "pandas==2.3.0",
+    "pandas==2.3.1",
     "pyyaml==6.0.2",
 ]
 dynamic = ["version"]
