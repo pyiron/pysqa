@@ -194,6 +194,7 @@ echo \"hello\""""
                 slurm_tmp.get_queue_status(user="janj")
             )
         )
+        self.assertEqual(len(slurm_tmp.get_status_of_my_jobs()), 0)
         self.assertEqual(slurm_tmp.get_status_of_job(process_id=5322019), "running")
         self.assertIsNone(slurm_tmp.get_status_of_job(process_id=0))
         self.assertEqual(
