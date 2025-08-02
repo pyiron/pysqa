@@ -369,6 +369,7 @@ class RemoteQueueAdapter(QueueAdapterWithConfig):
                 port=self._ssh_port,
                 username=self._ssh_username,
                 password=self._ssh_password,
+                look_for_keys=False,
             )
         elif self._ssh_ask_for_password and not self._ssh_two_factor_authentication:
             ssh.connect(

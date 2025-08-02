@@ -117,3 +117,17 @@ class TestRemoteQueueAdapter(unittest.TestCase):
             ),
             os.path.abspath("abc.txt"),
         )
+
+
+@unittest.skipIf(
+    skip_remote_test,
+    "Either paramiko or tqdm are not installed, so the remote queue adapter tests are skipped.",
+)
+class TestRemoteQueueAdapterRebex(unittest.TestCase):
+    def test_remote_command(self):
+        path = os.path.dirname(os.path.abspath(__file__))
+        remote = QueueAdapter(directory=os.path.join(path, "config/remote_rebex"))
+        remote._adapter._ssh_remote_path = path
+        remote._adapter._open_ssh_connection()
+        output = remote._adapter._execute_remote_command(command="pwd")
+        self.assertEqual(output, "/")
