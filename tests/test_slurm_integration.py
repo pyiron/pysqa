@@ -1,5 +1,6 @@
 import unittest
 import shutil
+from time import sleep
 from pysqa import QueueAdapter
 
 if shutil.which("srun") is not None:
@@ -16,4 +17,6 @@ class TestSlurm(unittest.TestCase):
         qa = QueueAdapter(queue_type="slurm")
         job_id = qa.submit_job(command="sleep 1")
         status = qa.get_status_of_job(process_id=job_id)
-        self.assertEqual(status, "running")
+        self.assertTrue(status in ["running", "pending"])
+        sleep(2)
+        self.assertEqual(status, "finished")
