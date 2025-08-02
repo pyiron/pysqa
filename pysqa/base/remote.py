@@ -122,7 +122,7 @@ class RemoteQueueAdapter(QueueAdapterWithConfig):
         )
         self._ssh_port = int(config.get("ssh_port", 22))
         self._ssh_continous_connection = config.get("ssh_continous_connection", False)
-        self._ssh_connection: Union[SSHClient, None]  = None
+        self._ssh_connection: Union[SSHClient, None] = None
         self._ssh_proxy_connection: Union[SSHClient, None] = None
         self._python_executable = config.get("python_executable", "python")
         self._remote_flag = True
