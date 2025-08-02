@@ -96,7 +96,7 @@ class ModularQueueAdapter(QueueAdapterWithConfig):
             split_output=False,
             shell=True,
         )
-        if out is not None:
+        if out is not None and self._commands is not None:
             cluster_queue_id = self._commands.get_job_id_from_output(out)
             cluster_queue_id *= 10
             cluster_queue_id += self._config["cluster"].index(cluster_module)
@@ -119,16 +119,16 @@ class ModularQueueAdapter(QueueAdapterWithConfig):
             process_id=process_id, cluster_dict=self._config["cluster"]
         )
         cluster_commands = self._switch_cluster_command(cluster_module=cluster_module)
-        commands = (
-            cluster_commands
-            + self._commands.enable_reservation_command
-            + [str(cluster_queue_id)]
-        )
-        out = self._execute_command(commands=commands, split_output=True, shell=True)
-        if out is not None:
-            return out[0]
-        else:
-            return None
+        if self._commands is not None:
+            commands = (
+                cluster_commands
+                + self._commands.enable_reservation_command
+                + [str(cluster_queue_id)]
+            )
+            out = self._execute_command(commands=commands, split_output=True, shell=True)
+            if out is not None:
+                return out[0]
+        return None
 
     def delete_job(self, process_id: int):
         """
@@ -145,18 +145,18 @@ class ModularQueueAdapter(QueueAdapterWithConfig):
             process_id=process_id, cluster_dict=self._config["cluster"]
         )
         cluster_commands = self._switch_cluster_command(cluster_module=cluster_module)
-        commands = (
-            cluster_commands
-            + self._commands.delete_job_command
-            + [str(cluster_queue_id)]
-        )
-        out = self._execute_command(commands=commands, split_output=True, shell=True)
-        if out is not None:
-            return out[0]
-        else:
-            return None
+        if self._commands is not None:
+            commands = (
+                cluster_commands
+                + self._commands.delete_job_command
+                + [str(cluster_queue_id)]
+            )
+            out = self._execute_command(commands=commands, split_output=True, shell=True)
+            if out is not None:
+                return out[0]
+        return None
 
-    def get_queue_status(self, user: Optional[str] = None) -> pandas.DataFrame:
+    def get_queue_status(self, user: Optional[str] = None) -> Union[pandas.DataFrame, None]:
         """
         Get the queue status.
 
@@ -167,6 +167,8 @@ class ModularQueueAdapter(QueueAdapterWithConfig):
             pandas.DataFrame: The queue status.
 
         """
+        if self._commands is None:
+            return None
         df_lst = []
         for cluster_module in self._config["cluster"]:
             cluster_commands = self._switch_cluster_command(
