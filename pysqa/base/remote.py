@@ -95,13 +95,10 @@ class RemoteQueueAdapter(QueueAdapterWithConfig):
             os.path.expanduser(config["known_hosts"])
         )
         self._ssh_ask_for_password: Union[bool, str] = False
-        if "ssh_key" in config:
-            self._ssh_key = os.path.abspath(os.path.expanduser(config["ssh_key"]))
-        else:
-            self._ssh_key = None
+        self._ssh_key = os.path.abspath(os.path.expanduser(config["ssh_key"])) if "ssh_key" in config else None
         self._ssh_password = config.get("ssh_password")
         if self._ssh_password is None:
-            self._ssh_ask_for_password: Union[bool, str] = config.get(
+            self._ssh_ask_for_password = config.get(
                 "ssh_ask_for_password", False
             )
         self._ssh_key_passphrase = config.get("ssh_key_passphrase")
@@ -117,7 +114,7 @@ class RemoteQueueAdapter(QueueAdapterWithConfig):
         self._ssh_local_path = os.path.abspath(
             os.path.expanduser(config["ssh_local_path"])
         )
-        self._ssh_delete_file_on_remote = config.get("ssh_delete_file_on_remote", True)
+        self._ssh_delete_file_on_remote = bool(config.get("ssh_delete_file_on_remote", True))
         self._ssh_port = int(config.get("ssh_port", 22))
         self._ssh_continous_connection = config.get("ssh_continous_connection", False)
         self._ssh_connection = None
@@ -171,7 +168,8 @@ class RemoteQueueAdapter(QueueAdapterWithConfig):
             raise NotImplementedError(
                 "Submitting jobs with dependencies to a remote cluster is not yet supported."
             )
-        self._transfer_data_to_remote(working_directory=working_directory)
+        if working_directory is not None:
+            self._transfer_data_to_remote(working_directory=working_directory)
         output = self._execute_remote_command(command=command)
         return int(output.split()[-1])
 

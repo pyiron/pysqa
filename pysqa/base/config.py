@@ -263,14 +263,16 @@ class QueueAdapterWithConfig(QueueAdapterCore):
                 active_queue=active_queue,
             )
         )
+        if cores_checked is None:
+            raise ValueError()
         return super()._job_submission_template(
             queue=None,
             submission_template=active_queue["template"],
             job_name=job_name,
             working_directory=working_directory,
             cores=int(cores_checked),
-            memory_max=memory_max_checked,
-            run_time_max=run_time_max_checked,
+            memory_max=int(memory_max_checked) if isinstance(memory_max_checked, float) else memory_max_checked,
+            run_time_max=int(run_time_max_checked) if isinstance(run_time_max_checked, float) else run_time_max_checked,
             dependency_list=dependency_list,
             command=command,
             **kwargs,
