@@ -120,9 +120,6 @@ echo hello"""
     def test_flux_integration_dynamic(self):
         flux_dynamic = QueueAdapter(queue_type="flux")
         job_id = flux_dynamic.submit_job(
-            queue="flux",
-            job_name="test",
-            working_directory=".",
             cores=1,
             command="sleep 1",
         )
