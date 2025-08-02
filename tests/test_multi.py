@@ -31,6 +31,10 @@ class TestMultiQueueAdapter(unittest.TestCase):
         self.assertEqual(self.multi.list_clusters(), ["local_slurm", "remote_slurm"])
 
 
+@unittest.skipIf(
+    skip_multi_test,
+    "Either paramiko or tqdm are not installed, so the multi queue adapter tests are skipped.",
+)
 class TestNoneAdapter(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
