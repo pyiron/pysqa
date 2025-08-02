@@ -7,6 +7,7 @@ from typing import Callable, Optional, Union
 import pandas
 import paramiko
 from jinja2 import Template
+from paramiko.client import SSHClient
 from tqdm import tqdm
 
 from pysqa.base.config import QueueAdapterWithConfig
@@ -121,8 +122,8 @@ class RemoteQueueAdapter(QueueAdapterWithConfig):
         )
         self._ssh_port = int(config.get("ssh_port", 22))
         self._ssh_continous_connection = config.get("ssh_continous_connection", False)
-        self._ssh_connection = None
-        self._ssh_proxy_connection = None
+        self._ssh_connection: Union[SSHClient, None]  = None
+        self._ssh_proxy_connection: Union[SSHClient, None] = None
         self._python_executable = config.get("python_executable", "python")
         self._remote_flag = True
 
