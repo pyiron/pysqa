@@ -254,12 +254,14 @@ class QueueAdapterWithConfig(QueueAdapterCore):
                 + str(self.queue_list)
             )
         active_queue = self._config["queues"][queue]
-        cores_checked, run_time_max_checked, memory_max_checked = self.check_queue_parameters(
-            queue=None,
-            cores=cores,
-            run_time_max=run_time_max,
-            memory_max=memory_max,
-            active_queue=active_queue,
+        cores_checked, run_time_max_checked, memory_max_checked = (
+            self.check_queue_parameters(
+                queue=None,
+                cores=cores,
+                run_time_max=run_time_max,
+                memory_max=memory_max,
+                active_queue=active_queue,
+            )
         )
         return super()._job_submission_template(
             queue=None,

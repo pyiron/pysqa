@@ -7,7 +7,9 @@ def check_queue_parameters(
     cores: Union[float, int, None] = 1,
     run_time_max: Optional[Union[float, int]] = None,
     memory_max: Optional[Union[int, float, str]] = None,
-) -> tuple[Union[float, int, None], Union[float, int, None], Union[str, float, int, None]]:
+) -> tuple[
+    Union[float, int, None], Union[float, int, None], Union[str, float, int, None]
+]:
     """
     Check the parameters of a queue.
 
@@ -30,7 +32,9 @@ def check_queue_parameters(
         value=run_time_max, value_max=active_queue["run_time_max"]
     )
     if isinstance(memory_max, int) or isinstance(memory_max, float):
-        memory_max = value_in_range(value=memory_max, value_max=active_queue["memory_max"])
+        memory_max = value_in_range(
+            value=memory_max, value_max=active_queue["memory_max"]
+        )
     return cores, run_time_max, memory_max
 
 
