@@ -41,6 +41,22 @@ jobs:
         github_token: ${{ secrets.DEPENDABOT_WORKFLOW_TOKEN }}
         branch: ${{ github.event.pull_request.head.ref }}
 
+  mypy:
+    needs: [black]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+          architecture: x64
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Test
+        run: |
+          pip install mypy types-PyYAML types-paramiko
+          mypy --ignore-missing-imports ${{ github.event.repository.name }}
+
   coverage:
     needs: [black]
     runs-on: ubuntu-latest

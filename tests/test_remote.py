@@ -5,10 +5,17 @@ from pysqa import QueueAdapter
 try:
     import paramiko
     from tqdm import tqdm
+    from pysqa.base.remote import get_transport
 
     skip_remote_test = False
 except ImportError:
     skip_remote_test = True
+
+
+class FakeSSH:
+    @staticmethod
+    def get_transport(*args, **kwargs):
+        return None
 
 
 @unittest.skipIf(
@@ -118,6 +125,9 @@ class TestRemoteQueueAdapter(unittest.TestCase):
             os.path.abspath("abc.txt"),
         )
 
+    def test_list_command_to_be_executed(self):
+        self.assertEqual(len(self.remote._adapter._list_command_to_be_executed(queue_script_path=".")), 0)
+
 
 @unittest.skipIf(
     skip_remote_test,
@@ -160,3 +170,10 @@ class TestRemoteQueueAdapterRebex(unittest.TestCase):
         remote._adapter._ssh_remote_path = path
         remote._adapter._ssh_continous_connection = True
         self.assertIsNone(remote._adapter.transfer_file(file="readme.txt", transfer_back=True))
+
+    def test_get_transport(self):
+        path = os.path.dirname(os.path.abspath(__file__))
+        remote = QueueAdapter(directory=os.path.join(path, "config/remote_rebex"))
+        self.assertIsNotNone(get_transport(remote._adapter._open_ssh_connection()))
+        with self.assertRaises(ValueError):
+            get_transport(ssh=FakeSSH())

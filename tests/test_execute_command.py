@@ -57,3 +57,17 @@ class TestExecuteCommand(unittest.TestCase):
             error = f.readlines()
         self.assertEqual(error, ["\n"])
         os.remove("pysqa_fails.err")
+
+    def test_commands_fails_no_working_directory(self):
+        output = execute_command(
+            commands="exit 1",
+            working_directory=None,
+            split_output=True,
+            shell=False,
+            error_filename="pysqa_fails.err",
+        )
+        self.assertIsNone(output)
+        with open("pysqa_fails.err") as f:
+            error = f.readlines()
+        self.assertEqual(error, ["\n"])
+        os.remove("pysqa_fails.err")

@@ -70,3 +70,13 @@ class TestTorqueQueueAdapter(unittest.TestCase):
                 )
             )
         )
+
+    def test_render_submission_template(self):
+        output_str = """\
+#!/bin/bash
+#PBS -l ncpus=1
+#PBS -N pysqa
+#PBS -l wd
+ 
+echo hello"""
+        self.assertEqual(self.torque._adapter._commands.render_submission_template(command="echo hello"), output_str)

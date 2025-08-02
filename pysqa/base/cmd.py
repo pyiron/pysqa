@@ -2,21 +2,21 @@ import getopt
 import json
 import os
 import sys
-from typing import Optional
+from typing import Callable, Optional
 
 from pysqa.base.core import execute_command
 from pysqa.queueadapter import QueueAdapter
 
 
 def command_line(
-    arguments_lst: Optional[list] = None, execute_command: callable = execute_command
+    arguments_lst: Optional[list] = None, execute_command: Callable = execute_command
 ) -> None:
     """
     Parse the command line arguments.
 
     Args:
         arguments_lst (Optional[list]): Command line arguments
-        execute_command (callable): Function to communicate with shell process
+        execute_command (Callable): Function to communicate with shell process
 
     Returns:
         None
@@ -25,7 +25,7 @@ def command_line(
     queue = None
     job_name = None
     working_directory = None
-    cores = None
+    cores = 1
     memory_max = None
     run_time_max = None
     command = None
@@ -63,7 +63,7 @@ def command_line(
         mode_reservation = False
         mode_status = False
         mode_list = False
-        dependency_list = None
+        dependency_list = []
         for opt, arg in opts:
             if opt in ("-f", "--config_directory"):
                 directory = arg
@@ -80,11 +80,11 @@ def command_line(
             elif opt in ("-m", "--memory"):
                 memory_max = arg
             elif opt in ("-t", "--run_time"):
-                run_time_max = arg
+                run_time_max = int(arg)
             elif opt in ("-c", "--command"):
                 command = arg
             elif opt in ("-r", "--reservation"):
-                mode_reservation = arg
+                mode_reservation = True
             elif opt in ("-i", "--id"):
                 if arg != "":
                     job_id = int(arg)
@@ -95,10 +95,7 @@ def command_line(
             elif opt in ("-l", "--list"):
                 mode_list = True
             elif opt in ("-b", "--dependency"):
-                if dependency_list is None:
-                    dependency_list = [arg]
-                else:
-                    dependency_list.append(arg)
+                dependency_list.append(int(arg))
         if mode_submit or mode_delete or mode_reservation or mode_status:
             qa = QueueAdapter(directory=directory, execute_command=execute_command)
             if mode_submit:
@@ -115,17 +112,24 @@ def command_line(
                     )
                 )
             elif mode_delete:
-                print(qa.delete_job(process_id=job_id))
+                if job_id is not None:
+                    print(qa.delete_job(process_id=job_id))
+                else:
+                    raise ValueError("Job ID not provided")
             elif mode_reservation:
-                print(qa.enable_reservation(process_id=job_id))
+                if job_id is not None:
+                    print(qa.enable_reservation(process_id=job_id))
+                else:
+                    raise ValueError("Job ID not provided")
             elif mode_status:
                 print(json.dumps(qa.get_queue_status().to_dict(orient="list")))
-        elif mode_list:
+        elif mode_list and working_directory is not None:
             working_directory = os.path.abspath(os.path.expanduser(working_directory))
             remote_dirs, remote_files = [], []
             for p, _folder, files in os.walk(working_directory):
                 remote_dirs.append(p)
-                remote_files += [os.path.join(p, f) for f in files]
+                if p is not None:
+                    remote_files += [os.path.join(p, f) for f in files if f is not None]
             print(
                 json.dumps({"dirs": sorted(remote_dirs), "files": sorted(remote_files)})
             )

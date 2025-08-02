@@ -1,5 +1,5 @@
 import os
-from typing import Optional, Union
+from typing import Callable, Optional, Union
 
 import pandas
 import yaml
@@ -71,7 +71,7 @@ class QueueAdapterWithConfig(QueueAdapterCore):
         self,
         config: dict,
         directory: str = "~/.queues",
-        execute_command: callable = execute_command,
+        execute_command: Callable = execute_command,
     ):
         super().__init__(
             queue_type=config["queue_type"], execute_command=execute_command
@@ -187,10 +187,10 @@ class QueueAdapterWithConfig(QueueAdapterCore):
         queue: Optional[str],
         cores: int = 1,
         run_time_max: Optional[int] = None,
-        memory_max: Optional[int] = None,
+        memory_max: Optional[Union[int, str]] = None,
         active_queue: Optional[dict] = None,
     ) -> tuple[
-        Union[float, int, None], Union[float, int, None], Union[float, int, None]
+        Union[float, int, None], Union[float, int, None], Union[float, int, str, None]
     ]:
         """
         Check the parameters of a queue.
@@ -220,11 +220,11 @@ class QueueAdapterWithConfig(QueueAdapterCore):
         submission_template: Optional[Union[str, Template]] = None,
         job_name: str = "job.py",
         working_directory: str = ".",
-        cores: Optional[int] = None,
-        memory_max: Optional[int] = None,
+        cores: int = 1,
+        memory_max: Optional[Union[int, str]] = None,
         run_time_max: Optional[int] = None,
         dependency_list: Optional[list[int]] = None,
-        command: Optional[str] = None,
+        command: str = "",
         **kwargs,
     ) -> str:
         """
@@ -254,21 +254,33 @@ class QueueAdapterWithConfig(QueueAdapterCore):
                 + str(self.queue_list)
             )
         active_queue = self._config["queues"][queue]
-        cores, run_time_max, memory_max = self.check_queue_parameters(
-            queue=None,
-            cores=cores,
-            run_time_max=run_time_max,
-            memory_max=memory_max,
-            active_queue=active_queue,
+        cores_checked, run_time_max_checked, memory_max_checked = (
+            self.check_queue_parameters(
+                queue=None,
+                cores=cores,
+                run_time_max=run_time_max,
+                memory_max=memory_max,
+                active_queue=active_queue,
+            )
         )
+        if cores_checked is None:
+            raise ValueError()
         return super()._job_submission_template(
             queue=None,
             submission_template=active_queue["template"],
             job_name=job_name,
             working_directory=working_directory,
-            cores=cores,
-            memory_max=memory_max,
-            run_time_max=run_time_max,
+            cores=int(cores_checked),
+            memory_max=(
+                int(memory_max_checked)
+                if isinstance(memory_max_checked, float)
+                else memory_max_checked
+            ),
+            run_time_max=(
+                int(run_time_max_checked)
+                if isinstance(run_time_max_checked, float)
+                else run_time_max_checked
+            ),
             dependency_list=dependency_list,
             command=command,
             **kwargs,

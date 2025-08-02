@@ -2,10 +2,13 @@ import getpass
 import json
 import os
 import warnings
-from typing import Optional, Union
+from typing import Callable, Optional, Union
 
 import pandas
 import paramiko
+from jinja2 import Template
+from paramiko.client import SSHClient
+from paramiko.transport import Transport
 from tqdm import tqdm
 
 from pysqa.base.config import QueueAdapterWithConfig
@@ -19,7 +22,7 @@ class RemoteQueueAdapter(QueueAdapterWithConfig):
     Args:
         config (dict): The configuration dictionary.
         directory (str, optional): The directory path. Defaults to "~/.queues".
-        execute_command (callable, optional): The execute command function. Defaults to execute_command.
+        execute_command (Callable, optional): The execute command function. Defaults to execute_command.
 
     Attributes:
         _ssh_host (str): The SSH host.
@@ -81,9 +84,9 @@ class RemoteQueueAdapter(QueueAdapterWithConfig):
 
     def __init__(
         self,
-        config: dict,
+        config: dict[str, str],
         directory: str = "~/.queues",
-        execute_command: callable = execute_command,
+        execute_command: Callable = execute_command,
     ):
         super().__init__(
             config=config, directory=directory, execute_command=execute_command
@@ -93,15 +96,14 @@ class RemoteQueueAdapter(QueueAdapterWithConfig):
         self._ssh_known_hosts = os.path.abspath(
             os.path.expanduser(config["known_hosts"])
         )
-        if "ssh_key" in config:
-            self._ssh_key = os.path.abspath(os.path.expanduser(config["ssh_key"]))
-            self._ssh_ask_for_password = False
-        else:
-            self._ssh_key = None
+        self._ssh_ask_for_password: Union[bool, str] = False
+        self._ssh_key = (
+            os.path.abspath(os.path.expanduser(config["ssh_key"]))
+            if "ssh_key" in config
+            else None
+        )
         self._ssh_password = config.get("ssh_password")
-        if self._ssh_password is not None:
-            self._ssh_ask_for_password = False
-        else:
+        if self._ssh_password is None:
             self._ssh_ask_for_password = config.get("ssh_ask_for_password", False)
         self._ssh_key_passphrase = config.get("ssh_key_passphrase")
         self._ssh_two_factor_authentication = config.get(
@@ -116,11 +118,13 @@ class RemoteQueueAdapter(QueueAdapterWithConfig):
         self._ssh_local_path = os.path.abspath(
             os.path.expanduser(config["ssh_local_path"])
         )
-        self._ssh_delete_file_on_remote = config.get("ssh_delete_file_on_remote", True)
-        self._ssh_port = config.get("ssh_port", 22)
+        self._ssh_delete_file_on_remote = bool(
+            config.get("ssh_delete_file_on_remote", True)
+        )
+        self._ssh_port = int(config.get("ssh_port", 22))
         self._ssh_continous_connection = config.get("ssh_continous_connection", False)
-        self._ssh_connection = None
-        self._ssh_proxy_connection = None
+        self._ssh_connection: Union[SSHClient, None] = None
+        self._ssh_proxy_connection: Union[SSHClient, None] = None
         self._python_executable = config.get("python_executable", "python")
         self._remote_flag = True
 
@@ -140,13 +144,14 @@ class RemoteQueueAdapter(QueueAdapterWithConfig):
     def submit_job(
         self,
         queue: Optional[str] = None,
-        job_name: Optional[str] = None,
+        job_name: str = "pysqa",
         working_directory: Optional[str] = None,
-        cores: Optional[int] = None,
-        memory_max: Optional[int] = None,
+        cores: int = 1,
+        memory_max: Optional[Union[int, str]] = None,
         run_time_max: Optional[int] = None,
-        dependency_list: Optional[list[str]] = None,
-        command: Optional[str] = None,
+        dependency_list: Optional[list[int]] = None,
+        command: str = "",
+        submission_template: Optional[Union[str, Template]] = None,
         **kwargs,
     ) -> int:
         """
@@ -156,11 +161,11 @@ class RemoteQueueAdapter(QueueAdapterWithConfig):
             queue (str, optional): The queue name.
             job_name (str, optional): The job name.
             working_directory (str, optional): The working directory.
-            cores (int, optional): The number of cores.
+            cores (int): The number of cores.
             memory_max (int, optional): The maximum memory.
             run_time_max (int, optional): The maximum run time.
-            dependency_list (list[str], optional): The list of job dependencies.
-            command (str, optional): The command to execute.
+            dependency_list (list[int], optional): The list of job dependencies.
+            command (str): The command to execute.
 
         Returns:
             int: The process ID of the submitted job.
@@ -169,7 +174,8 @@ class RemoteQueueAdapter(QueueAdapterWithConfig):
             raise NotImplementedError(
                 "Submitting jobs with dependencies to a remote cluster is not yet supported."
             )
-        self._transfer_data_to_remote(working_directory=working_directory)
+        if working_directory is not None:
+            self._transfer_data_to_remote(working_directory=working_directory)
         output = self._execute_remote_command(command=command)
         return int(output.split()[-1])
 
@@ -312,6 +318,8 @@ class RemoteQueueAdapter(QueueAdapterWithConfig):
                 ssh = self._ssh_connection
             else:
                 ssh = self._open_ssh_connection()
+            if ssh is None:
+                raise ValueError()
             sftp_client = ssh.open_sftp()
         else:
             sftp_client = sftp
@@ -401,7 +409,7 @@ class RemoteQueueAdapter(QueueAdapterWithConfig):
                 password=self._ssh_password,
             )
 
-            ssh._transport.auth_interactive(
+            get_transport(ssh=ssh).auth_interactive(
                 username=self._ssh_username, handler=authentication, submethods=""
             )
         elif (
@@ -415,7 +423,7 @@ class RemoteQueueAdapter(QueueAdapterWithConfig):
                 username=self._ssh_username,
                 password=self._ssh_password,
             )
-            ssh._transport.auth_interactive_dumb(
+            get_transport(ssh=ssh).auth_interactive_dumb(
                 username=self._ssh_username, handler=None, submethods=""
             )
         elif self._ssh_ask_for_password and self._ssh_two_factor_authentication:
@@ -425,7 +433,7 @@ class RemoteQueueAdapter(QueueAdapterWithConfig):
                 username=self._ssh_username,
                 password=getpass.getpass(prompt="SSH Password: ", stream=None),
             )
-            ssh._transport.auth_interactive_dumb(
+            get_transport(ssh=ssh).auth_interactive_dumb(
                 username=self._ssh_username, handler=None, submethods=""
             )
         else:
@@ -435,6 +443,8 @@ class RemoteQueueAdapter(QueueAdapterWithConfig):
             client_new = paramiko.SSHClient()
             client_new.set_missing_host_key_policy(paramiko.AutoAddPolicy())
             vmtransport = ssh.get_transport()
+            if vmtransport is None:
+                raise ValueError()
             vmchannel = vmtransport.open_channel(
                 kind="direct-tcpip",
                 dest_addr=(self._ssh_proxy_host, self._ssh_port),
@@ -445,7 +455,8 @@ class RemoteQueueAdapter(QueueAdapterWithConfig):
                 username=self._ssh_username,
                 sock=vmchannel,
             )
-            self._ssh_proxy_connection = ssh
+            if ssh is not None:
+                self._ssh_proxy_connection = ssh
             return client_new
         else:
             return ssh
@@ -478,10 +489,10 @@ class RemoteQueueAdapter(QueueAdapterWithConfig):
         queue: Optional[str] = None,
         job_name: Optional[str] = None,
         working_directory: Optional[str] = None,
-        cores: Optional[int] = None,
+        cores: int = 1,
         memory_max: Optional[int] = None,
         run_time_max: Optional[int] = None,
-        command_str: Optional[str] = None,
+        command_str: str = "",
     ) -> str:
         """
         Generates the command to submit a job to the remote host.
@@ -490,10 +501,10 @@ class RemoteQueueAdapter(QueueAdapterWithConfig):
             queue (str, optional): The queue to submit the job to.
             job_name (str, optional): The name of the job.
             working_directory (str, optional): The working directory for the job.
-            cores (int, optional): The number of cores required for the job.
+            cores (int): The number of cores required for the job.
             memory_max (int, optional): The maximum memory required for the job.
             run_time_max (int, optional): The maximum run time for the job.
-            command_str (str, optional): The command to be executed by the job.
+            command_str (str): The command to be executed by the job.
 
         Returns:
             str: The submit command.
@@ -554,12 +565,15 @@ class RemoteQueueAdapter(QueueAdapterWithConfig):
             ssh = self._ssh_connection
         else:
             ssh = self._open_ssh_connection()
-        stdin, stdout, stderr = ssh.exec_command(command)
-        warnings.warn(message=stderr.read().decode(), stacklevel=2)
-        output = stdout.read().decode()
-        if not self._ssh_continous_connection:
-            ssh.close()
-        return output
+        if ssh is not None:
+            stdin, stdout, stderr = ssh.exec_command(command)
+            warnings.warn(message=stderr.read().decode(), stacklevel=2)
+            output = stdout.read().decode()
+            if not self._ssh_continous_connection:
+                ssh.close()
+            return output
+        else:
+            return ""
 
     def _get_remote_working_dir(self, working_directory: str) -> str:
         """
@@ -655,3 +669,10 @@ class RemoteQueueAdapter(QueueAdapterWithConfig):
         return os.path.abspath(
             os.path.join(remote_dir, os.path.relpath(file, local_dir))
         )
+
+
+def get_transport(ssh: SSHClient) -> Transport:
+    transport = ssh.get_transport()
+    if transport is None:
+        raise ValueError()
+    return transport
