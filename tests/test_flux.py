@@ -116,3 +116,16 @@ echo hello"""
         self.assertEqual(self.flux.get_status_of_job(process_id=job_id), "running")
         self.flux.delete_job(process_id=job_id)
         self.assertEqual(self.flux.get_status_of_job(process_id=job_id), "error")
+
+    def test_flux_integration_dynamic(self):
+        flux_dynamic = QueueAdapter(queue_type="flux")
+        job_id = flux_dynamic.submit_job(
+            queue="flux",
+            job_name="test",
+            working_directory=".",
+            cores=1,
+            command="sleep 1",
+        )
+        self.assertEqual(flux_dynamic.get_status_of_job(process_id=job_id), "running")
+        flux_dynamic.delete_job(process_id=job_id)
+        self.assertEqual(flux_dynamic.get_status_of_job(process_id=job_id), "error")

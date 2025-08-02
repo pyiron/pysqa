@@ -1,6 +1,5 @@
 import unittest
 import shutil
-from time import sleep
 from pysqa import QueueAdapter
 
 if shutil.which("srun") is not None:
@@ -9,17 +8,25 @@ else:
     skip_slurm_test = True
 
 
+submission_template = """\
+#!/bin/bash
+#SBATCH --output=time.out
+#SBATCH --job-name={{job_name}}
+#SBATCH --chdir={{working_directory}}
+#SBATCH --get-user-env=L
+#SBATCH --ntasks={{cores}}
+
+{{command}}
+"""
+
+
 @unittest.skipIf(
     skip_slurm_test, "SLURM is not installed, so the slurm tests are skipped.",
 )
 class TestSlurm(unittest.TestCase):
     def test_slurm(self):
-        qa = QueueAdapter(queue_type="slurm")
-        job_id = qa.submit_job(command="sleep 5", cores=1)
-        sleep(2)
-        status = qa.get_status_of_job(process_id=job_id)
-        print(job_id, status)
-        self.assertEqual(status, "running")
-        sleep(5)
-        status = qa.get_status_of_job(process_id=job_id)
-        self.assertEqual(status, "finished")
+        slurm_dynamic = QueueAdapter(queue_type="slurm")
+        job_id = slurm_dynamic.submit_job(command="sleep 1", cores=1, submission_template=submission_template)
+        self.assertEqual(slurm_dynamic.get_status_of_job(process_id=job_id), "running")
+        slurm_dynamic.delete_job(process_id=job_id)
+        self.assertEqual(slurm_dynamic.get_status_of_job(process_id=job_id), "error")
