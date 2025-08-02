@@ -75,6 +75,16 @@ class TestSlurmQueueAdapter(unittest.TestCase):
             )
         )
 
+    def test_convert_queue_status_slurm_empty(self):
+        df = self.slurm._adapter._commands.convert_queue_status(queue_status_output="")
+        self.assertEqual(len(df), 0)
+        self.assertEqual(list(df.columns), ["jobid", "user", "jobname", "status", "working_directory"])
+
+    def test_dependencies(self):
+        self.assertEqual(len(self.slurm._adapter._commands.dependencies(dependency_list=None)), 0)
+        self.assertEqual(len(self.slurm._adapter._commands.dependencies(dependency_list=[])), 0)
+        self.assertEqual(self.slurm._adapter._commands.dependencies(dependency_list=["123"]), ['--dependency=afterok:123'])
+
     def test_get_user(self):
         self.assertEqual(self.slurm._adapter._get_user(), getpass.getuser())
 
