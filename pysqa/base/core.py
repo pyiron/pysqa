@@ -234,7 +234,9 @@ class QueueAdapterCore(QueueAdapterAbstractClass):
                 return out[0]
         return None
 
-    def get_queue_status(self, user: Optional[str] = None) -> Union[pandas.DataFrame, None]:
+    def get_queue_status(
+        self, user: Optional[str] = None
+    ) -> Union[pandas.DataFrame, None]:
         """
         Get the status of the queue.
 
