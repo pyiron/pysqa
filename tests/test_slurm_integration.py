@@ -29,4 +29,4 @@ class TestSlurm(unittest.TestCase):
         job_id = slurm_dynamic.submit_job(command="sleep 1", cores=1, submission_template=submission_template)
         self.assertEqual(slurm_dynamic.get_status_of_job(process_id=job_id), "pending")
         slurm_dynamic.delete_job(process_id=job_id)
-        self.assertEqual(slurm_dynamic.get_status_of_job(process_id=job_id), "error")
+        self.assertIsNone(slurm_dynamic.get_status_of_job(process_id=job_id))
