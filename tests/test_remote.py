@@ -35,6 +35,10 @@ class TestRemoteQueueAdapter(unittest.TestCase):
         self.assertTrue(self.remote._adapter.remote_flag)
         self.assertTrue(self.remote_alternative._adapter.remote_flag)
 
+    def test_create_remote_dir(self):
+        with self.assertRaises(TypeError):
+            self.remote._adapter._create_remote_dir(directory=None)
+
     def test_ssh_delete_file_on_remote(self):
         self.assertEqual(self.remote.ssh_delete_file_on_remote, False)
 
