@@ -2,11 +2,12 @@ import getpass
 import json
 import os
 import warnings
-from typing import Optional, Union
+from typing import Optional, Union, Callable
 
 import pandas
 import paramiko
 from tqdm import tqdm
+from jinja2 import Template
 
 from pysqa.base.config import QueueAdapterWithConfig
 from pysqa.base.core import execute_command
@@ -19,7 +20,7 @@ class RemoteQueueAdapter(QueueAdapterWithConfig):
     Args:
         config (dict): The configuration dictionary.
         directory (str, optional): The directory path. Defaults to "~/.queues".
-        execute_command (callable, optional): The execute command function. Defaults to execute_command.
+        execute_command (Callable, optional): The execute command function. Defaults to execute_command.
 
     Attributes:
         _ssh_host (str): The SSH host.
@@ -81,9 +82,9 @@ class RemoteQueueAdapter(QueueAdapterWithConfig):
 
     def __init__(
         self,
-        config: dict,
+        config: dict[str, str],
         directory: str = "~/.queues",
-        execute_command: callable = execute_command,
+        execute_command: Callable = execute_command,
     ):
         super().__init__(
             config=config, directory=directory, execute_command=execute_command
@@ -93,16 +94,14 @@ class RemoteQueueAdapter(QueueAdapterWithConfig):
         self._ssh_known_hosts = os.path.abspath(
             os.path.expanduser(config["known_hosts"])
         )
+        self._ssh_ask_for_password: Union[bool, str] = False
         if "ssh_key" in config:
             self._ssh_key = os.path.abspath(os.path.expanduser(config["ssh_key"]))
-            self._ssh_ask_for_password = False
         else:
             self._ssh_key = None
         self._ssh_password = config.get("ssh_password")
-        if self._ssh_password is not None:
-            self._ssh_ask_for_password = False
-        else:
-            self._ssh_ask_for_password = config.get("ssh_ask_for_password", False)
+        if self._ssh_password is None:
+            self._ssh_ask_for_password: Union[bool, str] = config.get("ssh_ask_for_password", False)
         self._ssh_key_passphrase = config.get("ssh_key_passphrase")
         self._ssh_two_factor_authentication = config.get(
             "ssh_two_factor_authentication", False
@@ -140,13 +139,14 @@ class RemoteQueueAdapter(QueueAdapterWithConfig):
     def submit_job(
         self,
         queue: Optional[str] = None,
-        job_name: Optional[str] = None,
+        job_name: str = "pysqa",
         working_directory: Optional[str] = None,
-        cores: Optional[int] = None,
+        cores: int = 1,
         memory_max: Optional[int] = None,
         run_time_max: Optional[int] = None,
-        dependency_list: Optional[list[str]] = None,
-        command: Optional[str] = None,
+        dependency_list: Optional[list[int]] = None,
+        command: str = "",
+        submission_template: Optional[Union[str, Template]] = None,
         **kwargs,
     ) -> int:
         """
@@ -156,11 +156,11 @@ class RemoteQueueAdapter(QueueAdapterWithConfig):
             queue (str, optional): The queue name.
             job_name (str, optional): The job name.
             working_directory (str, optional): The working directory.
-            cores (int, optional): The number of cores.
+            cores (int): The number of cores.
             memory_max (int, optional): The maximum memory.
             run_time_max (int, optional): The maximum run time.
-            dependency_list (list[str], optional): The list of job dependencies.
-            command (str, optional): The command to execute.
+            dependency_list (list[int], optional): The list of job dependencies.
+            command (str): The command to execute.
 
         Returns:
             int: The process ID of the submitted job.
@@ -478,10 +478,10 @@ class RemoteQueueAdapter(QueueAdapterWithConfig):
         queue: Optional[str] = None,
         job_name: Optional[str] = None,
         working_directory: Optional[str] = None,
-        cores: Optional[int] = None,
+        cores: int = 1,
         memory_max: Optional[int] = None,
         run_time_max: Optional[int] = None,
-        command_str: Optional[str] = None,
+        command_str: str = "",
     ) -> str:
         """
         Generates the command to submit a job to the remote host.
@@ -490,10 +490,10 @@ class RemoteQueueAdapter(QueueAdapterWithConfig):
             queue (str, optional): The queue to submit the job to.
             job_name (str, optional): The name of the job.
             working_directory (str, optional): The working directory for the job.
-            cores (int, optional): The number of cores required for the job.
+            cores (int): The number of cores required for the job.
             memory_max (int, optional): The maximum memory required for the job.
             run_time_max (int, optional): The maximum run time for the job.
-            command_str (str, optional): The command to be executed by the job.
+            command_str (str): The command to be executed by the job.
 
         Returns:
             str: The submit command.

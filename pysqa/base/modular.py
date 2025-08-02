@@ -1,6 +1,7 @@
-from typing import Optional, Union
+from typing import Optional, Union, Callable
 
 import pandas
+from jinja2 import Template
 
 from pysqa.base.config import QueueAdapterWithConfig
 from pysqa.base.core import execute_command
@@ -27,7 +28,7 @@ class ModularQueueAdapter(QueueAdapterWithConfig):
         self,
         config: dict,
         directory: str = "~/.queues",
-        execute_command: callable = execute_command,
+        execute_command: Callable = execute_command,
     ):
         super().__init__(
             config=config, directory=directory, execute_command=execute_command
@@ -47,13 +48,14 @@ class ModularQueueAdapter(QueueAdapterWithConfig):
     def submit_job(
         self,
         queue: Optional[str] = None,
-        job_name: Optional[str] = None,
+        job_name: str = "pysqa",
         working_directory: Optional[str] = None,
-        cores: Optional[int] = None,
-        memory_max: Optional[str] = None,
+        cores: int = 1,
+        memory_max: Optional[int] = None,
         run_time_max: Optional[int] = None,
-        dependency_list: Optional[list[str]] = None,
-        command: Optional[str] = None,
+        dependency_list: Optional[list[int]] = None,
+        command: str = "",
+        submission_template: Optional[Union[str, Template]] = None,
         **kwargs,
     ) -> Union[int, None]:
         """
@@ -66,7 +68,7 @@ class ModularQueueAdapter(QueueAdapterWithConfig):
             cores (int, optional): The number of cores. Defaults to None.
             memory_max (int, optional): The maximum memory. Defaults to None.
             run_time_max (int, optional): The maximum run time. Defaults to None.
-            dependency_list (list[str], optional): The list of dependencies. Defaults to None.
+            dependency_list (list[int], optional): The list of dependencies. Defaults to None.
             command (str, optional): The command to execute. Defaults to None.
 
         Returns:

@@ -1,5 +1,5 @@
 import os
-from typing import Optional, Union
+from typing import Optional, Union, Callable
 
 import pandas
 from jinja2 import Template
@@ -42,19 +42,18 @@ class QueueAdapter(QueueAdapterAbstractClass):
         self,
         directory: Optional[str] = None,
         queue_type: Optional[str] = None,
-        execute_command: callable = execute_command,
+        execute_command: Callable = execute_command,
     ):
         """
         Initialize the QueueAdapter.
 
         Args:
             directory (str): Directory containing the queue.yaml files and corresponding templates.
-            execute_command (callable): Function to execute commands.
+            execute_command (Callable): Function to execute commands.
         """
         if directory is not None:
             queue_yaml = os.path.join(directory, "queue.yaml")
             clusters_yaml = os.path.join(directory, "clusters.yaml")
-            self._adapter = None
             if os.path.exists(queue_yaml):
                 self._queue_dict = {
                     "default": set_queue_adapter(
@@ -194,7 +193,7 @@ class QueueAdapter(QueueAdapterAbstractClass):
         cores: Optional[int] = None,
         memory_max: Optional[int] = None,
         run_time_max: Optional[int] = None,
-        dependency_list: Optional[list[str]] = None,
+        dependency_list: Optional[list[int]] = None,
         command: Optional[str] = None,
         submission_template: Optional[Union[str, Template]] = None,
         **kwargs,
@@ -386,7 +385,7 @@ class QueueAdapter(QueueAdapterAbstractClass):
 
 
 def set_queue_adapter(
-    config: dict, directory: str, execute_command: callable = execute_command
+    config: dict, directory: str, execute_command: Callable = execute_command
 ):
     """
     Initialize the queue adapter

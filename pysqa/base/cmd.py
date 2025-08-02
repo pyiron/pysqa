@@ -2,21 +2,21 @@ import getopt
 import json
 import os
 import sys
-from typing import Optional
+from typing import Optional, Callable
 
 from pysqa.base.core import execute_command
 from pysqa.queueadapter import QueueAdapter
 
 
 def command_line(
-    arguments_lst: Optional[list] = None, execute_command: callable = execute_command
+    arguments_lst: Optional[list] = None, execute_command: Callable = execute_command
 ) -> None:
     """
     Parse the command line arguments.
 
     Args:
         arguments_lst (Optional[list]): Command line arguments
-        execute_command (callable): Function to communicate with shell process
+        execute_command (Callable): Function to communicate with shell process
 
     Returns:
         None
@@ -115,9 +115,15 @@ def command_line(
                     )
                 )
             elif mode_delete:
-                print(qa.delete_job(process_id=job_id))
+                if job_id is not None:
+                    print(qa.delete_job(process_id=job_id))
+                else:
+                    raise ValueError("Job ID not provided")
             elif mode_reservation:
-                print(qa.enable_reservation(process_id=job_id))
+                if job_id is not None:
+                    print(qa.enable_reservation(process_id=job_id))
+                else:
+                    raise ValueError("Job ID not provided")
             elif mode_status:
                 print(json.dumps(qa.get_queue_status().to_dict(orient="list")))
         elif mode_list:

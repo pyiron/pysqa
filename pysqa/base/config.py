@@ -1,5 +1,5 @@
 import os
-from typing import Optional, Union
+from typing import Optional, Union, Callable
 
 import pandas
 import yaml
@@ -71,7 +71,7 @@ class QueueAdapterWithConfig(QueueAdapterCore):
         self,
         config: dict,
         directory: str = "~/.queues",
-        execute_command: callable = execute_command,
+        execute_command: Callable = execute_command,
     ):
         super().__init__(
             queue_type=config["queue_type"], execute_command=execute_command
@@ -220,11 +220,11 @@ class QueueAdapterWithConfig(QueueAdapterCore):
         submission_template: Optional[Union[str, Template]] = None,
         job_name: str = "job.py",
         working_directory: str = ".",
-        cores: Optional[int] = None,
+        cores: int = 1,
         memory_max: Optional[int] = None,
         run_time_max: Optional[int] = None,
         dependency_list: Optional[list[int]] = None,
-        command: Optional[str] = None,
+        command: str = "",
         **kwargs,
     ) -> str:
         """

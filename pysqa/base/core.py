@@ -2,7 +2,7 @@ import getpass
 import importlib
 import os
 import subprocess
-from typing import Optional, Union
+from typing import Optional, Union, Callable
 
 import pandas
 from jinja2 import Template
@@ -10,7 +10,7 @@ from jinja2 import Template
 from pysqa.base.abstract import QueueAdapterAbstractClass
 from pysqa.wrapper.abstract import SchedulerCommands
 
-queue_type_dict = {
+queue_type_dict: dict[str, dict[str, Union[str, None]]] = {
     "SGE": {
         "class_name": "SunGridEngineCommands",
         "module_name": "pysqa.wrapper.sge",
@@ -52,7 +52,7 @@ def execute_command(
     split_output: bool = True,
     shell: bool = False,
     error_filename: str = "pysqa.err",
-) -> Union[str, list[str]]:
+) -> Union[str, list[str], None]:
     """
     A wrapper around the subprocess.check_output function.
 
@@ -77,7 +77,11 @@ def execute_command(
             shell=not isinstance(commands, list),
         )
     except subprocess.CalledProcessError as e:
-        with open(os.path.join(working_directory, error_filename), "w") as f:
+        if working_directory is not None:
+            error_file = os.path.join(working_directory, error_filename)
+        else:
+            error_file = error_filename
+        with open(error_file, "w") as f:
             print(e.stdout, file=f)
         out = None
     if out is not None and split_output:
@@ -86,7 +90,7 @@ def execute_command(
         return out
 
 
-def get_queue_commands(queue_type: str) -> Union[SchedulerCommands, None]:
+def get_queue_commands(queue_type: str) -> SchedulerCommands:
     """
     Load queuing system commands class
 
@@ -102,7 +106,7 @@ def get_queue_commands(queue_type: str) -> Union[SchedulerCommands, None]:
         if module_name is not None and class_name is not None:
             return getattr(importlib.import_module(module_name), class_name)()
         else:
-            return None
+            raise ValueError("Please define module_name and class_name: " + str(module_name) + " " + str(class_name))
     else:
         raise ValueError(
             "The queue_type "
@@ -125,25 +129,26 @@ class QueueAdapterCore(QueueAdapterAbstractClass):
     def __init__(
         self,
         queue_type: str,
-        execute_command: callable = execute_command,
+        execute_command: Callable = execute_command,
     ):
         self._commands = get_queue_commands(queue_type=queue_type)
-        if queue_type_dict[queue_type]["module_name"] is not None:
+        module_name = queue_type_dict[queue_type]["module_name"]
+        if module_name is not None:
             self._submission_template = importlib.import_module(
-                queue_type_dict[queue_type]["module_name"]
+                module_name
             ).template
         self._execute_command_function = execute_command
 
     def submit_job(
         self,
         queue: Optional[str] = None,
-        job_name: Optional[str] = None,
+        job_name: str = "pysqa",
         working_directory: Optional[str] = None,
-        cores: Optional[int] = None,
+        cores: int = 1,
         memory_max: Optional[int] = None,
         run_time_max: Optional[int] = None,
-        dependency_list: Optional[list[str]] = None,
-        command: Optional[str] = None,
+        dependency_list: Optional[list[int]] = None,
+        command: str = "",
         submission_template: Optional[Union[str, Template]] = None,
         **kwargs,
     ) -> Union[int, None]:
@@ -158,7 +163,7 @@ class QueueAdapterCore(QueueAdapterAbstractClass):
             memory_max (int/None): The maximum memory required for the job.
             run_time_max (int/None): The maximum run time for the job.
             dependency_list (list[str]/None): List of job dependencies.
-            command (str/None): The command to execute for the job.
+            command (str): The command to execute for the job.
 
         Returns:
             int: The job ID.
@@ -341,13 +346,13 @@ class QueueAdapterCore(QueueAdapterAbstractClass):
         self,
         queue: Optional[str] = None,
         submission_template: Optional[Union[str, Template]] = None,
-        job_name: Optional[str] = None,
+        job_name: str = "pysqa",
         working_directory: Optional[str] = None,
-        cores: Optional[int] = None,
+        cores: int = 1,
         memory_max: Optional[int] = None,
         run_time_max: Optional[int] = None,
         dependency_list: Optional[list[int]] = None,
-        command: Optional[str] = None,
+        command: str = "",
         **kwargs,
     ) -> tuple[str, str]:
         """
@@ -361,7 +366,7 @@ class QueueAdapterCore(QueueAdapterAbstractClass):
             memory_max (int/None): The maximum memory.
             run_time_max (int/None): The maximum run time.
             dependency_list (list/None): The list of dependency job IDs.
-            command (str/None): The command to be executed.
+            command (str): The command to be executed.
 
         Returns:
             Tuple[str, str]: A tuple containing the working directory and the path to the queue script file.
@@ -393,13 +398,13 @@ class QueueAdapterCore(QueueAdapterAbstractClass):
         self,
         queue: Optional[str] = None,
         submission_template: Optional[Union[str, Template]] = None,
-        job_name: str = "job.py",
+        job_name: str = "pysqa",
         working_directory: str = ".",
-        cores: Optional[int] = None,
+        cores: int = 1,
         memory_max: Optional[int] = None,
         run_time_max: Optional[int] = None,
         dependency_list: Optional[list[int]] = None,
-        command: Optional[str] = None,
+        command: str = "",
         **kwargs,
     ) -> str:
         """
@@ -413,7 +418,7 @@ class QueueAdapterCore(QueueAdapterAbstractClass):
             memory_max (int, optional): The maximum memory. Defaults to None.
             run_time_max (int, optional): The maximum run time. Defaults to None.
             dependency_list (list[int], optional): The list of dependency job IDs. Defaults to None.
-            command (str, optional): The command to be executed. Defaults to None.
+            command (str): The command to be executed. Defaults to None.
 
         Returns:
             str: The job submission template.
@@ -434,8 +439,7 @@ class QueueAdapterCore(QueueAdapterAbstractClass):
             **kwargs,
         )
 
-    @staticmethod
-    def _get_user() -> str:
+    def _get_user(self) -> str:
         """
         Get the current user.
 
