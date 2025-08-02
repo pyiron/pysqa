@@ -124,10 +124,19 @@ class TestRemoteQueueAdapter(unittest.TestCase):
     "Either paramiko or tqdm are not installed, so the remote queue adapter tests are skipped.",
 )
 class TestRemoteQueueAdapterRebex(unittest.TestCase):
-    def test_remote_command(self):
+    def test_remote_command_individual_connections(self):
         path = os.path.dirname(os.path.abspath(__file__))
         remote = QueueAdapter(directory=os.path.join(path, "config/remote_rebex"))
         remote._adapter._ssh_remote_path = path
+        remote._adapter._open_ssh_connection()
+        output = remote._adapter._execute_remote_command(command="pwd")
+        self.assertEqual(output, "/\n")
+
+    def test_remote_command_continous_connection(self):
+        path = os.path.dirname(os.path.abspath(__file__))
+        remote = QueueAdapter(directory=os.path.join(path, "config/remote_rebex"))
+        remote._adapter._ssh_remote_path = path
+        remote._adapter._ssh_continous_connection = True
         remote._adapter._open_ssh_connection()
         output = remote._adapter._execute_remote_command(command="pwd")
         self.assertEqual(output, "/\n")
