@@ -144,7 +144,7 @@ class RemoteQueueAdapter(QueueAdapterWithConfig):
         job_name: str = "pysqa",
         working_directory: Optional[str] = None,
         cores: int = 1,
-        memory_max: Optional[int] = None,
+        memory_max: Optional[Union[int, str]] = None,
         run_time_max: Optional[int] = None,
         dependency_list: Optional[list[int]] = None,
         command: str = "",
@@ -314,6 +314,8 @@ class RemoteQueueAdapter(QueueAdapterWithConfig):
                 ssh = self._ssh_connection
             else:
                 ssh = self._open_ssh_connection()
+            if ssh is None:
+                raise ValueError()
             sftp_client = ssh.open_sftp()
         else:
             sftp_client = sftp

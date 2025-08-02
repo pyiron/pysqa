@@ -78,7 +78,7 @@ class LsfCommands(SchedulerCommands):
         job_name: str = "pysqa",
         working_directory: str = os.path.abspath("."),
         cores: int = 1,
-        memory_max: Optional[int] = None,
+        memory_max: Optional[Union[int, str]] = None,
         run_time_max: Optional[int] = None,
         dependency_list: Optional[list[int]] = None,
         **kwargs,

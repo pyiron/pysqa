@@ -6,8 +6,8 @@ def check_queue_parameters(
     active_queue: dict[str, int],
     cores: Union[float, int, None] = 1,
     run_time_max: Optional[Union[float, int]] = None,
-    memory_max: Optional[Union[float, int]] = None,
-) -> tuple[Union[float, int, None], Union[float, int, None], Union[float, int, None]]:
+    memory_max: Optional[Union[int, float, str]] = None,
+) -> tuple[Union[float, int, None], Union[float, int, None], Union[str, float, int, None]]:
     """
     Check the parameters of a queue.
 
@@ -29,7 +29,8 @@ def check_queue_parameters(
     run_time_max = value_in_range(
         value=run_time_max, value_max=active_queue["run_time_max"]
     )
-    memory_max = value_in_range(value=memory_max, value_max=active_queue["memory_max"])
+    if isinstance(memory_max, int) or isinstance(memory_max, float):
+        memory_max = value_in_range(value=memory_max, value_max=active_queue["memory_max"])
     return cores, run_time_max, memory_max
 
 
@@ -111,7 +112,7 @@ def _memory_spec_string_to_value(
     value: Union[str, int, float],
     default_magnitude: str = "m",
     target_magnitude: str = "b",
-) -> Union[int, float]:
+) -> Union[int, float, str]:
     """
     Converts a valid memory string (tested by _is_memory_string) into an integer/float value of desired
     magnitude `default_magnitude`. If it is a plain integer string (e.g.: '50000') it will be interpreted with
@@ -141,4 +142,4 @@ def _memory_spec_string_to_value(
             1024 ** magnitude_mapping[target_magnitude]
         )
     else:
-        return float(value)
+        return value

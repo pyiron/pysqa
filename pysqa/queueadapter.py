@@ -191,7 +191,7 @@ class QueueAdapter(QueueAdapterAbstractClass):
         job_name: Optional[str] = None,
         working_directory: Optional[str] = None,
         cores: Optional[int] = None,
-        memory_max: Optional[int] = None,
+        memory_max: Optional[Union[int, str]] = None,
         run_time_max: Optional[int] = None,
         dependency_list: Optional[list[int]] = None,
         command: Optional[str] = None,
@@ -357,7 +357,7 @@ class QueueAdapter(QueueAdapterAbstractClass):
         memory_max: Optional[int] = None,
         active_queue: Optional[dict] = None,
     ) -> tuple[
-        Union[float, int, None], Union[float, int, None], Union[float, int, None]
+        Union[float, int, None], Union[float, int, None], Union[float, int, str, None]
     ]:
         """
         Check the parameters of a queue.
