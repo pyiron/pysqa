@@ -31,7 +31,7 @@ def check_queue_parameters(
     run_time_max = value_in_range(
         value=run_time_max, value_max=active_queue["run_time_max"]
     )
-    if isinstance(memory_max, int) or isinstance(memory_max, float):
+    if isinstance(memory_max, (int, float)):
         memory_max = value_in_range(
             value=memory_max, value_max=active_queue["memory_max"]
         )
