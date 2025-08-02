@@ -46,3 +46,12 @@ class TestMoabQueueAdapter(unittest.TestCase):
         self.assertEqual(self.moab._adapter._commands.dependencies(dependency_list=None), [])
         with self.assertRaises(NotImplementedError):
             self.moab._adapter._commands.dependencies(dependency_list=[])
+
+    def test_render_submission_template(self):
+        output_str = """\
+#!/bin/bash
+#MSUB -N pysqa
+
+echo hello"""
+        self.assertEqual(self.moab._adapter._commands.render_submission_template(command="echo hello"),
+                         output_str)
