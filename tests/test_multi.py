@@ -30,6 +30,15 @@ class TestMultiQueueAdapter(unittest.TestCase):
     def test_list_clusters(self):
         self.assertEqual(self.multi.list_clusters(), ["local_slurm", "remote_slurm"])
 
+    def test_switch_cluster(self):
+        self.assertEqual(self.multi.queue_list, ['slurm'])
+        self.multi.switch_cluster("local_slurm")
+        self.assertEqual(self.multi.queue_list, ['slurm'])
+        self.multi.switch_cluster("remote_slurm")
+        self.assertEqual(self.multi.queue_list, ['remote'])
+        self.multi.switch_cluster("local_slurm")
+        self.assertEqual(self.multi.queue_list, ['slurm'])
+
 
 @unittest.skipIf(
     skip_multi_test,
