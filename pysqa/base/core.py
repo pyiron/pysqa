@@ -2,7 +2,7 @@ import getpass
 import importlib
 import os
 import subprocess
-from typing import Optional, Union, Callable
+from typing import Callable, Optional, Union
 
 import pandas
 from jinja2 import Template
@@ -106,7 +106,12 @@ def get_queue_commands(queue_type: str) -> SchedulerCommands:
         if module_name is not None and class_name is not None:
             return getattr(importlib.import_module(module_name), class_name)()
         else:
-            raise ValueError("Please define module_name and class_name: " + str(module_name) + " " + str(class_name))
+            raise ValueError(
+                "Please define module_name and class_name: "
+                + str(module_name)
+                + " "
+                + str(class_name)
+            )
     else:
         raise ValueError(
             "The queue_type "
@@ -134,9 +139,7 @@ class QueueAdapterCore(QueueAdapterAbstractClass):
         self._commands = get_queue_commands(queue_type=queue_type)
         module_name = queue_type_dict[queue_type]["module_name"]
         if module_name is not None:
-            self._submission_template = importlib.import_module(
-                module_name
-            ).template
+            self._submission_template = importlib.import_module(module_name).template
         self._execute_command_function = execute_command
 
     def submit_job(

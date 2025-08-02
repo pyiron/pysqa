@@ -1,4 +1,4 @@
-from typing import Optional, Union, Callable
+from typing import Callable, Optional, Union
 
 import pandas
 from jinja2 import Template

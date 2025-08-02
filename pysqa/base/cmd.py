@@ -2,7 +2,7 @@ import getopt
 import json
 import os
 import sys
-from typing import Optional, Callable
+from typing import Callable, Optional
 
 from pysqa.base.core import execute_command
 from pysqa.queueadapter import QueueAdapter

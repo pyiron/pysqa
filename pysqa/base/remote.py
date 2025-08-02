@@ -2,12 +2,12 @@ import getpass
 import json
 import os
 import warnings
-from typing import Optional, Union, Callable
+from typing import Callable, Optional, Union
 
 import pandas
 import paramiko
-from tqdm import tqdm
 from jinja2 import Template
+from tqdm import tqdm
 
 from pysqa.base.config import QueueAdapterWithConfig
 from pysqa.base.core import execute_command
@@ -101,7 +101,9 @@ class RemoteQueueAdapter(QueueAdapterWithConfig):
             self._ssh_key = None
         self._ssh_password = config.get("ssh_password")
         if self._ssh_password is None:
-            self._ssh_ask_for_password: Union[bool, str] = config.get("ssh_ask_for_password", False)
+            self._ssh_ask_for_password: Union[bool, str] = config.get(
+                "ssh_ask_for_password", False
+            )
         self._ssh_key_passphrase = config.get("ssh_key_passphrase")
         self._ssh_two_factor_authentication = config.get(
             "ssh_two_factor_authentication", False
