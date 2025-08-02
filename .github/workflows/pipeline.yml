@@ -52,11 +52,9 @@ jobs:
           architecture: x64
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Install mypy
-        run: pip install mypy
       - name: Test
         run: |
-          python3 -m pip install types-PyYAML types-paramiko
+          pip install mypy types-PyYAML types-paramiko
           mypy --ignore-missing-imports ${{ github.event.repository.name }}
 
   coverage:
