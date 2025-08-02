@@ -221,7 +221,7 @@ jobs:
           pip install . --no-deps --no-build-isolation
           python -m unittest discover tests
 
- unittest_slurm:
+  unittest_slurm:
     needs: [black]
     runs-on: ubuntu-latest
     services:
