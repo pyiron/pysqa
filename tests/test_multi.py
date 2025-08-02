@@ -67,15 +67,15 @@ class TestNoneAdapter(unittest.TestCase):
 
     def test_get_job_from_remote(self):
         with self.assertRaises(TypeError):
-            self.multi.get_job_from_remote()
+            self.multi.get_job_from_remote(working_directory=".")
 
     def test_transfer_file_to_remote(self):
         with self.assertRaises(TypeError):
-            self.multi.transfer_file_to_remote()
+            self.multi.transfer_file_to_remote(file="test.py")
 
     def test_convert_path_to_remote(self):
         with self.assertRaises(TypeError):
-            self.multi.convert_path_to_remote()
+            self.multi.convert_path_to_remote(path=".")
 
     def test_check_queue_parameters(self):
         cores_input = 1
