@@ -130,4 +130,4 @@ class TestRemoteQueueAdapterRebex(unittest.TestCase):
         remote._adapter._ssh_remote_path = path
         remote._adapter._open_ssh_connection()
         output = remote._adapter._execute_remote_command(command="pwd")
-        self.assertEqual(output, "/")
+        self.assertEqual(output, "/\n")
