@@ -95,12 +95,14 @@ class RemoteQueueAdapter(QueueAdapterWithConfig):
             os.path.expanduser(config["known_hosts"])
         )
         self._ssh_ask_for_password: Union[bool, str] = False
-        self._ssh_key = os.path.abspath(os.path.expanduser(config["ssh_key"])) if "ssh_key" in config else None
+        self._ssh_key = (
+            os.path.abspath(os.path.expanduser(config["ssh_key"]))
+            if "ssh_key" in config
+            else None
+        )
         self._ssh_password = config.get("ssh_password")
         if self._ssh_password is None:
-            self._ssh_ask_for_password = config.get(
-                "ssh_ask_for_password", False
-            )
+            self._ssh_ask_for_password = config.get("ssh_ask_for_password", False)
         self._ssh_key_passphrase = config.get("ssh_key_passphrase")
         self._ssh_two_factor_authentication = config.get(
             "ssh_two_factor_authentication", False
@@ -114,7 +116,9 @@ class RemoteQueueAdapter(QueueAdapterWithConfig):
         self._ssh_local_path = os.path.abspath(
             os.path.expanduser(config["ssh_local_path"])
         )
-        self._ssh_delete_file_on_remote = bool(config.get("ssh_delete_file_on_remote", True))
+        self._ssh_delete_file_on_remote = bool(
+            config.get("ssh_delete_file_on_remote", True)
+        )
         self._ssh_port = int(config.get("ssh_port", 22))
         self._ssh_continous_connection = config.get("ssh_continous_connection", False)
         self._ssh_connection = None
