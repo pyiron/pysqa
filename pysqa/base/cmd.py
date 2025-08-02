@@ -25,7 +25,7 @@ def command_line(
     queue = None
     job_name = None
     working_directory = None
-    cores = None
+    cores = 1
     memory_max = None
     run_time_max = None
     command = None
@@ -63,7 +63,7 @@ def command_line(
         mode_reservation = False
         mode_status = False
         mode_list = False
-        dependency_list = None
+        dependency_list = []
         for opt, arg in opts:
             if opt in ("-f", "--config_directory"):
                 directory = arg
@@ -80,11 +80,11 @@ def command_line(
             elif opt in ("-m", "--memory"):
                 memory_max = arg
             elif opt in ("-t", "--run_time"):
-                run_time_max = arg
+                run_time_max = int(arg)
             elif opt in ("-c", "--command"):
                 command = arg
             elif opt in ("-r", "--reservation"):
-                mode_reservation = arg
+                mode_reservation = True
             elif opt in ("-i", "--id"):
                 if arg != "":
                     job_id = int(arg)
@@ -95,10 +95,7 @@ def command_line(
             elif opt in ("-l", "--list"):
                 mode_list = True
             elif opt in ("-b", "--dependency"):
-                if dependency_list is None:
-                    dependency_list = [arg]
-                else:
-                    dependency_list.append(arg)
+                dependency_list.append(int(arg))
         if mode_submit or mode_delete or mode_reservation or mode_status:
             qa = QueueAdapter(directory=directory, execute_command=execute_command)
             if mode_submit:
@@ -126,12 +123,13 @@ def command_line(
                     raise ValueError("Job ID not provided")
             elif mode_status:
                 print(json.dumps(qa.get_queue_status().to_dict(orient="list")))
-        elif mode_list:
+        elif mode_list and working_directory is not None:
             working_directory = os.path.abspath(os.path.expanduser(working_directory))
             remote_dirs, remote_files = [], []
             for p, _folder, files in os.walk(working_directory):
                 remote_dirs.append(p)
-                remote_files += [os.path.join(p, f) for f in files]
+                if p is not None:
+                    remote_files += [os.path.join(p, f) for f in files if f is not None]
             print(
                 json.dumps({"dirs": sorted(remote_dirs), "files": sorted(remote_files)})
             )
