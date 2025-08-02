@@ -84,7 +84,7 @@ class SlurmCommands(SchedulerCommands):
     @staticmethod
     def dependencies(dependency_list: list[str]) -> list[str]:
         """Returns the dependency options for job submission."""
-        if dependency_list is not None:
+        if dependency_list is not None and len(dependency_list) > 0:
             return ["--dependency=afterok:" + ",".join(dependency_list)]
         else:
             return []

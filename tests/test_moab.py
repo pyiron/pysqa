@@ -41,3 +41,8 @@ class TestMoabQueueAdapter(unittest.TestCase):
                 self.moab._adapter._list_command_to_be_executed("here"),
                 ["msub", "here"],
             )
+
+    def test_dependencies(self):
+        self.assertEqual(self.moab._adapter._commands.dependencies(dependency_list=None), [])
+        with self.assertRaises(NotImplementedError):
+            self.moab._adapter._commands.dependencies(dependency_list=[])

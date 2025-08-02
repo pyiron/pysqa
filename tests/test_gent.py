@@ -66,6 +66,11 @@ class TestGentQueueAdapter(unittest.TestCase):
             self.gent._adapter._commands.get_queue_from_output("123;MyQueue"), "MyQueue"
         )
 
+    def test_dependencies(self):
+        self.assertEqual(self.gent._adapter._commands.dependencies(dependency_list=None), [])
+        with self.assertRaises(NotImplementedError):
+            self.gent._adapter._commands.dependencies(dependency_list=[])
+
     def test_convert_queue_status_slurm(self):
         with open(os.path.join(self.path, "config/gent", "gent_output"), "r") as f:
             content = f.read()
@@ -76,6 +81,11 @@ class TestGentQueueAdapter(unittest.TestCase):
                 )
             )
         )
+
+    def test_convert_queue_status_empty(self):
+        self.assertIsNone(self.gent._adapter._commands.convert_queue_status(
+            queue_status_output=":"
+        ))
 
     def test_switch_cluster_command(self):
         self.assertEqual(
