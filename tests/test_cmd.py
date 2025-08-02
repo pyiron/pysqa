@@ -73,7 +73,7 @@ class TestCMD(unittest.TestCase):
             "#SBATCH --chdir=.\n",
             "#SBATCH --get-user-env=L\n",
             "#SBATCH --partition=slurm\n",
-            "#SBATCH --time=4320\n",
+            "#SBATCH --time=1\n",
             "#SBATCH --mem=1GBG\n",
             "#SBATCH --cpus-per-task=10\n",
             "\n",
