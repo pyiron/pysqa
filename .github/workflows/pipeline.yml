@@ -221,6 +221,61 @@ jobs:
           pip install . --no-deps --no-build-isolation
           python -m unittest discover tests
 
+ unittest_slurm:
+    needs: [black]
+    runs-on: ubuntu-latest
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root
+        ports:
+          - "8888:3306"
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+    steps:
+    - uses: actions/checkout@v4
+    - uses: koesterlab/setup-slurm-action@v1
+      timeout-minutes: 5
+    - name: Conda config
+      run: echo -e "channels:\n  - conda-forge\n" > .condarc
+    - uses: conda-incubator/setup-miniconda@v3
+      with:
+        python-version: "3.13"
+        miniforge-version: latest
+        condarc-file: .condarc
+        environment-file: .ci_support/environment.yml
+    - name: Test
+      shell: bash -l {0}
+      timeout-minutes: 5
+      run: |
+        pip install . --no-deps --no-build-isolation
+        cd tests
+        sinfo -o "%n %e %m %a %c %C"
+        srun --mpi=list
+        python -m unittest test_slurm_integration.py
+
+  unittest_flux:
+    needs: [black]
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Conda config
+      run: echo -e "channels:\n  - conda-forge\n" > .condarc
+    - uses: conda-incubator/setup-miniconda@v3
+      with:
+        python-version: "3.13"
+        miniforge-version: latest
+        condarc-file: .condarc
+        environment-file: .ci_support/environment.yml
+    - name: Test
+      shell: bash -l {0}
+      timeout-minutes: 5
+      run: |
+        conda install -y -c conda-forge flux-core
+        pip install . --no-deps --no-build-isolation
+        cd tests
+        flux start python -m unittest test_flux_integration.py
+
   autobot:
     needs: [unittest_old, unittest_matrix, pip_check, notebooks, minimal, coverage]
     permissions:
