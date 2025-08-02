@@ -125,6 +125,9 @@ class TestRemoteQueueAdapter(unittest.TestCase):
             os.path.abspath("abc.txt"),
         )
 
+    def test_list_command_to_be_executed(self):
+        self.assertEqual(len(self.remote._adapter._list_command_to_be_executed(queue_script_path=".")), 0)
+
 
 @unittest.skipIf(
     skip_remote_test,
