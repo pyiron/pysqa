@@ -15,8 +15,10 @@ else:
 class TestSlurm(unittest.TestCase):
     def test_slurm(self):
         qa = QueueAdapter(queue_type="slurm")
-        job_id = qa.submit_job(command="sleep 1")
-        status = qa.get_status_of_job(process_id=job_id)
-        self.assertTrue(status in ["running", "pending"])
+        job_id = qa.submit_job(command="sleep 5")
         sleep(2)
+        status = qa.get_status_of_job(process_id=job_id)
+        self.assertEqual(status, "running")
+        sleep(5)
+        status = qa.get_status_of_job(process_id=job_id)
         self.assertEqual(status, "finished")
