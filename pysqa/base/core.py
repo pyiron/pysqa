@@ -47,7 +47,7 @@ queue_type_dict: dict[str, dict[str, Union[str, None]]] = {
 
 
 def execute_command(
-    commands: str,
+    commands: Union[str, list[str]],
     working_directory: Optional[str] = None,
     split_output: bool = True,
     shell: bool = False,
