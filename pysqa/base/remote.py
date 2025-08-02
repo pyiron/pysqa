@@ -405,9 +405,11 @@ class RemoteQueueAdapter(QueueAdapterWithConfig):
                 password=self._ssh_password,
             )
 
-            ssh.get_transport().auth_interactive(
-                username=self._ssh_username, handler=authentication, submethods=""
-            )
+            transport = ssh.get_transport()
+            if transport is not None:
+                transport.auth_interactive(
+                    username=self._ssh_username, handler=authentication, submethods=""
+                )
         elif (
             self._ssh_password is not None
             and self._ssh_authenticator_service is None
@@ -419,9 +421,11 @@ class RemoteQueueAdapter(QueueAdapterWithConfig):
                 username=self._ssh_username,
                 password=self._ssh_password,
             )
-            ssh.get_transport().auth_interactive_dumb(
-                username=self._ssh_username, handler=None, submethods=""
-            )
+            transport = ssh.get_transport()
+            if transport is not None:
+                transport.auth_interactive_dumb(
+                    username=self._ssh_username, handler=None, submethods=""
+                )
         elif self._ssh_ask_for_password and self._ssh_two_factor_authentication:
             ssh.connect(
                 hostname=self._ssh_host,
@@ -429,9 +433,11 @@ class RemoteQueueAdapter(QueueAdapterWithConfig):
                 username=self._ssh_username,
                 password=getpass.getpass(prompt="SSH Password: ", stream=None),
             )
-            ssh.get_transport().auth_interactive_dumb(
-                username=self._ssh_username, handler=None, submethods=""
-            )
+            transport = ssh.get_transport()
+            if transport is not None:
+                transport.auth_interactive_dumb(
+                    username=self._ssh_username, handler=None, submethods=""
+                )
         else:
             raise ValueError("Un-supported authentication method.")
 
@@ -558,12 +564,15 @@ class RemoteQueueAdapter(QueueAdapterWithConfig):
             ssh = self._ssh_connection
         else:
             ssh = self._open_ssh_connection()
-        stdin, stdout, stderr = ssh.exec_command(command)
-        warnings.warn(message=stderr.read().decode(), stacklevel=2)
-        output = stdout.read().decode()
-        if not self._ssh_continous_connection:
-            ssh.close()
-        return output
+        if ssh is not None:
+            stdin, stdout, stderr = ssh.exec_command(command)
+            warnings.warn(message=stderr.read().decode(), stacklevel=2)
+            output = stdout.read().decode()
+            if not self._ssh_continous_connection:
+                ssh.close()
+            return output
+        else:
+            return ""
 
     def _get_remote_working_dir(self, working_directory: str) -> str:
         """
