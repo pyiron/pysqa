@@ -447,6 +447,8 @@ class RemoteQueueAdapter(QueueAdapterWithConfig):
             client_new = paramiko.SSHClient()
             client_new.set_missing_host_key_policy(paramiko.AutoAddPolicy())
             vmtransport = ssh.get_transport()
+            if vmtransport is None:
+                raise ValueError()
             vmchannel = vmtransport.open_channel(
                 kind="direct-tcpip",
                 dest_addr=(self._ssh_proxy_host, self._ssh_port),
@@ -457,7 +459,8 @@ class RemoteQueueAdapter(QueueAdapterWithConfig):
                 username=self._ssh_username,
                 sock=vmchannel,
             )
-            self._ssh_proxy_connection = ssh
+            if ssh is not None:
+                self._ssh_proxy_connection = ssh
             return client_new
         else:
             return ssh
