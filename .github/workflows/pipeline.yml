@@ -52,7 +52,7 @@ jobs:
           echo "- flux-core =0.59.0" >> environment.yml
           echo -e "channels:\n  - conda-forge\n" > .condarc
           mkdir -p /home/runner/.ssh
-          cat "test.rebex.net,195.144.107.198 ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBLZcZopPvkxYERubWeSrWOSHpxJdR14WFVES/Q3hFguTn6L+0EANqYcbRXhGBUV6SjR7SaxZACXSxOzgCtG4kwc=" > /home/runner/.ssh/known_hosts
+          echo "test.rebex.net,195.144.107.198 ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBLZcZopPvkxYERubWeSrWOSHpxJdR14WFVES/Q3hFguTn6L+0EANqYcbRXhGBUV6SjR7SaxZACXSxOzgCtG4kwc=" > /home/runner/.ssh/known_hosts
       - name: Setup Mambaforge
         uses: conda-incubator/setup-miniconda@v3
         with:
@@ -201,7 +201,7 @@ jobs:
         shell: bash -l {0}
         run: |
           mkdir -p /home/runner/.ssh
-          cat "test.rebex.net,195.144.107.198 ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBLZcZopPvkxYERubWeSrWOSHpxJdR14WFVES/Q3hFguTn6L+0EANqYcbRXhGBUV6SjR7SaxZACXSxOzgCtG4kwc=" > /home/runner/.ssh/known_hosts
+          echo "test.rebex.net,195.144.107.198 ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBLZcZopPvkxYERubWeSrWOSHpxJdR14WFVES/Q3hFguTn6L+0EANqYcbRXhGBUV6SjR7SaxZACXSxOzgCtG4kwc=" > /home/runner/.ssh/known_hosts
           pip install . --no-deps --no-build-isolation
           python -m unittest discover tests
 
@@ -223,7 +223,7 @@ jobs:
         shell: bash -l {0}
         run: |
           mkdir -p /home/runner/.ssh
-          cat "test.rebex.net,195.144.107.198 ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBLZcZopPvkxYERubWeSrWOSHpxJdR14WFVES/Q3hFguTn6L+0EANqYcbRXhGBUV6SjR7SaxZACXSxOzgCtG4kwc=" > /home/runner/.ssh/known_hosts
+          echo "test.rebex.net,195.144.107.198 ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBLZcZopPvkxYERubWeSrWOSHpxJdR14WFVES/Q3hFguTn6L+0EANqYcbRXhGBUV6SjR7SaxZACXSxOzgCtG4kwc=" > /home/runner/.ssh/known_hosts
           pip install . --no-deps --no-build-isolation
           python -m unittest discover tests
 
