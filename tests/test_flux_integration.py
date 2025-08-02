@@ -16,7 +16,7 @@ except ImportError:
 class TestFlux(unittest.TestCase):
     def test_flux(self):
         qa = QueueAdapter(queue_type="flux")
-        job_id = qa.submit_job(command="sleep 5")
+        job_id = qa.submit_job(command="sleep 5", cores=1)
         sleep(2)
         status = qa.get_status_of_job(process_id=job_id)
         print(job_id, status)

@@ -10,12 +10,12 @@ else:
 
 
 @unittest.skipIf(
-    skip_slurm_test, "SLRUM is not installed, so the slurm tests are skipped.",
+    skip_slurm_test, "SLURM is not installed, so the slurm tests are skipped.",
 )
 class TestSlurm(unittest.TestCase):
     def test_slurm(self):
         qa = QueueAdapter(queue_type="slurm")
-        job_id = qa.submit_job(command="sleep 5")
+        job_id = qa.submit_job(command="sleep 5", cores=1)
         sleep(2)
         status = qa.get_status_of_job(process_id=job_id)
         print(job_id, status)
