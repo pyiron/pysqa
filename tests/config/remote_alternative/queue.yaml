@@ -3,7 +3,8 @@ queue_primary: remote
 ssh_host: hpc-cluster.university.edu
 ssh_username: hpcuser
 known_hosts: ~/.ssh/known_hosts
-ssh_key: ~/.ssh/id_rsa
+ssh_password: test1234
+ssh_authenticator_service: testserver
 ssh_remote_config_dir: /u/share/pysqa/resources/queues/
 ssh_remote_path: /u/hpcuser/remote/
 ssh_local_path: /home/localuser/projects/
