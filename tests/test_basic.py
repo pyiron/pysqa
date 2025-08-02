@@ -15,6 +15,10 @@ class TestQueueAdapter(unittest.TestCase):
         with self.assertRaises(ValueError):
             QueueAdapter(directory=os.path.join(self.path, "config/error"))
 
+    def test_missing_config_folder(self):
+        with self.assertRaises(ValueError):
+            QueueAdapter(directory=os.path.join(self.path, "config"))
+
     def test_no_config(self):
         with self.assertRaises(ValueError):
             QueueAdapter()
