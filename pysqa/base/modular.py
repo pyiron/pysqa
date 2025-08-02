@@ -125,7 +125,9 @@ class ModularQueueAdapter(QueueAdapterWithConfig):
                 + self._commands.enable_reservation_command
                 + [str(cluster_queue_id)]
             )
-            out = self._execute_command(commands=commands, split_output=True, shell=True)
+            out = self._execute_command(
+                commands=commands, split_output=True, shell=True
+            )
             if out is not None:
                 return out[0]
         return None
@@ -151,12 +153,16 @@ class ModularQueueAdapter(QueueAdapterWithConfig):
                 + self._commands.delete_job_command
                 + [str(cluster_queue_id)]
             )
-            out = self._execute_command(commands=commands, split_output=True, shell=True)
+            out = self._execute_command(
+                commands=commands, split_output=True, shell=True
+            )
             if out is not None:
                 return out[0]
         return None
 
-    def get_queue_status(self, user: Optional[str] = None) -> Union[pandas.DataFrame, None]:
+    def get_queue_status(
+        self, user: Optional[str] = None
+    ) -> Union[pandas.DataFrame, None]:
         """
         Get the queue status.
 
