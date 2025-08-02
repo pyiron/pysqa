@@ -118,7 +118,7 @@ class RemoteQueueAdapter(QueueAdapterWithConfig):
             os.path.expanduser(config["ssh_local_path"])
         )
         self._ssh_delete_file_on_remote = config.get("ssh_delete_file_on_remote", True)
-        self._ssh_port = config.get("ssh_port", 22)
+        self._ssh_port = int(config.get("ssh_port", 22))
         self._ssh_continous_connection = config.get("ssh_continous_connection", False)
         self._ssh_connection = None
         self._ssh_proxy_connection = None
