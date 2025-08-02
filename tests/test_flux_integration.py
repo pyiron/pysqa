@@ -19,6 +19,7 @@ class TestFlux(unittest.TestCase):
         job_id = qa.submit_job(command="sleep 5")
         sleep(2)
         status = qa.get_status_of_job(process_id=job_id)
+        print(job_id, status)
         self.assertEqual(status, "running")
         sleep(5)
         status = qa.get_status_of_job(process_id=job_id)
