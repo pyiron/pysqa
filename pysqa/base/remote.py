@@ -405,7 +405,7 @@ class RemoteQueueAdapter(QueueAdapterWithConfig):
                 password=self._ssh_password,
             )
 
-            ssh._transport.auth_interactive(
+            ssh.get_transport().auth_interactive(
                 username=self._ssh_username, handler=authentication, submethods=""
             )
         elif (
@@ -419,7 +419,7 @@ class RemoteQueueAdapter(QueueAdapterWithConfig):
                 username=self._ssh_username,
                 password=self._ssh_password,
             )
-            ssh._transport.auth_interactive_dumb(
+            ssh.get_transport().auth_interactive_dumb(
                 username=self._ssh_username, handler=None, submethods=""
             )
         elif self._ssh_ask_for_password and self._ssh_two_factor_authentication:
@@ -429,7 +429,7 @@ class RemoteQueueAdapter(QueueAdapterWithConfig):
                 username=self._ssh_username,
                 password=getpass.getpass(prompt="SSH Password: ", stream=None),
             )
-            ssh._transport.auth_interactive_dumb(
+            ssh.get_transport().auth_interactive_dumb(
                 username=self._ssh_username, handler=None, submethods=""
             )
         else:
