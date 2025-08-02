@@ -8,6 +8,7 @@ import pandas
 import paramiko
 from jinja2 import Template
 from paramiko.client import SSHClient
+from paramiko.transport import Transport
 from tqdm import tqdm
 
 from pysqa.base.config import QueueAdapterWithConfig
@@ -408,11 +409,9 @@ class RemoteQueueAdapter(QueueAdapterWithConfig):
                 password=self._ssh_password,
             )
 
-            transport = ssh.get_transport()
-            if transport is not None:
-                transport.auth_interactive(
-                    username=self._ssh_username, handler=authentication, submethods=""
-                )
+            get_transport(ssh=ssh).auth_interactive(
+                username=self._ssh_username, handler=authentication, submethods=""
+            )
         elif (
             self._ssh_password is not None
             and self._ssh_authenticator_service is None
@@ -424,11 +423,9 @@ class RemoteQueueAdapter(QueueAdapterWithConfig):
                 username=self._ssh_username,
                 password=self._ssh_password,
             )
-            transport = ssh.get_transport()
-            if transport is not None:
-                transport.auth_interactive_dumb(
-                    username=self._ssh_username, handler=None, submethods=""
-                )
+            get_transport(ssh=ssh).auth_interactive_dumb(
+                username=self._ssh_username, handler=None, submethods=""
+            )
         elif self._ssh_ask_for_password and self._ssh_two_factor_authentication:
             ssh.connect(
                 hostname=self._ssh_host,
@@ -436,11 +433,9 @@ class RemoteQueueAdapter(QueueAdapterWithConfig):
                 username=self._ssh_username,
                 password=getpass.getpass(prompt="SSH Password: ", stream=None),
             )
-            transport = ssh.get_transport()
-            if transport is not None:
-                transport.auth_interactive_dumb(
-                    username=self._ssh_username, handler=None, submethods=""
-                )
+            get_transport(ssh=ssh).auth_interactive_dumb(
+                username=self._ssh_username, handler=None, submethods=""
+            )
         else:
             raise ValueError("Un-supported authentication method.")
 
@@ -674,3 +669,10 @@ class RemoteQueueAdapter(QueueAdapterWithConfig):
         return os.path.abspath(
             os.path.join(remote_dir, os.path.relpath(file, local_dir))
         )
+
+
+def get_transport(ssh: SSHClient) -> Transport:
+    transport = ssh.get_transport()
+    if transport is None:
+        raise ValueError()
+    return transport
