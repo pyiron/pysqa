@@ -177,3 +177,22 @@ class TestRemoteQueueAdapterRebex(unittest.TestCase):
         self.assertIsNotNone(get_transport(remote._adapter._open_ssh_connection()))
         with self.assertRaises(ValueError):
             get_transport(ssh=FakeSSH())
+
+    def test_get_job_from_remote(self):
+        path = os.path.dirname(os.path.abspath(__file__))
+        remote = QueueAdapter(directory=os.path.join(path, "config/remote_rebex"))
+        remote._adapter._ssh_remote_path = path
+        remote._adapter._ssh_local_path = path
+        remote._adapter._ssh_delete_file_on_remote = True
+        with unittest.mock.patch(
+            "pysqa.base.remote.RemoteQueueAdapter._execute_remote_command"
+        ) as mock_execute:
+            mock_execute.return_value = '{"dirs": [], "files": ["test.txt"]}'
+            with unittest.mock.patch(
+                "pysqa.base.remote.RemoteQueueAdapter._transfer_files"
+            ) as mock_transfer:
+                remote._adapter.get_job_from_remote(
+                    working_directory=os.path.join(path, "config/empty")
+                )
+                self.assertEqual(mock_transfer.call_count, 1)
+            self.assertEqual(mock_execute.call_count, 2)
