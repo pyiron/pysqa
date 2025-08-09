@@ -28,7 +28,7 @@ class TestRemoteQueueAdapterAuth(unittest.TestCase):
         path = os.path.dirname(os.path.abspath(__file__))
         remote = QueueAdapter(directory=os.path.join(path, "config/remote_rebex"))
         remote._adapter._ssh_password = None
-        with self.assertRaises(paramiko.ssh_exception.AuthenticationException):
+        with self.assertRaises(ValueError):
             remote._adapter._open_ssh_connection()
 
     def test_two_factor_auth(self):
