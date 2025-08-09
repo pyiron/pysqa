@@ -83,7 +83,7 @@ jobs:
         shell: bash -l {0}
         run: >
           flux start
-          coverage run  --omit="pysqa/_version.py,tests/*" -m unittest discover tests
+          coverage run
       - name: Collect Coverage
         shell: bash -l {0}
         run: coverage xml
