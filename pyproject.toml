@@ -113,3 +113,7 @@ packages = [
 [tool.hatch.version]
 source = "vcs"
 path = "pysqa/_version.py"
+
+[tool.coverage.run]
+omit = ["pysqa/_version.py", "tests/*"]
+command_line = "-m unittest discover tests"
