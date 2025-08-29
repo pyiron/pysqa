@@ -3,12 +3,13 @@ channels:
 dependencies:
 - defusedxml =0.7.1
 - coverage
-- pandas =2.2.3
+- pandas =2.3.2
 - pyyaml =6.0.2
-- jinja2 =3.1.4
-- paramiko =3.5.0
-- tqdm =4.67.0
+- jinja2 =3.1.6
+- paramiko =4.0.0
+- tqdm =4.67.1
 - executorlib =0.0.2
 - cloudpickle =3.0.0
 - flux-core =0.59.0
-- versioneer =0.28
+- hatchling =1.27.0
+- hatch-vcs =0.5.0

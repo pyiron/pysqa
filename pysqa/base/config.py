@@ -1,5 +1,5 @@
 import os
-from typing import List, Optional, Tuple, Union
+from typing import Callable, Optional, Union
 
 import pandas
 import yaml
@@ -10,13 +10,13 @@ from pysqa.base.core import QueueAdapterCore, execute_command
 from pysqa.base.validate import check_queue_parameters, value_error_if_none
 
 
-class Queues(object):
+class Queues:
     """
     Queues is an abstract class simply to make the list of queues available for auto completion. This is mainly used in
     interactive environments like jupyter.
     """
 
-    def __init__(self, list_of_queues: List[str]):
+    def __init__(self, list_of_queues: list[str]):
         """
         Initialize the Queues object.
 
@@ -45,7 +45,7 @@ class Queues(object):
         else:
             raise AttributeError
 
-    def __dir__(self) -> List[str]:
+    def __dir__(self) -> list[str]:
         """
         Get the list of queues.
 
@@ -71,7 +71,7 @@ class QueueAdapterWithConfig(QueueAdapterCore):
         self,
         config: dict,
         directory: str = "~/.queues",
-        execute_command: callable = execute_command,
+        execute_command: Callable = execute_command,
     ):
         super().__init__(
             queue_type=config["queue_type"], execute_command=execute_command
@@ -187,10 +187,10 @@ class QueueAdapterWithConfig(QueueAdapterCore):
         queue: Optional[str],
         cores: int = 1,
         run_time_max: Optional[int] = None,
-        memory_max: Optional[int] = None,
+        memory_max: Optional[Union[int, str]] = None,
         active_queue: Optional[dict] = None,
-    ) -> Tuple[
-        Union[float, int, None], Union[float, int, None], Union[float, int, None]
+    ) -> tuple[
+        Union[float, int, None], Union[float, int, None], Union[float, int, str, None]
     ]:
         """
         Check the parameters of a queue.
@@ -220,11 +220,11 @@ class QueueAdapterWithConfig(QueueAdapterCore):
         submission_template: Optional[Union[str, Template]] = None,
         job_name: str = "job.py",
         working_directory: str = ".",
-        cores: Optional[int] = None,
-        memory_max: Optional[int] = None,
+        cores: int = 1,
+        memory_max: Optional[Union[int, str]] = None,
         run_time_max: Optional[int] = None,
-        dependency_list: Optional[List[int]] = None,
-        command: Optional[str] = None,
+        dependency_list: Optional[list[int]] = None,
+        command: str = "",
         **kwargs,
     ) -> str:
         """
@@ -254,21 +254,33 @@ class QueueAdapterWithConfig(QueueAdapterCore):
                 + str(self.queue_list)
             )
         active_queue = self._config["queues"][queue]
-        cores, run_time_max, memory_max = self.check_queue_parameters(
-            queue=None,
-            cores=cores,
-            run_time_max=run_time_max,
-            memory_max=memory_max,
-            active_queue=active_queue,
+        cores_checked, run_time_max_checked, memory_max_checked = (
+            self.check_queue_parameters(
+                queue=None,
+                cores=cores,
+                run_time_max=run_time_max,
+                memory_max=memory_max,
+                active_queue=active_queue,
+            )
         )
+        if cores_checked is None:
+            raise ValueError()
         return super()._job_submission_template(
             queue=None,
             submission_template=active_queue["template"],
             job_name=job_name,
             working_directory=working_directory,
-            cores=cores,
-            memory_max=memory_max,
-            run_time_max=run_time_max,
+            cores=int(cores_checked),
+            memory_max=(
+                int(memory_max_checked)
+                if isinstance(memory_max_checked, float)
+                else memory_max_checked
+            ),
+            run_time_max=(
+                int(run_time_max_checked)
+                if isinstance(run_time_max_checked, float)
+                else run_time_max_checked
+            ),
             dependency_list=dependency_list,
             command=command,
             **kwargs,
@@ -297,8 +309,8 @@ class QueueAdapterWithConfig(QueueAdapterCore):
             directory (str, optional): The directory where the queue template files are located. Defaults to ".".
         """
         for queue_dict in queue_lst_dict.values():
-            if "script" in queue_dict.keys():
-                with open(os.path.join(directory, queue_dict["script"]), "r") as f:
+            if "script" in queue_dict:
+                with open(os.path.join(directory, queue_dict["script"])) as f:
                     try:
                         queue_dict["template"] = Template(f.read())
                     except TemplateSyntaxError as error:
@@ -321,5 +333,5 @@ def read_config(file_name: str = "queue.yaml") -> dict:
     Returns:
         dict: The parsed configuration as a dictionary.
     """
-    with open(file_name, "r") as f:
+    with open(file_name) as f:
         return yaml.load(f, Loader=yaml.FullLoader)

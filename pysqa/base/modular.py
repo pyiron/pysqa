@@ -1,6 +1,7 @@
-from typing import Optional, Union
+from typing import Callable, Optional, Union
 
 import pandas
+from jinja2 import Template
 
 from pysqa.base.config import QueueAdapterWithConfig
 from pysqa.base.core import execute_command
@@ -27,9 +28,9 @@ class ModularQueueAdapter(QueueAdapterWithConfig):
         self,
         config: dict,
         directory: str = "~/.queues",
-        execute_command: callable = execute_command,
+        execute_command: Callable = execute_command,
     ):
-        super(ModularQueueAdapter, self).__init__(
+        super().__init__(
             config=config, directory=directory, execute_command=execute_command
         )
         self._queue_to_cluster_dict = {
@@ -47,13 +48,14 @@ class ModularQueueAdapter(QueueAdapterWithConfig):
     def submit_job(
         self,
         queue: Optional[str] = None,
-        job_name: Optional[str] = None,
+        job_name: str = "pysqa",
         working_directory: Optional[str] = None,
-        cores: Optional[int] = None,
-        memory_max: Optional[str] = None,
+        cores: int = 1,
+        memory_max: Optional[Union[int, str]] = None,
         run_time_max: Optional[int] = None,
-        dependency_list: Optional[list[str]] = None,
-        command: Optional[str] = None,
+        dependency_list: Optional[list[int]] = None,
+        command: str = "",
+        submission_template: Optional[Union[str, Template]] = None,
         **kwargs,
     ) -> Union[int, None]:
         """
@@ -66,7 +68,7 @@ class ModularQueueAdapter(QueueAdapterWithConfig):
             cores (int, optional): The number of cores. Defaults to None.
             memory_max (int, optional): The maximum memory. Defaults to None.
             run_time_max (int, optional): The maximum run time. Defaults to None.
-            dependency_list (list[str], optional): The list of dependencies. Defaults to None.
+            dependency_list (list[int], optional): The list of dependencies. Defaults to None.
             command (str, optional): The command to execute. Defaults to None.
 
         Returns:
@@ -94,7 +96,7 @@ class ModularQueueAdapter(QueueAdapterWithConfig):
             split_output=False,
             shell=True,
         )
-        if out is not None:
+        if out is not None and self._commands is not None:
             cluster_queue_id = self._commands.get_job_id_from_output(out)
             cluster_queue_id *= 10
             cluster_queue_id += self._config["cluster"].index(cluster_module)
@@ -117,16 +119,18 @@ class ModularQueueAdapter(QueueAdapterWithConfig):
             process_id=process_id, cluster_dict=self._config["cluster"]
         )
         cluster_commands = self._switch_cluster_command(cluster_module=cluster_module)
-        commands = (
-            cluster_commands
-            + self._commands.enable_reservation_command
-            + [str(cluster_queue_id)]
-        )
-        out = self._execute_command(commands=commands, split_output=True, shell=True)
-        if out is not None:
-            return out[0]
-        else:
-            return None
+        if self._commands is not None:
+            commands = (
+                cluster_commands
+                + self._commands.enable_reservation_command
+                + [str(cluster_queue_id)]
+            )
+            out = self._execute_command(
+                commands=commands, split_output=True, shell=True
+            )
+            if out is not None:
+                return out[0]
+        return None
 
     def delete_job(self, process_id: int):
         """
@@ -143,18 +147,22 @@ class ModularQueueAdapter(QueueAdapterWithConfig):
             process_id=process_id, cluster_dict=self._config["cluster"]
         )
         cluster_commands = self._switch_cluster_command(cluster_module=cluster_module)
-        commands = (
-            cluster_commands
-            + self._commands.delete_job_command
-            + [str(cluster_queue_id)]
-        )
-        out = self._execute_command(commands=commands, split_output=True, shell=True)
-        if out is not None:
-            return out[0]
-        else:
-            return None
+        if self._commands is not None:
+            commands = (
+                cluster_commands
+                + self._commands.delete_job_command
+                + [str(cluster_queue_id)]
+            )
+            out = self._execute_command(
+                commands=commands, split_output=True, shell=True
+            )
+            if out is not None:
+                return out[0]
+        return None
 
-    def get_queue_status(self, user: Optional[str] = None) -> pandas.DataFrame:
+    def get_queue_status(
+        self, user: Optional[str] = None
+    ) -> Union[pandas.DataFrame, None]:
         """
         Get the queue status.
 
@@ -165,6 +173,8 @@ class ModularQueueAdapter(QueueAdapterWithConfig):
             pandas.DataFrame: The queue status.
 
         """
+        if self._commands is None:
+            return None
         df_lst = []
         for cluster_module in self._config["cluster"]:
             cluster_commands = self._switch_cluster_command(
@@ -212,4 +222,4 @@ class ModularQueueAdapter(QueueAdapterWithConfig):
             list: The switch cluster command.
 
         """
-        return ["module", "--quiet", "swap", "cluster/{};".format(cluster_module)]
+        return ["module", "--quiet", "swap", f"cluster/{cluster_module};"]

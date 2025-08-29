@@ -1,6 +1,12 @@
 [build-system]
-requires = ["jinja2", "pandas", "pyyaml", "setuptools", "versioneer[toml]==0.29"]
-build-backend = "setuptools.build_meta"
+requires = [
+    "jinja2==3.1.6", 
+    "pandas==2.3.2", 
+    "pyyaml==6.0.2", 
+    "hatchling==1.27.0",
+    "hatch-vcs==0.5.0",
+]
+build-backend = "hatchling.build"
 
 [project]
 name = "pysqa"
@@ -25,8 +31,8 @@ classifiers = [
     "Programming Language :: Python :: 3.13",
 ]
 dependencies = [
-    "jinja2==3.1.4",
-    "pandas==2.2.3",
+    "jinja2==3.1.6",
+    "pandas==2.3.2",
     "pyyaml==6.0.2",
 ]
 dynamic = ["version"]
@@ -39,23 +45,75 @@ Repository = "https://github.com/pyiron/pysqa"
 [project.optional-dependencies]
 sge = ["defusedxml==0.7.1"]
 remote = [
-    "paramiko==3.5.0",
-    "tqdm==4.67.0",
+    "paramiko==4.0.0",
+    "tqdm==4.67.1",
 ]
-twofactor = ["pyauthenticator==0.2.0"]
+twofactor = ["pyauthenticator==0.2.1"]
 
 [project.scripts]
 pysqa = "pysqa.cmd:command_line"
 
-[tool.setuptools.packages.find]
-include = ["pysqa*"]
+[tool.ruff]
+exclude = [".ci_support", "docs", "notebooks", "tests", "setup.py", "_version.py"]
 
-[tool.setuptools.dynamic]
-version = {attr = "pysqa.__version__"}
+[tool.ruff.lint]
+select = [
+    # pycodestyle
+    "E",
+    # Pyflakes
+    "F",
+    # pyupgrade
+    "UP",
+    # flake8-bugbear
+    "B",
+    # flake8-simplify
+    "SIM",
+    # isort
+    "I",
+    # flake8-comprehensions
+    "C4",
+    # eradicate
+    "ERA",
+    # pylint
+    "PL",
+]
+ignore = [
+    # ignore exception naming
+    "B904",
+    # ignore line-length violations
+    "E501",
+    # ignore imports which are not at the top of a module
+    "PLC0415",
+    # Too many arguments in function definition
+    "PLR0913",
+    # Too many branches
+    "PLR0912",
+    # Too many statements
+    "PLR0915",
+]
 
-[tool.versioneer]
-VCS = "git"
-style = "pep440-pre"
-versionfile_source = "pysqa/_version.py"
-parentdir_prefix = "pysqa"
-tag_prefix = "pysqa-"
+[tool.hatch.build]
+include = [
+    "pysqa"
+]
+
+[tool.hatch.build.hooks.vcs]
+version-file = "pysqa/_version.py"
+
+[tool.hatch.build.targets.sdist]
+include = [
+    "pysqa"
+]
+
+[tool.hatch.build.targets.wheel]
+packages = [
+    "pysqa"
+]
+
+[tool.hatch.version]
+source = "vcs"
+path = "pysqa/_version.py"
+
+[tool.coverage.run]
+omit = ["pysqa/_version.py", "tests/*"]
+command_line = "-m unittest discover tests"

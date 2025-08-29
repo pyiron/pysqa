@@ -1,13 +1,15 @@
 import re
-from typing import Optional, Tuple, Union
+from typing import Optional, Union
 
 
 def check_queue_parameters(
-    active_queue: Optional[dict] = None,
-    cores: int = 1,
-    run_time_max: Optional[int] = None,
-    memory_max: Optional[int] = None,
-) -> Tuple[Union[float, int, None], Union[float, int, None], Union[float, int, None]]:
+    active_queue: dict[str, int],
+    cores: Union[float, int, None] = 1,
+    run_time_max: Optional[Union[float, int]] = None,
+    memory_max: Optional[Union[int, float, str]] = None,
+) -> tuple[
+    Union[float, int, None], Union[float, int, None], Union[str, float, int, None]
+]:
     """
     Check the parameters of a queue.
 
@@ -29,11 +31,14 @@ def check_queue_parameters(
     run_time_max = value_in_range(
         value=run_time_max, value_max=active_queue["run_time_max"]
     )
-    memory_max = value_in_range(value=memory_max, value_max=active_queue["memory_max"])
+    if isinstance(memory_max, (int, float)):
+        memory_max = value_in_range(
+            value=memory_max, value_max=active_queue["memory_max"]
+        )
     return cores, run_time_max, memory_max
 
 
-def value_error_if_none(value: str) -> None:
+def value_error_if_none(value: Union[str, None]) -> None:
     """
     Raise a ValueError if the value is None or not a string.
 
@@ -51,9 +56,9 @@ def value_error_if_none(value: str) -> None:
 
 
 def value_in_range(
-    value: Union[int, float, None],
-    value_min: Union[int, float, None] = None,
-    value_max: Union[int, float, None] = None,
+    value: Optional[Union[int, float]] = None,
+    value_min: Optional[Union[int, float]] = None,
+    value_max: Optional[Union[int, float]] = None,
 ) -> Union[int, float, None]:
     """
     Check if a value is within a specified range.
@@ -80,9 +85,9 @@ def value_in_range(
         # ATTENTION: int('60000') is interpreted as '60000B' since _memory_spec_string_to_value return the size in
         # ATTENTION: bytes, as target_magnitude = 'b'
         # We want to compare the the actual (k,m,g)byte value if there is any
-        if value_min_ is not None and value_ < value_min_:
+        if value_min_ is not None and value_ is not None and value_ < value_min_:
             return value_min
-        if value_max_ is not None and value_ > value_max_:
+        if value_max_ is not None and value_ is not None and value_ > value_max_:
             return value_max
         return value
     else:
@@ -111,7 +116,7 @@ def _memory_spec_string_to_value(
     value: Union[str, int, float],
     default_magnitude: str = "m",
     target_magnitude: str = "b",
-) -> Union[int, float]:
+) -> Union[int, float, str]:
     """
     Converts a valid memory string (tested by _is_memory_string) into an integer/float value of desired
     magnitude `default_magnitude`. If it is a plain integer string (e.g.: '50000') it will be interpreted with
@@ -126,18 +131,18 @@ def _memory_spec_string_to_value(
         Union[int, float]: The value of the string in `target_magnitude` units.
     """
     magnitude_mapping = {"b": 0, "k": 1, "m": 2, "g": 3, "t": 4}
-    if _is_memory_string(value):
+    if isinstance(value, str) and _is_memory_string(value):
         integer_pattern = r"[0-9]+"
         magnitude_pattern = r"[bBkKmMgGtT]+"
         integer_value = int(re.findall(integer_pattern, value)[0])
 
         magnitude = re.findall(magnitude_pattern, value)
         if len(magnitude) > 0:
-            magnitude = magnitude[0].lower()
+            magnitude_str = magnitude[0].lower()
         else:
-            magnitude = default_magnitude.lower()
+            magnitude_str = default_magnitude.lower()
         # Convert it to default magnitude = megabytes
-        return (integer_value * 1024 ** magnitude_mapping[magnitude]) / (
+        return (integer_value * 1024 ** magnitude_mapping[magnitude_str]) / (
             1024 ** magnitude_mapping[target_magnitude]
         )
     else:

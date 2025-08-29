@@ -1,5 +1,5 @@
 import os
-from typing import List, Optional, Tuple, Union
+from typing import Callable, Optional, Union
 
 import pandas
 from jinja2 import Template
@@ -42,19 +42,18 @@ class QueueAdapter(QueueAdapterAbstractClass):
         self,
         directory: Optional[str] = None,
         queue_type: Optional[str] = None,
-        execute_command: callable = execute_command,
+        execute_command: Callable = execute_command,
     ):
         """
         Initialize the QueueAdapter.
 
         Args:
             directory (str): Directory containing the queue.yaml files and corresponding templates.
-            execute_command (callable): Function to execute commands.
+            execute_command (Callable): Function to execute commands.
         """
         if directory is not None:
             queue_yaml = os.path.join(directory, "queue.yaml")
             clusters_yaml = os.path.join(directory, "clusters.yaml")
-            self._adapter = None
             if os.path.exists(queue_yaml):
                 self._queue_dict = {
                     "default": set_queue_adapter(
@@ -90,7 +89,7 @@ class QueueAdapter(QueueAdapterAbstractClass):
         else:
             raise ValueError()
 
-    def list_clusters(self) -> List[str]:
+    def list_clusters(self) -> list[str]:
         """
         List available computing clusters for remote submission
 
@@ -148,7 +147,7 @@ class QueueAdapter(QueueAdapterAbstractClass):
             return False
 
     @property
-    def queue_list(self) -> Union[List[str], None]:
+    def queue_list(self) -> Union[list[str], None]:
         """
         Get the list of available queues.
 
@@ -192,9 +191,9 @@ class QueueAdapter(QueueAdapterAbstractClass):
         job_name: Optional[str] = None,
         working_directory: Optional[str] = None,
         cores: Optional[int] = None,
-        memory_max: Optional[int] = None,
+        memory_max: Optional[Union[int, str]] = None,
         run_time_max: Optional[int] = None,
-        dependency_list: Optional[List[str]] = None,
+        dependency_list: Optional[list[int]] = None,
         command: Optional[str] = None,
         submission_template: Optional[Union[str, Template]] = None,
         **kwargs,
@@ -338,7 +337,7 @@ class QueueAdapter(QueueAdapterAbstractClass):
         """
         return self._adapter.get_status_of_job(process_id=process_id)
 
-    def get_status_of_jobs(self, process_id_lst: List[int]) -> List[str]:
+    def get_status_of_jobs(self, process_id_lst: list[int]) -> list[str]:
         """
         Get the status of multiple jobs.
 
@@ -357,8 +356,8 @@ class QueueAdapter(QueueAdapterAbstractClass):
         run_time_max: Optional[int] = None,
         memory_max: Optional[int] = None,
         active_queue: Optional[dict] = None,
-    ) -> Tuple[
-        Union[float, int, None], Union[float, int, None], Union[float, int, None]
+    ) -> tuple[
+        Union[float, int, None], Union[float, int, None], Union[float, int, str, None]
     ]:
         """
         Check the parameters of a queue.
@@ -386,7 +385,7 @@ class QueueAdapter(QueueAdapterAbstractClass):
 
 
 def set_queue_adapter(
-    config: dict, directory: str, execute_command: callable = execute_command
+    config: dict, directory: str, execute_command: Callable = execute_command
 ):
     """
     Initialize the queue adapter

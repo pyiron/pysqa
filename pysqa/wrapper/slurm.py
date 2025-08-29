@@ -1,5 +1,5 @@
 import os
-from typing import List, Optional, Union
+from typing import Optional, Union
 
 import pandas
 from jinja2 import Template
@@ -62,11 +62,11 @@ class SlurmCommands(SchedulerCommands):
             )
         else:
             job_id_lst, user_lst, status_lst, job_name_lst, working_directory_lst = (
-                [],
-                [],
-                [],
-                [],
-                [],
+                (),
+                (),
+                (),
+                (),
+                (),
             )
         df = pandas.DataFrame(
             {
@@ -84,21 +84,21 @@ class SlurmCommands(SchedulerCommands):
     @staticmethod
     def dependencies(dependency_list: list[str]) -> list[str]:
         """Returns the dependency options for job submission."""
-        if dependency_list is not None:
+        if dependency_list is not None and len(dependency_list) > 0:
             return ["--dependency=afterok:" + ",".join(dependency_list)]
         else:
             return []
 
+    @staticmethod
     def render_submission_template(
-        self,
         command: str,
+        submission_template: Union[str, Template] = template,
         job_name: str = "pysqa",
         working_directory: str = os.path.abspath("."),
         cores: int = 1,
-        memory_max: Optional[int] = None,
+        memory_max: Optional[Union[int, str]] = None,
         run_time_max: Optional[int] = None,
-        dependency_list: Optional[List[int]] = None,
-        submission_template: Union[str, Template] = template,
+        dependency_list: Optional[list[int]] = None,
         **kwargs,
     ) -> str:
         """
@@ -117,7 +117,7 @@ class SlurmCommands(SchedulerCommands):
         Returns:
             str: The rendered job submission template.
         """
-        return super().render_submission_template(
+        return SchedulerCommands.render_submission_template(
             command=command,
             job_name=job_name,
             working_directory=working_directory,

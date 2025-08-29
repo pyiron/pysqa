@@ -1,4 +1,5 @@
 import unittest
+from unittest.mock import patch
 from pysqa.wrapper.abstract import SchedulerCommands
 
 
@@ -11,6 +12,20 @@ class TmpSchedularCommands(SchedulerCommands):
 
     def submit_job_command(self):
         pass
+
+
+class TestAbstractSchedulerCommands(unittest.TestCase):
+    @patch.multiple(SchedulerCommands, __abstractmethods__=set())
+    def test_submit_job_command(self):
+        self.assertIsNone(SchedulerCommands().submit_job_command)
+
+    @patch.multiple(SchedulerCommands, __abstractmethods__=set())
+    def test_submit_job_command(self):
+        self.assertIsNone(SchedulerCommands().delete_job_command)
+
+    @patch.multiple(SchedulerCommands, __abstractmethods__=set())
+    def test_submit_job_command(self):
+        self.assertIsNone(SchedulerCommands().get_queue_status_command)
 
 
 class TestSchedulerCommands(unittest.TestCase):

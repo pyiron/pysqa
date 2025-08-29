@@ -5,10 +5,17 @@ from pysqa import QueueAdapter
 try:
     import paramiko
     from tqdm import tqdm
+    from pysqa.base.remote import get_transport
 
     skip_remote_test = False
 except ImportError:
     skip_remote_test = True
+
+
+class FakeSSH:
+    @staticmethod
+    def get_transport(*args, **kwargs):
+        return None
 
 
 @unittest.skipIf(
@@ -33,6 +40,11 @@ class TestRemoteQueueAdapter(unittest.TestCase):
 
     def test_remote_flag(self):
         self.assertTrue(self.remote._adapter.remote_flag)
+        self.assertTrue(self.remote_alternative._adapter.remote_flag)
+
+    def test_create_remote_dir(self):
+        with self.assertRaises(TypeError):
+            self.remote._adapter._create_remote_dir(directory=None)
 
     def test_ssh_delete_file_on_remote(self):
         self.assertEqual(self.remote.ssh_delete_file_on_remote, False)
@@ -48,19 +60,34 @@ class TestRemoteQueueAdapter(unittest.TestCase):
             self.remote.submit_job(queue="remote", dependency_list=[])
 
     def test_submit_command(self):
-        command = self.remote._adapter._submit_command(
-            queue="remote",
-            job_name="test",
-            working_directory="/home/localuser/projects/test",
-            cores=str(1),
-            memory_max=str(1),
-            run_time_max=str(1),
-            command_str="/bin/true",
-        )
-        self.assertEqual(
-            command,
-            'python -m pysqa --config_directory /u/share/pysqa/resources/queues/ --submit --queue remote --job_name test --working_directory /home/localuser/projects/test --cores 1 --memory 1 --run_time 1 --command "/bin/true" ',
-        )
+        with self.subTest("remote config"):
+            command = self.remote._adapter._submit_command(
+                queue="remote",
+                job_name="test",
+                working_directory="/home/localuser/projects/test",
+                cores=str(1),
+                memory_max=str(1),
+                run_time_max=str(1),
+                command_str="/bin/true",
+            )
+            self.assertEqual(
+                command,
+                'python -m pysqa --config_directory /u/share/pysqa/resources/queues/ --submit --queue remote --job_name test --working_directory /home/localuser/projects/test --cores 1 --memory 1 --run_time 1 --command "/bin/true" ',
+            )
+        with self.subTest("alternative remote config"):
+            command = self.remote_alternative._adapter._submit_command(
+                queue="remote",
+                job_name="test",
+                working_directory="/home/localuser/projects/test",
+                cores=str(1),
+                memory_max=str(1),
+                run_time_max=str(1),
+                command_str="/bin/true",
+            )
+            self.assertEqual(
+                command,
+                'python3 -m pysqa --config_directory /u/share/pysqa/resources/queues/ --submit --queue remote --job_name test --working_directory /home/localuser/projects/test --cores 1 --memory 1 --run_time 1 --command "/bin/true" ',
+            )
 
     def test_get_queue_status_command(self):
         command = self.remote._adapter._get_queue_status_command()
@@ -97,3 +124,75 @@ class TestRemoteQueueAdapter(unittest.TestCase):
             ),
             os.path.abspath("abc.txt"),
         )
+
+    def test_list_command_to_be_executed(self):
+        self.assertEqual(len(self.remote._adapter._list_command_to_be_executed(queue_script_path=".")), 0)
+
+
+@unittest.skipIf(
+    skip_remote_test,
+    "Either paramiko or tqdm are not installed, so the remote queue adapter tests are skipped.",
+)
+class TestRemoteQueueAdapterRebex(unittest.TestCase):
+    def test_remote_command_individual_connections(self):
+        path = os.path.dirname(os.path.abspath(__file__))
+        remote = QueueAdapter(directory=os.path.join(path, "config/remote_rebex"))
+        remote._adapter._ssh_remote_path = path
+        remote._adapter._open_ssh_connection()
+        output = remote._adapter._execute_remote_command(command="pwd")
+        self.assertEqual(output, "/\n")
+
+    def test_remote_command_continous_connection(self):
+        path = os.path.dirname(os.path.abspath(__file__))
+        remote = QueueAdapter(directory=os.path.join(path, "config/remote_rebex"))
+        remote._adapter._ssh_remote_path = path
+        remote._adapter._ssh_continous_connection = True
+        remote._adapter._open_ssh_connection()
+        output = remote._adapter._execute_remote_command(command="pwd")
+        self.assertEqual(output, "/\n")
+
+    def test_submit_job(self):
+        path = os.path.dirname(os.path.abspath(__file__))
+        remote = QueueAdapter(directory=os.path.join(path, "config/remote_rebex"))
+        remote._adapter._ssh_remote_path = path
+        output = remote._adapter.submit_job(working_directory=os.path.join(path, "config/empty"), command="echo 1")
+        self.assertEqual(output, 1)
+
+    def test_transferfile_individual_connections(self):
+        path = os.path.dirname(os.path.abspath(__file__))
+        remote = QueueAdapter(directory=os.path.join(path, "config/remote_rebex"))
+        remote._adapter._ssh_remote_path = path
+        self.assertIsNone(remote._adapter.transfer_file(file="readme.txt", transfer_back=True))
+
+    def test_transferfile_continous_connection(self):
+        path = os.path.dirname(os.path.abspath(__file__))
+        remote = QueueAdapter(directory=os.path.join(path, "config/remote_rebex"))
+        remote._adapter._ssh_remote_path = path
+        remote._adapter._ssh_continous_connection = True
+        self.assertIsNone(remote._adapter.transfer_file(file="readme.txt", transfer_back=True))
+
+    def test_get_transport(self):
+        path = os.path.dirname(os.path.abspath(__file__))
+        remote = QueueAdapter(directory=os.path.join(path, "config/remote_rebex"))
+        self.assertIsNotNone(get_transport(remote._adapter._open_ssh_connection()))
+        with self.assertRaises(ValueError):
+            get_transport(ssh=FakeSSH())
+
+    def test_get_job_from_remote(self):
+        path = os.path.dirname(os.path.abspath(__file__))
+        remote = QueueAdapter(directory=os.path.join(path, "config/remote_rebex"))
+        remote._adapter._ssh_remote_path = path
+        remote._adapter._ssh_local_path = path
+        remote._adapter._ssh_delete_file_on_remote = True
+        with unittest.mock.patch(
+            "pysqa.base.remote.RemoteQueueAdapter._execute_remote_command"
+        ) as mock_execute:
+            mock_execute.return_value = '{"dirs": [], "files": ["test.txt"]}'
+            with unittest.mock.patch(
+                "pysqa.base.remote.RemoteQueueAdapter._transfer_files"
+            ) as mock_transfer:
+                remote._adapter.get_job_from_remote(
+                    working_directory=os.path.join(path, "config/empty")
+                )
+                self.assertEqual(mock_transfer.call_count, 1)
+            self.assertEqual(mock_execute.call_count, 2)

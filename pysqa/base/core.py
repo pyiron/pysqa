@@ -2,7 +2,7 @@ import getpass
 import importlib
 import os
 import subprocess
-from typing import List, Optional, Tuple, Union
+from typing import Callable, Optional, Union
 
 import pandas
 from jinja2 import Template
@@ -10,7 +10,7 @@ from jinja2 import Template
 from pysqa.base.abstract import QueueAdapterAbstractClass
 from pysqa.wrapper.abstract import SchedulerCommands
 
-queue_type_dict = {
+queue_type_dict: dict[str, dict[str, Union[str, None]]] = {
     "SGE": {
         "class_name": "SunGridEngineCommands",
         "module_name": "pysqa.wrapper.sge",
@@ -47,12 +47,12 @@ queue_type_dict = {
 
 
 def execute_command(
-    commands: str,
+    commands: Union[str, list[str]],
     working_directory: Optional[str] = None,
     split_output: bool = True,
     shell: bool = False,
     error_filename: str = "pysqa.err",
-) -> Union[str, List[str]]:
+) -> Union[str, list[str], None]:
     """
     A wrapper around the subprocess.check_output function.
 
@@ -77,7 +77,11 @@ def execute_command(
             shell=not isinstance(commands, list),
         )
     except subprocess.CalledProcessError as e:
-        with open(os.path.join(working_directory, error_filename), "w") as f:
+        if working_directory is not None:
+            error_file = os.path.join(working_directory, error_filename)
+        else:
+            error_file = error_filename
+        with open(error_file, "w") as f:
             print(e.stdout, file=f)
         out = None
     if out is not None and split_output:
@@ -96,7 +100,7 @@ def get_queue_commands(queue_type: str) -> Union[SchedulerCommands, None]:
     Returns:
         SchedulerCommands: queuing system commands class instance
     """
-    if queue_type in queue_type_dict.keys():
+    if queue_type in queue_type_dict:
         class_name = queue_type_dict[queue_type]["class_name"]
         module_name = queue_type_dict[queue_type]["module_name"]
         if module_name is not None and class_name is not None:
@@ -125,26 +129,24 @@ class QueueAdapterCore(QueueAdapterAbstractClass):
     def __init__(
         self,
         queue_type: str,
-        execute_command: callable = execute_command,
+        execute_command: Callable = execute_command,
     ):
         self._commands = get_queue_commands(queue_type=queue_type)
-        if queue_type_dict[queue_type]["module_name"] is not None:
-            self._submission_template = getattr(
-                importlib.import_module(queue_type_dict[queue_type]["module_name"]),
-                "template",
-            )
+        module_name = queue_type_dict[queue_type]["module_name"]
+        if module_name is not None:
+            self._submission_template = importlib.import_module(module_name).template
         self._execute_command_function = execute_command
 
     def submit_job(
         self,
         queue: Optional[str] = None,
-        job_name: Optional[str] = None,
+        job_name: str = "pysqa",
         working_directory: Optional[str] = None,
-        cores: Optional[int] = None,
-        memory_max: Optional[int] = None,
+        cores: int = 1,
+        memory_max: Optional[Union[int, str]] = None,
         run_time_max: Optional[int] = None,
-        dependency_list: Optional[List[str]] = None,
-        command: Optional[str] = None,
+        dependency_list: Optional[list[int]] = None,
+        command: str = "",
         submission_template: Optional[Union[str, Template]] = None,
         **kwargs,
     ) -> Union[int, None]:
@@ -159,7 +161,7 @@ class QueueAdapterCore(QueueAdapterAbstractClass):
             memory_max (int/None): The maximum memory required for the job.
             run_time_max (int/None): The maximum run time for the job.
             dependency_list (list[str]/None): List of job dependencies.
-            command (str/None): The command to execute for the job.
+            command (str): The command to execute for the job.
 
         Returns:
             int: The job ID.
@@ -189,7 +191,7 @@ class QueueAdapterCore(QueueAdapterAbstractClass):
             working_directory=working_directory,
             split_output=False,
         )
-        if out is not None:
+        if out is not None and self._commands is not None:
             return self._commands.get_job_id_from_output(out)
         else:
             return None
@@ -204,14 +206,14 @@ class QueueAdapterCore(QueueAdapterAbstractClass):
         Returns:
             str: The result of the enable reservation command.
         """
-        out = self._execute_command(
-            commands=self._commands.enable_reservation_command + [str(process_id)],
-            split_output=True,
-        )
-        if out is not None:
-            return out[0]
-        else:
-            return None
+        if self._commands is not None:
+            out = self._execute_command(
+                commands=self._commands.enable_reservation_command + [str(process_id)],
+                split_output=True,
+            )
+            if out is not None:
+                return out[0]
+        return None
 
     def delete_job(self, process_id: int) -> Union[str, None]:
         """
@@ -223,16 +225,18 @@ class QueueAdapterCore(QueueAdapterAbstractClass):
         Returns:
             str: The result of the delete job command.
         """
-        out = self._execute_command(
-            commands=self._commands.delete_job_command + [str(process_id)],
-            split_output=True,
-        )
-        if out is not None:
-            return out[0]
-        else:
-            return None
+        if self._commands is not None:
+            out = self._execute_command(
+                commands=self._commands.delete_job_command + [str(process_id)],
+                split_output=True,
+            )
+            if out is not None:
+                return out[0]
+        return None
 
-    def get_queue_status(self, user: Optional[str] = None) -> pandas.DataFrame:
+    def get_queue_status(
+        self, user: Optional[str] = None
+    ) -> Union[pandas.DataFrame, None]:
         """
         Get the status of the queue.
 
@@ -242,14 +246,17 @@ class QueueAdapterCore(QueueAdapterAbstractClass):
         Returns:
             pandas.DataFrame: The queue status.
         """
-        out = self._execute_command(
-            commands=self._commands.get_queue_status_command, split_output=False
-        )
-        df = self._commands.convert_queue_status(queue_status_output=out)
-        if user is None:
-            return df
+        if self._commands is not None:
+            out = self._execute_command(
+                commands=self._commands.get_queue_status_command, split_output=False
+            )
+            df = self._commands.convert_queue_status(queue_status_output=out)
+            if user is None:
+                return df
+            else:
+                return df[df["user"] == user]
         else:
-            return df[df["user"] == user]
+            return None
 
     def get_status_of_my_jobs(self) -> pandas.DataFrame:
         """
@@ -271,13 +278,13 @@ class QueueAdapterCore(QueueAdapterAbstractClass):
             str: The status of the job.results_lst.append(df_selected.values[0])
         """
         df = self.get_queue_status()
-        df_selected = df[df["jobid"] == process_id]["status"]
-        if len(df_selected) != 0:
-            return df_selected.values[0]
-        else:
-            return None
+        if df is not None:
+            df_selected = df[df["jobid"] == process_id]["status"]
+            if len(df_selected) != 0:
+                return df_selected.values[0]
+        return None
 
-    def get_status_of_jobs(self, process_id_lst: List[int]) -> List[str]:
+    def get_status_of_jobs(self, process_id_lst: list[int]) -> list[str]:
         """
         Get the status of multiple jobs.
 
@@ -289,12 +296,13 @@ class QueueAdapterCore(QueueAdapterAbstractClass):
         """
         df = self.get_queue_status()
         results_lst = []
-        for process_id in process_id_lst:
-            df_selected = df[df["jobid"] == process_id]["status"]
-            if len(df_selected) != 0:
-                results_lst.append(df_selected.values[0])
-            else:
-                results_lst.append("finished")
+        if df is not None:
+            for process_id in process_id_lst:
+                df_selected = df[df["jobid"] == process_id]["status"]
+                if len(df_selected) != 0:
+                    results_lst.append(df_selected.values[0])
+                else:
+                    results_lst.append("finished")
         return results_lst
 
     def _list_command_to_be_executed(self, queue_script_path: str) -> list:
@@ -307,11 +315,14 @@ class QueueAdapterCore(QueueAdapterAbstractClass):
         Returns:
             list: The list of commands to be executed.
         """
-        return self._commands.submit_job_command + [queue_script_path]
+        if self._commands is not None:
+            return self._commands.submit_job_command + [queue_script_path]
+        else:
+            return []
 
     def _execute_command(
         self,
-        commands: Union[str, List[str]],
+        commands: Union[str, list[str]],
         working_directory: Optional[str] = None,
         split_output: bool = True,
         shell: bool = False,
@@ -342,15 +353,15 @@ class QueueAdapterCore(QueueAdapterAbstractClass):
         self,
         queue: Optional[str] = None,
         submission_template: Optional[Union[str, Template]] = None,
-        job_name: Optional[str] = None,
+        job_name: str = "pysqa",
         working_directory: Optional[str] = None,
-        cores: Optional[int] = None,
-        memory_max: Optional[int] = None,
+        cores: int = 1,
+        memory_max: Optional[Union[int, str]] = None,
         run_time_max: Optional[int] = None,
-        dependency_list: Optional[List[int]] = None,
-        command: Optional[str] = None,
+        dependency_list: Optional[list[int]] = None,
+        command: str = "",
         **kwargs,
-    ) -> Tuple[str, str]:
+    ) -> tuple[str, str]:
         """
         Write the queue script to a file.
 
@@ -362,7 +373,7 @@ class QueueAdapterCore(QueueAdapterAbstractClass):
             memory_max (int/None): The maximum memory.
             run_time_max (int/None): The maximum run time.
             dependency_list (list/None): The list of dependency job IDs.
-            command (str/None): The command to be executed.
+            command (str): The command to be executed.
 
         Returns:
             Tuple[str, str]: A tuple containing the working directory and the path to the queue script file.
@@ -383,8 +394,7 @@ class QueueAdapterCore(QueueAdapterAbstractClass):
             command=command,
             **kwargs,
         )
-        if not os.path.exists(working_directory):
-            os.makedirs(working_directory)
+        os.makedirs(working_directory, exist_ok=True)
         queue_script_path = os.path.join(working_directory, "run_queue.sh")
         with open(queue_script_path, "w") as f:
             f.writelines(queue_script)
@@ -394,13 +404,13 @@ class QueueAdapterCore(QueueAdapterAbstractClass):
         self,
         queue: Optional[str] = None,
         submission_template: Optional[Union[str, Template]] = None,
-        job_name: str = "job.py",
+        job_name: str = "pysqa",
         working_directory: str = ".",
-        cores: Optional[int] = None,
-        memory_max: Optional[int] = None,
+        cores: int = 1,
+        memory_max: Optional[Union[int, str]] = None,
         run_time_max: Optional[int] = None,
-        dependency_list: Optional[List[int]] = None,
-        command: Optional[str] = None,
+        dependency_list: Optional[list[int]] = None,
+        command: str = "",
         **kwargs,
     ) -> str:
         """
@@ -414,7 +424,7 @@ class QueueAdapterCore(QueueAdapterAbstractClass):
             memory_max (int, optional): The maximum memory. Defaults to None.
             run_time_max (int, optional): The maximum run time. Defaults to None.
             dependency_list (list[int], optional): The list of dependency job IDs. Defaults to None.
-            command (str, optional): The command to be executed. Defaults to None.
+            command (str): The command to be executed. Defaults to None.
 
         Returns:
             str: The job submission template.
@@ -423,20 +433,22 @@ class QueueAdapterCore(QueueAdapterAbstractClass):
             raise ValueError()
         if submission_template is None:
             submission_template = self._submission_template
-        return self._commands.render_submission_template(
-            command=command,
-            submission_template=submission_template,
-            working_directory=working_directory,
-            job_name=job_name,
-            cores=cores,
-            memory_max=memory_max,
-            run_time_max=run_time_max,
-            dependency_list=dependency_list,
-            **kwargs,
-        )
+        if self._commands is not None:
+            return self._commands.render_submission_template(
+                command=command,
+                submission_template=submission_template,
+                working_directory=working_directory,
+                job_name=job_name,
+                cores=cores,
+                memory_max=memory_max,
+                run_time_max=run_time_max,
+                dependency_list=dependency_list,
+                **kwargs,
+            )
+        else:
+            return ""
 
-    @staticmethod
-    def _get_user() -> str:
+    def _get_user(self) -> str:
         """
         Get the current user.
 
