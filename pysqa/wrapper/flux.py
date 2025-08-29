@@ -71,6 +71,7 @@ class FluxCommands(SchedulerCommands):
         df.loc[df.status == "R", "status"] = "running"
         df.loc[df.status == "S", "status"] = "pending"
         df.loc[df.status == "C", "status"] = "error"
+        df.loc[df.status == "CA", "status"] = "error"
         df.loc[df.status == "CD", "status"] = "finished"
         return df
 
