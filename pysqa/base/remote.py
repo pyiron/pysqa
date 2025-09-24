@@ -93,9 +93,12 @@ class RemoteQueueAdapter(QueueAdapterWithConfig):
         )
         self._ssh_host = config["ssh_host"]
         self._ssh_username = config["ssh_username"]
-        self._ssh_known_hosts = os.path.abspath(
-            os.path.expanduser(config["known_hosts"])
-        )
+        if "known_hosts" in config:
+            self._ssh_known_hosts = os.path.abspath(
+                os.path.expanduser(config["known_hosts"])
+            )
+        else:
+            self._ssh_known_hosts = ""
         self._ssh_ask_for_password: Union[bool, str] = False
         self._ssh_key = (
             os.path.abspath(os.path.expanduser(config["ssh_key"]))
@@ -346,7 +349,10 @@ class RemoteQueueAdapter(QueueAdapterWithConfig):
             paramiko.SSHClient: The SSH connection object.
         """
         ssh = paramiko.SSHClient()
-        ssh.load_host_keys(self._ssh_known_hosts)
+        if len(self._ssh_known_hosts) > 0:
+            ssh.load_host_keys(self._ssh_known_hosts)
+        else:
+            ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
         if (
             self._ssh_key is not None
             and self._ssh_key_passphrase is not None
