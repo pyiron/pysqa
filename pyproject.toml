@@ -117,3 +117,9 @@ path = "pysqa/_version.py"
 [tool.coverage.run]
 omit = ["pysqa/_version.py", "tests/*"]
 command_line = "-m unittest discover tests"
+[tool.codespell]
+# Ref: https://github.com/codespell-project/codespell#using-a-config-file
+skip = '.git*'
+check-hidden = true
+ignore-regex = '^\s*"image/\S+": ".*'
+# ignore-words-list = ''
