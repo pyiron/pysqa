@@ -2,7 +2,7 @@
 requires = [
     "jinja2==3.1.6", 
     "pandas==2.3.2", 
-    "pyyaml==6.0.2", 
+    "pyyaml==6.0.3", 
     "hatchling==1.27.0",
     "hatch-vcs==0.5.0",
 ]
@@ -33,7 +33,7 @@ classifiers = [
 dependencies = [
     "jinja2==3.1.6",
     "pandas==2.3.2",
-    "pyyaml==6.0.2",
+    "pyyaml==6.0.3",
 ]
 dynamic = ["version"]
 
