@@ -47,7 +47,13 @@ class SlurmCommands(SchedulerCommands):
     @staticmethod
     def get_job_id_from_output(queue_submit_output: str) -> int:
         """Extracts the job ID from the output of the job submission command."""
-        return int(queue_submit_output.splitlines()[-1].rstrip().lstrip().split()[-1])
+        return int(
+            queue_submit_output.splitlines()[-1]
+            .rstrip()
+            .lstrip()
+            .split()[-1]
+            .split(";")[0]
+        )
 
     @staticmethod
     def convert_queue_status(queue_status_output: str) -> pandas.DataFrame:
