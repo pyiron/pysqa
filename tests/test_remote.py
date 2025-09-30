@@ -151,36 +151,53 @@ class TestRemoteQueueAdapterRebex(unittest.TestCase):
         output = remote._adapter._execute_remote_command(command="pwd")
         self.assertEqual(output, "/\n")
 
+    def test_remote_command_individual_connections_hosts(self):
+        path = os.path.dirname(os.path.abspath(__file__))
+        remote = QueueAdapter(directory=os.path.join(path, "config/remote_rebex_hosts"))
+        remote._adapter._ssh_remote_path = path
+        remote._adapter._open_ssh_connection()
+        output = remote._adapter._execute_remote_command(command="pwd")
+        self.assertEqual(output, "/\n")
+
+    def test_remote_command_continous_connection_hosts(self):
+        path = os.path.dirname(os.path.abspath(__file__))
+        remote = QueueAdapter(directory=os.path.join(path, "config/remote_rebex_hosts"))
+        remote._adapter._ssh_remote_path = path
+        remote._adapter._ssh_continous_connection = True
+        remote._adapter._open_ssh_connection()
+        output = remote._adapter._execute_remote_command(command="pwd")
+        self.assertEqual(output, "/\n")
+
     def test_submit_job(self):
         path = os.path.dirname(os.path.abspath(__file__))
-        remote = QueueAdapter(directory=os.path.join(path, "config/remote_rebex"))
+        remote = QueueAdapter(directory=os.path.join(path, "config/remote_rebex_hosts"))
         remote._adapter._ssh_remote_path = path
         output = remote._adapter.submit_job(working_directory=os.path.join(path, "config/empty"), command="echo 1")
         self.assertEqual(output, 1)
 
     def test_transferfile_individual_connections(self):
         path = os.path.dirname(os.path.abspath(__file__))
-        remote = QueueAdapter(directory=os.path.join(path, "config/remote_rebex"))
+        remote = QueueAdapter(directory=os.path.join(path, "config/remote_rebex_hosts"))
         remote._adapter._ssh_remote_path = path
         self.assertIsNone(remote._adapter.transfer_file(file="readme.txt", transfer_back=True))
 
     def test_transferfile_continous_connection(self):
         path = os.path.dirname(os.path.abspath(__file__))
-        remote = QueueAdapter(directory=os.path.join(path, "config/remote_rebex"))
+        remote = QueueAdapter(directory=os.path.join(path, "config/remote_rebex_hosts"))
         remote._adapter._ssh_remote_path = path
         remote._adapter._ssh_continous_connection = True
         self.assertIsNone(remote._adapter.transfer_file(file="readme.txt", transfer_back=True))
 
     def test_get_transport(self):
         path = os.path.dirname(os.path.abspath(__file__))
-        remote = QueueAdapter(directory=os.path.join(path, "config/remote_rebex"))
+        remote = QueueAdapter(directory=os.path.join(path, "config/remote_rebex_hosts"))
         self.assertIsNotNone(get_transport(remote._adapter._open_ssh_connection()))
         with self.assertRaises(ValueError):
             get_transport(ssh=FakeSSH())
 
     def test_get_job_from_remote(self):
         path = os.path.dirname(os.path.abspath(__file__))
-        remote = QueueAdapter(directory=os.path.join(path, "config/remote_rebex"))
+        remote = QueueAdapter(directory=os.path.join(path, "config/remote_rebex_hosts"))
         remote._adapter._ssh_remote_path = path
         remote._adapter._ssh_local_path = path
         remote._adapter._ssh_delete_file_on_remote = True
