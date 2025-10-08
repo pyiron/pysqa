@@ -130,7 +130,7 @@ jobs:
       - name: Setup Mambaforge
         uses: conda-incubator/setup-miniconda@v3
         with:
-          python-version: "3.14"
+          python-version: "3.13"
           miniforge-version: latest
           condarc-file: .condarc
           environment-file: environment.yml
