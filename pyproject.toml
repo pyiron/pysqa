@@ -95,26 +95,26 @@ ignore = [
 
 [tool.hatch.build]
 include = [
-    "pysqa"
+    "src/pysqa"
 ]
 
 [tool.hatch.build.hooks.vcs]
-version-file = "pysqa/_version.py"
+version-file = "src/pysqa/_version.py"
 
 [tool.hatch.build.targets.sdist]
 include = [
-    "pysqa"
+    "src/pysqa"
 ]
 
 [tool.hatch.build.targets.wheel]
 packages = [
-    "pysqa"
+    "src/pysqa"
 ]
 
 [tool.hatch.version]
 source = "vcs"
-path = "pysqa/_version.py"
+path = "src/pysqa/_version.py"
 
 [tool.coverage.run]
-omit = ["pysqa/_version.py", "tests/*"]
+source = ["pysqa"]
 command_line = "-m unittest discover tests"
