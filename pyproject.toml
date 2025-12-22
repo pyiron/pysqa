@@ -49,7 +49,7 @@ remote = [
     "paramiko==4.0.0",
     "tqdm==4.67.1",
 ]
-twofactor = ["pyauthenticator==0.2.1"]
+twofactor = ["pyauthenticator==0.3.0"]
 
 [project.scripts]
 pysqa = "pysqa.cmd:command_line"
