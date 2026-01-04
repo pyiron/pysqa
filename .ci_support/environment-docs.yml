@@ -13,5 +13,5 @@ dependencies:
 - tqdm =4.67.1
 - jupyter-book =1.0.0
 - python =3.12
-- hatchling =1.27.0
+- hatchling =1.28.0
 - hatch-vcs =0.5.0
