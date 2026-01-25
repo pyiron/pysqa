@@ -65,7 +65,7 @@ jobs:
       - name: Setup environment
         run: |
           cp .ci_support/environment.yml environment.yml
-          echo "- flux-core =0.79.0" >> environment.yml
+          echo "- flux-core =0.81.0" >> environment.yml
           echo -e "channels:\n  - conda-forge\n" > .condarc
           mkdir -p /home/runner/.ssh
           echo "test.rebex.net,195.144.107.198 ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBLZcZopPvkxYERubWeSrWOSHpxJdR14WFVES/Q3hFguTn6L+0EANqYcbRXhGBUV6SjR7SaxZACXSxOzgCtG4kwc=" > /home/runner/.ssh/known_hosts
