@@ -2,7 +2,7 @@ channels:
 - conda-forge
 dependencies:
 - defusedxml =0.7.1
-- flux-core =0.79.0
+- flux-core =0.81.0
 - pandas =3.0.0
 - pyyaml =6.0.3
 - jinja2 =3.1.6
