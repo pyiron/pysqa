@@ -1,6 +1,7 @@
 channels:
 - conda-forge
 dependencies:
+- python =3.13
 - defusedxml =0.7.1
 - flux-core =0.81.0
 - pandas =3.0.0
