@@ -19,11 +19,11 @@ class TestQueueAdapter(unittest.TestCase):
 
     def test_missing_config(self):
         with self.assertRaises(ValueError):
-            QueueAdapter(directory=os.path.join(self.path, "../config/error"))
+            QueueAdapter(directory=os.path.join(self.path, "../static/error"))
 
     def test_missing_config_folder(self):
         with self.assertRaises(ValueError):
-            QueueAdapter(directory=os.path.join(self.path, "../config"))
+            QueueAdapter(directory=os.path.join(self.path, "../static"))
 
     def test_no_config(self):
         with self.assertRaises(ValueError):
@@ -31,7 +31,7 @@ class TestQueueAdapter(unittest.TestCase):
 
     def test_bad_queue_template(self):
         with self.assertRaises(TemplateSyntaxError):
-            QueueAdapter(directory=os.path.join(self.path, "../config/bad_template"))
+            QueueAdapter(directory=os.path.join(self.path, "../static/bad_template"))
 
 
 @unittest.skipIf(
@@ -43,7 +43,7 @@ class TestMultiQueueAdapter(unittest.TestCase):
     def setUpClass(cls):
         cls.path = os.path.dirname(os.path.abspath(__file__))
         cls.multi = QueueAdapter(
-            directory=os.path.join(cls.path, "../config/multicluster")
+            directory=os.path.join(cls.path, "../static/multicluster")
         )
 
     def test_config(self):
@@ -72,7 +72,7 @@ class TestNoneAdapter(unittest.TestCase):
     def setUpClass(cls):
         cls.path = os.path.dirname(os.path.abspath(__file__))
         cls.multi = QueueAdapter(
-            directory=os.path.join(cls.path, "../config/multicluster")
+            directory=os.path.join(cls.path, "../static/multicluster")
         )
         cls.multi._adapter = None
 
