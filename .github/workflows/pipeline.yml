@@ -300,7 +300,7 @@ jobs:
       run: |
         pip install . --no-deps --no-build-isolation
         cd tests
-        python -m unittest integration/test_flux_integration.py
+        flux start python -m unittest integration/test_flux_integration.py
 
   autobot:
     needs: [unittest_old, unittest_matrix, pip_check, notebooks, minimal, coverage]
