@@ -77,7 +77,7 @@ class TestFluxQueueAdapter(unittest.TestCase):
             return "ƒWZEQa8X\n"
 
         flux_tmp = QueueAdapter(
-            directory=os.path.join(self.path, "../../config/flux"),
+            directory=os.path.join(self.path, "../../static/flux"),
             execute_command=execute_command,
         )
         self.assertEqual(
