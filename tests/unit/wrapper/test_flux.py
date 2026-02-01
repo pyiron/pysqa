@@ -20,7 +20,7 @@ class TestFluxQueueAdapter(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.path = os.path.dirname(os.path.abspath(__file__))
-        cls.flux = QueueAdapter(directory=os.path.join(cls.path, "config/flux"))
+        cls.flux = QueueAdapter(directory=os.path.join(cls.path, "../../config/flux"))
 
     def test_config(self):
         self.assertEqual(self.flux.config["queue_type"], "FLUX")
@@ -48,7 +48,7 @@ class TestFluxQueueAdapter(unittest.TestCase):
         )
 
     def test_convert_queue_status_slurm(self):
-        with open(os.path.join(self.path, "config/flux", "flux_jobs"), "r") as f:
+        with open(os.path.join(self.path, "../../config/flux", "flux_jobs"), "r") as f:
             content = f.read()
         df = pandas.DataFrame(
             {
@@ -77,7 +77,7 @@ class TestFluxQueueAdapter(unittest.TestCase):
             return "ƒWZEQa8X\n"
 
         flux_tmp = QueueAdapter(
-            directory=os.path.join(self.path, "config/flux"),
+            directory=os.path.join(self.path, "../../config/flux"),
             execute_command=execute_command,
         )
         self.assertEqual(

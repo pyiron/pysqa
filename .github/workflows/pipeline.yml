@@ -277,7 +277,7 @@ jobs:
         cd tests
         sinfo -o "%n %e %m %a %c %C"
         srun --mpi=list
-        python -m unittest test_slurm_integration.py
+        python -m unittest integration/test_slurm_integration.py
 
   autobot:
     needs: [unittest_old, unittest_matrix, pip_check, notebooks, minimal, coverage]

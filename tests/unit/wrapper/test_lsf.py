@@ -10,7 +10,7 @@ class TestLsfQueueAdapter(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.path = os.path.dirname(os.path.abspath(__file__))
-        cls.lsf = QueueAdapter(directory=os.path.join(cls.path, "config/lsf"))
+        cls.lsf = QueueAdapter(directory=os.path.join(cls.path, "../../config/lsf"))
 
     def test_config(self):
         self.assertEqual(self.lsf.config["queue_type"], "LSF")
@@ -54,7 +54,7 @@ class TestLsfQueueAdapter(unittest.TestCase):
             )
 
     def test_convert_queue_status_sge(self):
-        with open(os.path.join(self.path, "config/lsf", "bjobs_output"), "r") as f:
+        with open(os.path.join(self.path, "../../config/lsf", "bjobs_output"), "r") as f:
             content = f.read()
         df = pandas.DataFrame(
             {

@@ -1,38 +1,8 @@
-import os
 import unittest
-from jinja2.exceptions import TemplateSyntaxError
-from pysqa import QueueAdapter
-from pysqa.base.config import QueueAdapterWithConfig
 from pysqa.base.validate import value_in_range, check_queue_parameters
 
 
-class TestQueueAdapter(unittest.TestCase):
-    @classmethod
-    def setUpClass(cls):
-        cls.path = os.path.dirname(os.path.abspath(__file__))
-
-    def test_missing_config(self):
-        with self.assertRaises(ValueError):
-            QueueAdapter(directory=os.path.join(self.path, "config/error"))
-
-    def test_missing_config_folder(self):
-        with self.assertRaises(ValueError):
-            QueueAdapter(directory=os.path.join(self.path, "config"))
-
-    def test_no_config(self):
-        with self.assertRaises(ValueError):
-            QueueAdapter()
-
-    def test_bad_queue_template(self):
-        with self.assertRaises(TemplateSyntaxError):
-            QueueAdapter(directory=os.path.join(self.path, "config/bad_template"))
-
-
-class TestBasisQueueAdapter(unittest.TestCase):
-    def test_bad_queue_type(self):
-        with self.assertRaises(ValueError):
-            QueueAdapterWithConfig(config={"queue_type": "error", "queues": {}})
-
+class TestValidate(unittest.TestCase):
     def test_memory_string_comparison(self):
         self.assertEqual(value_in_range(1023, value_min="1K"), "1K")
         self.assertEqual(value_in_range(1035, value_min="1K"), 1035)

@@ -9,6 +9,7 @@ class TestCMD(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.test_dir = os.path.abspath(os.path.dirname(__file__))
+        cls.config_dir = os.path.abspath(os.path.join(cls.test_dir, "..", "..", "config"))
 
     @unittest.mock.patch("sys.stdout", new_callable=io.StringIO)
     def assert_stdout_command_line(
@@ -44,7 +45,7 @@ class TestCMD(unittest.TestCase):
         self.assert_stdout_command_line(
             [
                 "--config_directory",
-                os.path.join(self.test_dir, "config", "slurm"),
+                os.path.join(self.config_dir, "slurm"),
                 "--submit",
                 "--reservation",
                 "--dependency",
@@ -98,7 +99,7 @@ class TestCMD(unittest.TestCase):
         self.assert_stdout_command_line(
             [
                 "--config_directory",
-                os.path.join(self.test_dir, "config", "slurm"),
+                os.path.join(self.config_dir, "slurm"),
                 "--delete",
                 "--id",
                 "1",
@@ -116,14 +117,14 @@ class TestCMD(unittest.TestCase):
             error_filename="pysqa.err",
         ):
             with open(
-                os.path.join(self.test_dir, "config", "slurm", "squeue_output")
+                os.path.join(self.config_dir, "slurm", "squeue_output")
             ) as f:
                 return f.read()
 
         self.assert_stdout_command_line(
             [
                 "--config_directory",
-                os.path.join(self.test_dir, "config", "slurm"),
+                os.path.join(self.config_dir, "slurm"),
                 "--status",
             ],
             execute_command,
@@ -164,26 +165,26 @@ class TestCMD(unittest.TestCase):
         self.assert_stdout_command_line(
             [
                 "--config_directory",
-                os.path.join(self.test_dir, "config", "slurm"),
+                os.path.join(self.config_dir, "slurm"),
                 "--list",
                 "--working_directory",
-                os.path.join(self.test_dir, "config", "slurm"),
+                os.path.join(self.config_dir, "slurm"),
             ],
             execute_command,
             json.dumps(
                 {
-                    "dirs": [os.path.join(self.test_dir, "config", "slurm")],
+                    "dirs": [os.path.join(self.config_dir, "slurm")],
                     "files": sorted(
                         [
                             os.path.join(
-                                self.test_dir, "config", "slurm", "squeue_output"
+                                self.config_dir, "slurm", "squeue_output"
                             ),
                             os.path.join(
-                                self.test_dir, "config", "slurm", "slurm_extra.sh"
+                                self.config_dir, "slurm", "slurm_extra.sh"
                             ),
-                            os.path.join(self.test_dir, "config", "slurm", "slurm.sh"),
+                            os.path.join(self.config_dir, "slurm", "slurm.sh"),
                             os.path.join(
-                                self.test_dir, "config", "slurm", "queue.yaml"
+                                self.config_dir, "slurm", "queue.yaml"
                             ),
                         ]
                     ),
