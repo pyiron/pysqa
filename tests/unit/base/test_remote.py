@@ -26,9 +26,9 @@ class TestRemoteQueueAdapter(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.path = os.path.dirname(os.path.abspath(__file__))
-        cls.remote = QueueAdapter(directory=os.path.join(cls.path, "../../config/remote"))
+        cls.remote = QueueAdapter(directory=os.path.join(cls.path, "../../static/remote"))
         cls.remote_alternative = QueueAdapter(
-            directory=os.path.join(cls.path, "../../config/remote_alternative")
+            directory=os.path.join(cls.path, "../../static/remote_alternative")
         )
 
     def test_config(self):
