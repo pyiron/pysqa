@@ -279,6 +279,29 @@ jobs:
         srun --mpi=list
         python -m unittest integration/test_slurm_integration.py
 
+  unittest_flux:
+    needs: [black]
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Conda config
+      run: |
+        echo -e "channels:\n  - conda-forge\n" > .condarc
+        echo "- flux-core=0.81.0" >> .ci_support/environment.yml
+    - uses: conda-incubator/setup-miniconda@v3
+      with:
+        python-version: "3.13"
+        miniforge-version: latest
+        condarc-file: .condarc
+        environment-file: .ci_support/environment.yml
+    - name: Test
+      shell: bash -l {0}
+      timeout-minutes: 5
+      run: |
+        pip install . --no-deps --no-build-isolation
+        cd tests
+        python -m unittest integration/test_flux_integration.py
+
   autobot:
     needs: [unittest_old, unittest_matrix, pip_check, notebooks, minimal, coverage]
     permissions:
