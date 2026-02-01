@@ -26,9 +26,9 @@ class TestRemoteQueueAdapter(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.path = os.path.dirname(os.path.abspath(__file__))
-        cls.remote = QueueAdapter(directory=os.path.join(cls.path, "../../config/remote"))
+        cls.remote = QueueAdapter(directory=os.path.join(cls.path, "../../static/remote"))
         cls.remote_alternative = QueueAdapter(
-            directory=os.path.join(cls.path, "../../config/remote_alternative")
+            directory=os.path.join(cls.path, "../../static/remote_alternative")
         )
 
     def test_config(self):
@@ -136,7 +136,7 @@ class TestRemoteQueueAdapter(unittest.TestCase):
 class TestRemoteQueueAdapterRebex(unittest.TestCase):
     def test_remote_command_individual_connections(self):
         path = os.path.dirname(os.path.abspath(__file__))
-        remote = QueueAdapter(directory=os.path.join(path, "../../config/remote_rebex"))
+        remote = QueueAdapter(directory=os.path.join(path, "../../static/remote_rebex"))
         remote._adapter._ssh_remote_path = path
         remote._adapter._open_ssh_connection()
         output = remote._adapter._execute_remote_command(command="pwd")
@@ -144,7 +144,7 @@ class TestRemoteQueueAdapterRebex(unittest.TestCase):
 
     def test_remote_command_continous_connection(self):
         path = os.path.dirname(os.path.abspath(__file__))
-        remote = QueueAdapter(directory=os.path.join(path, "../../config/remote_rebex"))
+        remote = QueueAdapter(directory=os.path.join(path, "../../static/remote_rebex"))
         remote._adapter._ssh_remote_path = path
         remote._adapter._ssh_continous_connection = True
         remote._adapter._open_ssh_connection()
@@ -153,34 +153,34 @@ class TestRemoteQueueAdapterRebex(unittest.TestCase):
 
     def test_submit_job(self):
         path = os.path.dirname(os.path.abspath(__file__))
-        remote = QueueAdapter(directory=os.path.join(path, "../../config/remote_rebex"))
+        remote = QueueAdapter(directory=os.path.join(path, "../../static/remote_rebex"))
         remote._adapter._ssh_remote_path = path
-        output = remote._adapter.submit_job(working_directory=os.path.join(path, "../../config/empty"), command="echo 1")
+        output = remote._adapter.submit_job(working_directory=os.path.join(path, "../../static/empty"), command="echo 1")
         self.assertEqual(output, 1)
 
     def test_transferfile_individual_connections(self):
         path = os.path.dirname(os.path.abspath(__file__))
-        remote = QueueAdapter(directory=os.path.join(path, "../../config/remote_rebex"))
+        remote = QueueAdapter(directory=os.path.join(path, "../../static/remote_rebex"))
         remote._adapter._ssh_remote_path = path
         self.assertIsNone(remote._adapter.transfer_file(file="readme.txt", transfer_back=True))
 
     def test_transferfile_continous_connection(self):
         path = os.path.dirname(os.path.abspath(__file__))
-        remote = QueueAdapter(directory=os.path.join(path, "../../config/remote_rebex"))
+        remote = QueueAdapter(directory=os.path.join(path, "../../static/remote_rebex"))
         remote._adapter._ssh_remote_path = path
         remote._adapter._ssh_continous_connection = True
         self.assertIsNone(remote._adapter.transfer_file(file="readme.txt", transfer_back=True))
 
     def test_get_transport(self):
         path = os.path.dirname(os.path.abspath(__file__))
-        remote = QueueAdapter(directory=os.path.join(path, "../../config/remote_rebex"))
+        remote = QueueAdapter(directory=os.path.join(path, "../../static/remote_rebex"))
         self.assertIsNotNone(get_transport(remote._adapter._open_ssh_connection()))
         with self.assertRaises(ValueError):
             get_transport(ssh=FakeSSH())
 
     def test_get_job_from_remote(self):
         path = os.path.dirname(os.path.abspath(__file__))
-        remote = QueueAdapter(directory=os.path.join(path, "../../config/remote_rebex"))
+        remote = QueueAdapter(directory=os.path.join(path, "../../static/remote_rebex"))
         remote._adapter._ssh_remote_path = path
         remote._adapter._ssh_local_path = path
         remote._adapter._ssh_delete_file_on_remote = True
@@ -192,7 +192,7 @@ class TestRemoteQueueAdapterRebex(unittest.TestCase):
                 "pysqa.base.remote.RemoteQueueAdapter._transfer_files"
             ) as mock_transfer:
                 remote._adapter.get_job_from_remote(
-                    working_directory=os.path.join(path, "../../config/empty")
+                    working_directory=os.path.join(path, "../../static/empty")
                 )
                 self.assertEqual(mock_transfer.call_count, 1)
             self.assertEqual(mock_execute.call_count, 2)

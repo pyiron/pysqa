@@ -9,7 +9,7 @@ class TestCMD(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.test_dir = os.path.abspath(os.path.dirname(__file__))
-        cls.config_dir = os.path.abspath(os.path.join(cls.test_dir, "..", "..", "config"))
+        cls.config_dir = os.path.abspath(os.path.join(cls.test_dir, "..", "..", "static"))
 
     @unittest.mock.patch("sys.stdout", new_callable=io.StringIO)
     def assert_stdout_command_line(

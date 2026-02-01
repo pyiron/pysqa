@@ -19,21 +19,21 @@ except ImportError:
 class TestRemoteQueueAdapterAuth(unittest.TestCase):
     def test_password_auth(self):
         path = os.path.dirname(os.path.abspath(__file__))
-        remote = QueueAdapter(directory=os.path.join(path, "../../config/remote_rebex"))
+        remote = QueueAdapter(directory=os.path.join(path, "../../static/remote_rebex"))
         remote._adapter._ssh_ask_for_password = False
         remote._adapter._ssh_key = None
         self.assertIsNotNone(remote._adapter._open_ssh_connection())
 
     def test_key_auth(self):
         path = os.path.dirname(os.path.abspath(__file__))
-        remote = QueueAdapter(directory=os.path.join(path, "../../config/remote_rebex"))
+        remote = QueueAdapter(directory=os.path.join(path, "../../static/remote_rebex"))
         remote._adapter._ssh_password = None
         with self.assertRaises(ValueError):
             remote._adapter._open_ssh_connection()
 
     def test_two_factor_auth(self):
         path = os.path.dirname(os.path.abspath(__file__))
-        remote = QueueAdapter(directory=os.path.join(path, "../../config/remote_rebex"))
+        remote = QueueAdapter(directory=os.path.join(path, "../../static/remote_rebex"))
         remote._adapter._ssh_two_factor_authentication = True
         with self.assertRaises(paramiko.ssh_exception.AuthenticationException):
             remote._adapter._open_ssh_connection()

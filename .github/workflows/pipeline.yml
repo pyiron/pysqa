@@ -139,7 +139,7 @@ jobs:
         run: |
           pip install . --no-deps --no-build-isolation
           mkdir config
-          cp -r tests/config/flux config
+          cp -r tests/static/flux config
       - name: Notebooks with config
         shell: bash -l {0}
         run: >

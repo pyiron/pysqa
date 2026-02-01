@@ -21,7 +21,7 @@ class TestSGEQueueAdapter(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.path = os.path.dirname(os.path.abspath(__file__))
-        cls.sge = QueueAdapter(directory=os.path.join(cls.path, "../../config/sge"))
+        cls.sge = QueueAdapter(directory=os.path.join(cls.path, "../../static/sge"))
 
     def test_config(self):
         self.assertEqual(self.sge.config["queue_type"], "SGE")
@@ -104,7 +104,7 @@ class TestSGEQueueAdapter(unittest.TestCase):
             )
 
     def test_convert_queue_status_sge(self):
-        with open(os.path.join(self.path, "../../config/sge", "qstat.xml"), "r") as f:
+        with open(os.path.join(self.path, "../../static/sge", "qstat.xml"), "r") as f:
             content = f.read()
         df_running = pandas.DataFrame(
             {

@@ -24,7 +24,7 @@ class TestGentQueueAdapter(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.path = os.path.dirname(os.path.abspath(__file__))
-        cls.gent = QueueAdapter(directory=os.path.join(cls.path, "../../config/gent"))
+        cls.gent = QueueAdapter(directory=os.path.join(cls.path, "../../static/gent"))
 
     def test_config(self):
         self.assertEqual(self.gent.config["queue_type"], "GENT")
@@ -72,7 +72,7 @@ class TestGentQueueAdapter(unittest.TestCase):
             self.gent._adapter._commands.dependencies(dependency_list=[])
 
     def test_convert_queue_status_slurm(self):
-        with open(os.path.join(self.path, "../../config/gent", "gent_output"), "r") as f:
+        with open(os.path.join(self.path, "../../static/gent", "gent_output"), "r") as f:
             content = f.read()
         self.assertTrue(
             df_queue_status.equals(
@@ -112,7 +112,7 @@ class TestGentQueueAdapter(unittest.TestCase):
             pass
 
         gent_tmp = QueueAdapter(
-            directory=os.path.join(self.path, "../../config/gent"),
+            directory=os.path.join(self.path, "../../static/gent"),
             execute_command=execute_command,
         )
         self.assertIsNone(
@@ -136,7 +136,7 @@ class TestGentQueueAdapter(unittest.TestCase):
             return "123;cluster0"
 
         gent_tmp = QueueAdapter(
-            directory=os.path.join(self.path, "../../config/gent"),
+            directory=os.path.join(self.path, "../../static/gent"),
             execute_command=execute_command,
         )
         self.assertEqual(
@@ -161,7 +161,7 @@ class TestGentQueueAdapter(unittest.TestCase):
             pass
 
         gent_tmp = QueueAdapter(
-            directory=os.path.join(self.path, "../../config/gent"),
+            directory=os.path.join(self.path, "../../static/gent"),
             execute_command=execute_command,
         )
         self.assertIsNone(gent_tmp.delete_job(process_id=1))
@@ -177,7 +177,7 @@ class TestGentQueueAdapter(unittest.TestCase):
             return 0, 1
 
         gent_tmp = QueueAdapter(
-            directory=os.path.join(self.path, "../../config/gent"),
+            directory=os.path.join(self.path, "../../static/gent"),
             execute_command=execute_command,
         )
         self.assertEqual(gent_tmp.delete_job(process_id=1), 0)
@@ -190,11 +190,11 @@ class TestGentQueueAdapter(unittest.TestCase):
             shell=False,
             error_filename="pysqa.err",
         ):
-            with open(os.path.join(self.path,  "..", "..", "config", "gent", "gent_output")) as f:
+            with open(os.path.join(self.path,  "..", "..", "static", "gent", "gent_output")) as f:
                 return f.read()
 
         gent_tmp = QueueAdapter(
-            directory=os.path.join(self.path, "../../config/gent"),
+            directory=os.path.join(self.path, "../../static/gent"),
             execute_command=execute_command,
         )
         self.assertTrue(
@@ -211,11 +211,11 @@ class TestGentQueueAdapter(unittest.TestCase):
             shell=False,
             error_filename="pysqa.err",
         ):
-            with open(os.path.join(self.path,  "..", "..", "config", "gent", "gent_output")) as f:
+            with open(os.path.join(self.path,  "..", "..", "static", "gent", "gent_output")) as f:
                 return f.read()
 
         gent_tmp = QueueAdapter(
-            directory=os.path.join(self.path, "../../config/gent"),
+            directory=os.path.join(self.path, "../../static/gent"),
             execute_command=execute_command,
         )
         self.assertTrue(
