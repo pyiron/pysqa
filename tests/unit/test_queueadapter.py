@@ -1,5 +1,6 @@
 import os
 import unittest
+from jinja2.exceptions import TemplateSyntaxError
 from pysqa import QueueAdapter
 
 try:
@@ -11,6 +12,28 @@ except ImportError:
     skip_multi_test = True
 
 
+class TestQueueAdapter(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.path = os.path.dirname(os.path.abspath(__file__))
+
+    def test_missing_config(self):
+        with self.assertRaises(ValueError):
+            QueueAdapter(directory=os.path.join(self.path, "../config/error"))
+
+    def test_missing_config_folder(self):
+        with self.assertRaises(ValueError):
+            QueueAdapter(directory=os.path.join(self.path, "../config"))
+
+    def test_no_config(self):
+        with self.assertRaises(ValueError):
+            QueueAdapter()
+
+    def test_bad_queue_template(self):
+        with self.assertRaises(TemplateSyntaxError):
+            QueueAdapter(directory=os.path.join(self.path, "../config/bad_template"))
+
+
 @unittest.skipIf(
     skip_multi_test,
     "Either paramiko or tqdm are not installed, so the multi queue adapter tests are skipped.",
@@ -20,7 +43,7 @@ class TestMultiQueueAdapter(unittest.TestCase):
     def setUpClass(cls):
         cls.path = os.path.dirname(os.path.abspath(__file__))
         cls.multi = QueueAdapter(
-            directory=os.path.join(cls.path, "config/multicluster")
+            directory=os.path.join(cls.path, "../config/multicluster")
         )
 
     def test_config(self):
@@ -49,7 +72,7 @@ class TestNoneAdapter(unittest.TestCase):
     def setUpClass(cls):
         cls.path = os.path.dirname(os.path.abspath(__file__))
         cls.multi = QueueAdapter(
-            directory=os.path.join(cls.path, "config/multicluster")
+            directory=os.path.join(cls.path, "../config/multicluster")
         )
         cls.multi._adapter = None
 

@@ -7,7 +7,7 @@ class TestMoabQueueAdapter(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.path = os.path.dirname(os.path.abspath(__file__))
-        cls.moab = QueueAdapter(directory=os.path.join(cls.path, "config/moab"))
+        cls.moab = QueueAdapter(directory=os.path.join(cls.path, "../../config/moab"))
 
     def test_config(self):
         self.assertEqual(self.moab.config["queue_type"], "MOAB")

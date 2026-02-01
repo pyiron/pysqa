@@ -8,7 +8,7 @@ class TestTorqueQueueAdapter(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.path = os.path.dirname(os.path.abspath(__file__))
-        cls.torque = QueueAdapter(directory=os.path.join(cls.path, "config/torque"))
+        cls.torque = QueueAdapter(directory=os.path.join(cls.path, "../../config/torque"))
 
     def test_config(self):
         self.assertEqual(self.torque.config["queue_type"], "TORQUE")
@@ -43,7 +43,7 @@ class TestTorqueQueueAdapter(unittest.TestCase):
 
     def test_convert_queue_status_torque(self):
         with open(
-            os.path.join(self.path, "config/torque", "PBSPro_qsub_output"), "r"
+            os.path.join(self.path, "../../config/torque", "PBSPro_qsub_output"), "r"
         ) as f:
             content = f.read()
         df_verify = pandas.DataFrame(

@@ -32,7 +32,7 @@ class TestSlurmQueueAdapter(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.path = os.path.dirname(os.path.abspath(__file__))
-        cls.slurm = QueueAdapter(directory=os.path.join(cls.path, "config/slurm"))
+        cls.slurm = QueueAdapter(directory=os.path.join(cls.path, "../../config/slurm"))
 
     def test_config(self):
         self.assertEqual(self.slurm.config["queue_type"], "SLURM")
@@ -65,7 +65,7 @@ class TestSlurmQueueAdapter(unittest.TestCase):
             )
 
     def test_convert_queue_status_slurm(self):
-        with open(os.path.join(self.path, "config/slurm", "squeue_output"), "r") as f:
+        with open(os.path.join(self.path, "../../config/slurm", "squeue_output"), "r") as f:
             content = f.read()
         self.assertTrue(
             df_queue_status.equals(
@@ -170,7 +170,7 @@ echo \"hello\""""
             pass
 
         slurm_tmp = QueueAdapter(
-            directory=os.path.join(self.path, "config/slurm"),
+            directory=os.path.join(self.path, "../../config/slurm"),
             execute_command=execute_command,
         )
         self.assertIsNone(
@@ -191,11 +191,11 @@ echo \"hello\""""
             shell=False,
             error_filename="pysqa.err",
         ):
-            with open(os.path.join(self.path, "config", "slurm", "squeue_output")) as f:
+            with open(os.path.join(self.path,  "..", "..", "config", "slurm", "squeue_output")) as f:
                 return f.read()
 
         slurm_tmp = QueueAdapter(
-            directory=os.path.join(self.path, "config/slurm"),
+            directory=os.path.join(self.path, "../../config/slurm"),
             execute_command=execute_command,
         )
         self.assertTrue(df_queue_status.equals(slurm_tmp.get_queue_status()))
@@ -223,7 +223,7 @@ echo \"hello\""""
             pass
 
         slurm_tmp = QueueAdapter(
-            directory=os.path.join(self.path, "config/slurm"),
+            directory=os.path.join(self.path, "../../config/slurm"),
             execute_command=execute_command,
         )
 
@@ -272,7 +272,7 @@ class TestSlurmQueueAdapterDefault(unittest.TestCase):
             )
 
     def test_convert_queue_status_slurm(self):
-        with open(os.path.join(self.path, "config/slurm", "squeue_output"), "r") as f:
+        with open(os.path.join(self.path, "../../config/slurm", "squeue_output"), "r") as f:
             content = f.read()
         self.assertTrue(
             df_queue_status.equals(
@@ -352,7 +352,7 @@ echo \"hello\""""
             pass
 
         slurm_tmp = QueueAdapter(
-            directory=os.path.join(self.path, "config/slurm"),
+            directory=os.path.join(self.path, "../../config/slurm"),
             execute_command=execute_command,
         )
         self.assertIsNone(
@@ -373,11 +373,11 @@ echo \"hello\""""
             shell=False,
             error_filename="pysqa.err",
         ):
-            with open(os.path.join(self.path, "config", "slurm", "squeue_output")) as f:
+            with open(os.path.join(self.path,  "..", "..", "config", "slurm", "squeue_output")) as f:
                 return f.read()
 
         slurm_tmp = QueueAdapter(
-            directory=os.path.join(self.path, "config/slurm"),
+            directory=os.path.join(self.path, "../../config/slurm"),
             execute_command=execute_command,
         )
         self.assertTrue(df_queue_status.equals(slurm_tmp.get_queue_status()))
@@ -404,7 +404,7 @@ echo \"hello\""""
             pass
 
         slurm_tmp = QueueAdapter(
-            directory=os.path.join(self.path, "config/slurm"),
+            directory=os.path.join(self.path, "../../config/slurm"),
             execute_command=execute_command,
         )
 
