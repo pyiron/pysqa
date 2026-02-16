@@ -46,6 +46,31 @@ class TestFlux(unittest.TestCase):
         flux.delete_job(process_id=job_id)
         self.assertEqual(flux.get_status_of_job(process_id=job_id), "error")
 
+    def test_flux_dependencies(self):
+        path = os.path.dirname(os.path.abspath(__file__))
+        flux = QueueAdapter(directory=os.path.join(path, "../static/flux"))
+        job_id_1 = flux.submit_job(
+            queue="flux",
+            job_name="test",
+            working_directory=".",
+            cores=1,
+            command="sleep 1",
+        )
+        job_id_2 = flux.submit_job(
+            queue="flux",
+            job_name="test",
+            working_directory=".",
+            cores=1,
+            command="sleep 1",
+            dependency_list=[job_id_1],
+        )
+        self.assertEqual(flux.get_status_of_job(process_id=job_id_1), "running")
+        self.assertEqual(flux.get_status_of_job(process_id=job_id_2), "pending")
+        flux.delete_job(process_id=job_id_1)
+        self.assertEqual(flux.get_status_of_job(process_id=job_id_1), "error")
+        flux.delete_job(process_id=job_id_2)
+        self.assertEqual(flux.get_status_of_job(process_id=job_id_2), "error")
+
     def test_flux_integration_dynamic(self):
         flux_dynamic = QueueAdapter(queue_type="flux")
         job_id = flux_dynamic.submit_job(

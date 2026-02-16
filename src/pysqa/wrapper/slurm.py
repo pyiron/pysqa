@@ -17,7 +17,7 @@ template = """\
 #SBATCH --time={{ [1, run_time_max // 60]|max }}
 {%- endif %}
 {%- if dependency_list %}
-#SBATCH --dependency_list=afterok:{{ dependency_list | join(',') }}
+#SBATCH --dependency=afterok:{{ dependency_list | join(',') }}
 {%- endif %}
 {%- if memory_max %}
 #SBATCH --mem={{memory_max}}G
