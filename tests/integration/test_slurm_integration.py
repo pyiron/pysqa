@@ -15,6 +15,9 @@ submission_template = """\
 #SBATCH --chdir={{working_directory}}
 #SBATCH --get-user-env=L
 #SBATCH --ntasks={{cores}}
+{%- if dependency_list %}
+#SBATCH --dependency=afterok:{{ dependency_list | join(',') }}
+{%- endif %}
 
 {{command}}
 """
@@ -30,3 +33,14 @@ class TestSlurm(unittest.TestCase):
         self.assertEqual(slurm_dynamic.get_status_of_job(process_id=job_id), "pending")
         slurm_dynamic.delete_job(process_id=job_id)
         self.assertIsNone(slurm_dynamic.get_status_of_job(process_id=job_id))
+
+    def test_slurm_dependencies(self):
+        slurm_dynamic = QueueAdapter(queue_type="slurm")
+        job_id_1 = slurm_dynamic.submit_job(command="sleep 1", cores=1, submission_template=submission_template)
+        job_id_2 = slurm_dynamic.submit_job(command="sleep 1", cores=1, submission_template=submission_template, dependency_list=[job_id_1])
+        self.assertEqual(slurm_dynamic.get_status_of_job(process_id=job_id_1), "pending")
+        self.assertEqual(slurm_dynamic.get_status_of_job(process_id=job_id_2), "pending")
+        slurm_dynamic.delete_job(process_id=job_id_1)
+        slurm_dynamic.delete_job(process_id=job_id_2)
+        self.assertIsNone(slurm_dynamic.get_status_of_job(process_id=job_id_1))
+        self.assertIsNone(slurm_dynamic.get_status_of_job(process_id=job_id_2))
