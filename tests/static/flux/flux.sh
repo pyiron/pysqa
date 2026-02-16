@@ -7,8 +7,8 @@
 {%- if run_time_max %}
 # flux: -t {{ [1, run_time_max // 60]|max }}
 {%- endif %}
-{%- if dependency %}
-{%- for jobid in dependency %}
+{%- if dependency_list %}
+{%- for jobid in dependency_list %}
 # flux: --dependency=afterok:{{jobid}}
 {%- endfor %}
 {%- endif %}

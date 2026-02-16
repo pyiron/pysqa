@@ -7,8 +7,8 @@
 {%- if run_time_max %}
 #SBATCH --time={{ [1, run_time_max // 60]|max }}
 {%- endif %}
-{%- if dependency %}
-#SBATCH --dependency=afterok:{{ dependency | join(',') }}
+{%- if dependency_list %}
+#SBATCH --dependency=afterok:{{ dependency_list | join(',') }}
 {%- endif %}
 {%- if memory_max %}
 #SBATCH --mem={{memory_max}}G

@@ -18,8 +18,8 @@ template = """\
 #PBS -l walltime={{run_time_max}} 
 {%- endif %}
 #PBS -l wd
-{%- if dependency %}
-#PBS -W depend=afterok:{{ dependency | join(':') }}
+{%- if dependency_list %}
+#PBS -W depend=afterok:{{ dependency_list | join(':') }}
 {%- endif %}
  
 {{command}}
