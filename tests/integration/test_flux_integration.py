@@ -65,7 +65,7 @@ class TestFlux(unittest.TestCase):
             dependency_list=[job_id_1],
         )
         self.assertEqual(flux.get_status_of_job(process_id=job_id_1), "running")
-        self.assertEqual(flux.get_status_of_job(process_id=job_id_1), "pending")
+        self.assertEqual(flux.get_status_of_job(process_id=job_id_2), "pending")
         flux.delete_job(process_id=job_id_1)
         self.assertEqual(flux.get_status_of_job(process_id=job_id_1), "error")
         flux.delete_job(process_id=job_id_2)
