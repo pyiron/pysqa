@@ -4,7 +4,7 @@ dependencies:
 - python =3.13
 - defusedxml =0.7.1
 - flux-core =0.81.0
-- pandas =3.0.0
+- pandas =3.0.1
 - pyyaml =6.0.3
 - jinja2 =3.1.6
 - paramiko =4.0.0
