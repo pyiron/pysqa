@@ -99,7 +99,7 @@ class TestFluxQueueAdapter(unittest.TestCase):
 # flux: --output=time.out
 # flux: --error=error.out
 # flux: -n 4
-# flux: -t 2880
+# flux: -t 172800
 
 echo hello"""
         self.assertEqual(content, output)
