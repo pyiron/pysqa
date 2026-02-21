@@ -98,8 +98,8 @@ class TestFluxQueueAdapter(unittest.TestCase):
 # flux: --env=CORES=4
 # flux: --output=time.out
 # flux: --error=error.out
-# flux: -n 4
-# flux: -t 172800
+# flux: --nslots=4
+# flux: --time-limit=172800s
 
 echo hello"""
         self.assertEqual(content, output)

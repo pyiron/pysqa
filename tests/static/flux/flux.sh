@@ -3,9 +3,9 @@
 # flux: --env=CORES={{cores}}
 # flux: --output=time.out
 # flux: --error=error.out
-# flux: -n {{cores}}
+# flux: --nslots={{cores}}
 {%- if run_time_max %}
-# flux: -t {{run_time_max}}
+# flux: --time-limit={{run_time_max}}s
 {%- endif %}
 {%- if dependency_list %}
 {%- for jobid in dependency_list %}
