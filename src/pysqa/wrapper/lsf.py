@@ -44,7 +44,7 @@ class LsfCommands(SchedulerCommands):
     @staticmethod
     def get_job_id_from_output(queue_submit_output: str) -> int:
         """Extract the job ID from the queue submit output."""
-        return int(queue_submit_output.split("<")[1].split(">")[0])
+        return int(queue_submit_output.split("<")[1].split(">", maxsplit=1)[0])
 
     @staticmethod
     def convert_queue_status(queue_status_output: str) -> pandas.DataFrame:
