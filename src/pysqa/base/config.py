@@ -5,7 +5,7 @@ import pandas
 import yaml
 from jinja2 import Template
 from jinja2.exceptions import TemplateSyntaxError
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict
 
 from pysqa.base.core import QueueAdapterCore, execute_command
 from pysqa.base.validate import check_queue_parameters, value_error_if_none
