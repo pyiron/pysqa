@@ -30,11 +30,19 @@ class ConfigModel(BaseModel):
     ssh_username: Optional[str] = None
     known_hosts: Optional[str] = None
     ssh_key: Optional[str] = None
+    ssh_password: Optional[str] = None
+    ssh_ask_for_password: Optional[str] = None
+    ssh_key_passphrase: Optional[str] = None
+    ssh_two_factor_authentication: bool = False
+    ssh_authenticator_service: Optional[str] = None
+    ssh_proxy_host: Optional[str] = None
     ssh_remote_config_dir: Optional[str] = None
     ssh_remote_path: Optional[str] = None
     ssh_local_path: Optional[str] = None
+    ssh_port: Optional[int] = None
     ssh_continous_connection: bool = True
     ssh_delete_file_on_remote: bool = False
+    python_executable: Optional[str] = None
     queues: dict[str, QueueModel]
 
 
