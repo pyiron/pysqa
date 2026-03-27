@@ -33,10 +33,16 @@ class TestConfig(unittest.TestCase):
         self.assertEqual(qa.config["queues"]["sq"]["extra_field"], "allowed")
         self.assertEqual(qa.config["extra_top_level"], "also_allowed")
 
-    def test_no_oydan_config(self):
+    def test_no_pydantic_validation_extra_fields(self):
         with patch.dict('sys.modules', {'pydantic': None}):
             if 'pysqa.base.models.validate_config' in sys.modules:
                 del sys.modules['pysqa.base.models.validate_config']
+
+            if 'pysqa.base.config.QueueAdapterWithConfig' in sys.modules:
+                del sys.modules['pysqa.base.config.QueueAdapterWithConfig']
+
+            from pysqa.base.config import QueueAdapterWithConfig
+
             config = {
                 "queue_type": "SLURM",
                 "queue_primary": "sq",
