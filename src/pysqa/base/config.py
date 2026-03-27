@@ -9,10 +9,10 @@ from jinja2.exceptions import TemplateSyntaxError
 from pysqa.base.core import QueueAdapterCore, execute_command
 from pysqa.base.validate import check_queue_parameters, value_error_if_none
 
-
 try:
     from pysqa.base.models import validate_config
 except ImportError:
+
     def validate_config(config: dict) -> dict:
         return config
 
