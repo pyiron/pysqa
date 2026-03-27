@@ -1,19 +1,24 @@
 import unittest
 import sys
 from unittest.mock import patch
-from pysqa.base.config import QueueAdapterWithConfig
 
 
 class TestConfig(unittest.TestCase):
     def test_bad_queue_type(self):
+        from pysqa.base.config import QueueAdapterWithConfig
+
         with self.assertRaises(ValueError):
             QueueAdapterWithConfig(config={"queue_type": "error", "queues": {}})
 
     def test_pydantic_validation_missing_queues(self):
+        from pysqa.base.config import QueueAdapterWithConfig
+
         with self.assertRaises(ValueError):
             QueueAdapterWithConfig(config={"queue_type": "SLURM"})
 
     def test_pydantic_validation_wrong_type(self):
+        from pysqa.base.config import QueueAdapterWithConfig
+
         with self.assertRaises(ValueError):
             QueueAdapterWithConfig(
                 config={
@@ -23,6 +28,8 @@ class TestConfig(unittest.TestCase):
             )
 
     def test_pydantic_validation_extra_fields(self):
+        from pysqa.base.config import QueueAdapterWithConfig
+
         config = {
             "queue_type": "SLURM",
             "queue_primary": "sq",
@@ -37,9 +44,6 @@ class TestConfig(unittest.TestCase):
         with patch.dict('sys.modules', {'pydantic': None}):
             if 'pysqa.base.models.validate_config' in sys.modules:
                 del sys.modules['pysqa.base.models.validate_config']
-
-            if 'pysqa.base.config.QueueAdapterWithConfig' in sys.modules:
-                del sys.modules['pysqa.base.config.QueueAdapterWithConfig']
 
             from pysqa.base.config import QueueAdapterWithConfig
 
