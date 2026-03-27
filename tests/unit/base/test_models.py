@@ -9,6 +9,9 @@ class TestPydanticModels(unittest.TestCase):
             if 'pysqa.base.models' in sys.modules:
                 del sys.modules['pysqa.base.models']
 
+            if 'pysqa.base.config' in sys.modules:
+                del sys.modules['pysqa.base.config']
+
             from pysqa.base.config import QueueAdapterWithConfig
 
             config = {
