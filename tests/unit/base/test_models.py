@@ -6,8 +6,8 @@ from unittest.mock import patch
 class TestPydanticModels(unittest.TestCase):
     def test_no_pydantic_validation_extra_fields(self):
         with patch.dict('sys.modules', {'pydantic': None}):
-            if 'pysqa.base.models.validate_config' in sys.modules:
-                del sys.modules['pysqa.base.models.validate_config']
+            if 'pysqa.base.models' in sys.modules:
+                del sys.modules['pysqa.base.models']
 
             from pysqa.base.config import QueueAdapterWithConfig
 
