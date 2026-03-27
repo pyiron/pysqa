@@ -105,7 +105,7 @@ jobs:
           python-version: '3.14'
           miniforge-version: latest
           condarc-file: .condarc
-          environment-file: environment-mini.yml
+          environment-file: .ci_support/environment-mini.yml
       - name: Test
         shell: bash -l {0}
         run: |
