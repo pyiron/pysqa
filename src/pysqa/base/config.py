@@ -5,36 +5,16 @@ import pandas
 import yaml
 from jinja2 import Template
 from jinja2.exceptions import TemplateSyntaxError
-from pydantic import BaseModel, ConfigDict
 
 from pysqa.base.core import QueueAdapterCore, execute_command
 from pysqa.base.validate import check_queue_parameters, value_error_if_none
 
 
-class QueueModel(BaseModel):
-    """
-    Pydantic model for a single queue configuration.
-    """
-
-    model_config = ConfigDict(extra="allow")
-
-    script: Optional[str] = None
-    cores_min: Optional[int] = None
-    cores_max: Optional[int] = None
-    run_time_max: Optional[int] = None
-    memory_max: Optional[Union[int, str]] = None
-
-
-class ConfigModel(BaseModel):
-    """
-    Pydantic model for the overall configuration.
-    """
-
-    model_config = ConfigDict(extra="allow")
-
-    queue_type: str
-    queue_primary: Optional[str] = None
-    queues: dict[str, QueueModel]
+try:
+    from pysqa.base.models import validate_config
+except ImportError:
+    def validate_config(config: dict) -> dict:
+        return config
 
 
 class Queues:
@@ -100,7 +80,7 @@ class QueueAdapterWithConfig(QueueAdapterCore):
         directory: str = "~/.queues",
         execute_command: Callable = execute_command,
     ):
-        self._config = ConfigModel(**config).model_dump()
+        self._config = validate_config(config)
         super().__init__(
             queue_type=self._config["queue_type"], execute_command=execute_command
         )

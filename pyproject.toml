@@ -34,7 +34,6 @@ classifiers = [
 dependencies = [
     "jinja2==3.1.6",
     "pandas==3.0.1",
-    "pydantic>=2.0",
     "pyyaml==6.0.3",
 ]
 dynamic = ["version"]
@@ -51,6 +50,7 @@ remote = [
     "tqdm==4.67.3",
 ]
 twofactor = ["pyauthenticator==0.3.0"]
+pydantic = ["pydantic==2.12.5"]
 
 [project.scripts]
 pysqa = "pysqa.cmd:command_line"
