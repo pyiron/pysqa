@@ -2,6 +2,13 @@ import unittest
 import sys
 from unittest.mock import patch
 
+try:
+    import pydantic
+
+    skip_pydantic_test = False
+except ImportError:
+    skip_pydantic_test = True
+
 
 class TestConfig(unittest.TestCase):
     def test_bad_queue_type(self):
@@ -10,12 +17,14 @@ class TestConfig(unittest.TestCase):
         with self.assertRaises(ValueError):
             QueueAdapterWithConfig(config={"queue_type": "error", "queues": {}})
 
+    @unittest.skipIf(skip_pydantic_test, "pydantic not installed")
     def test_pydantic_validation_missing_queues(self):
         from pysqa.base.config import QueueAdapterWithConfig
 
         with self.assertRaises(ValueError):
             QueueAdapterWithConfig(config={"queue_type": "SLURM"})
 
+    @unittest.skipIf(skip_pydantic_test, "pydantic not installed")
     def test_pydantic_validation_wrong_type(self):
         from pysqa.base.config import QueueAdapterWithConfig
 
