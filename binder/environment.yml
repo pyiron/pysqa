@@ -1,15 +1,13 @@
 channels:
 - conda-forge
 dependencies:
+- python =3.13
 - defusedxml =0.7.1
-- coverage
-- pandas =2.3.1
-- pyyaml =6.0.2
+- flux-core =0.81.0
+- pandas =3.0.1
+- pyyaml =6.0.3
 - jinja2 =3.1.6
-- paramiko =3.5.1
-- tqdm =4.67.1
-- executorlib =0.0.2
-- cloudpickle =3.0.0
-- flux-core =0.59.0
-- hatchling =1.27.0
+- paramiko =4.0.0
+- tqdm =4.67.3
+- hatchling =1.29.0
 - hatch-vcs =0.5.0

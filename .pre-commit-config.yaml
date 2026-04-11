@@ -1,10 +1,10 @@
 repos:
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.12.8
+    rev: v0.15.9
     hooks:
       - id: ruff
         name: ruff lint
         args: ["--fix"]
-        files: ^pysqa/
+        files: ^src/pysqa/
       - id: ruff-format
         name: ruff format
