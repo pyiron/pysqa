@@ -40,8 +40,8 @@ class ConfigModel(BaseModel):
     ssh_remote_path: Optional[str] = None
     ssh_local_path: Optional[str] = None
     ssh_port: Optional[int] = None
-    ssh_continous_connection: bool = True
-    ssh_delete_file_on_remote: bool = False
+    ssh_continous_connection: bool = False
+    ssh_delete_file_on_remote: bool = True
     python_executable: Optional[str] = None
     queues: dict[str, QueueModel]
 
@@ -56,4 +56,4 @@ def validate_config(config: dict) -> dict:
     Returns:
         dict: The validated configuration dictionary.
     """
-    return ConfigModel(**config).model_dump()
+    return ConfigModel(**config).model_dump(exclude_none=True, exclude_defaults=True)
