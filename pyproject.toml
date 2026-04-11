@@ -1,6 +1,12 @@
 [build-system]
-requires = ["jinja2", "pandas", "pyyaml", "setuptools", "versioneer[toml]==0.29"]
-build-backend = "setuptools.build_meta"
+requires = [
+    "jinja2==3.1.6", 
+    "pandas==3.0.1", 
+    "pyyaml==6.0.3", 
+    "hatchling==1.29.0",
+    "hatch-vcs==0.5.0",
+]
+build-backend = "hatchling.build"
 
 [project]
 name = "pysqa"
@@ -11,7 +17,7 @@ authors = [
 readme = "README.md"
 license = { file = "LICENSE" }
 keywords = ["pyiron"]
-requires-python = ">=3.9, <3.13"
+requires-python = ">=3.9, <3.15"
 classifiers = [
     "Development Status :: 5 - Production/Stable",
     "Topic :: Scientific/Engineering :: Physics",
@@ -22,11 +28,13 @@ classifiers = [
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
 ]
 dependencies = [
-    "jinja2==3.1.4",
-    "pandas==2.2.3",
-    "pyyaml==6.0.2",
+    "jinja2==3.1.6",
+    "pandas==3.0.1",
+    "pyyaml==6.0.3",
 ]
 dynamic = ["version"]
 
@@ -38,23 +46,76 @@ Repository = "https://github.com/pyiron/pysqa"
 [project.optional-dependencies]
 sge = ["defusedxml==0.7.1"]
 remote = [
-    "paramiko==3.5.0",
-    "tqdm==4.66.5",
+    "paramiko==4.0.0",
+    "tqdm==4.67.3",
 ]
-twofactor = ["pyauthenticator==0.2.0"]
+twofactor = ["pyauthenticator==0.3.0"]
+pydantic = ["pydantic==2.12.5"]
 
 [project.scripts]
 pysqa = "pysqa.cmd:command_line"
 
-[tool.setuptools.packages.find]
-include = ["pysqa*"]
+[tool.ruff]
+exclude = [".ci_support", "docs", "notebooks", "tests", "setup.py", "_version.py"]
 
-[tool.setuptools.dynamic]
-version = {attr = "pysqa.__version__"}
+[tool.ruff.lint]
+select = [
+    # pycodestyle
+    "E",
+    # Pyflakes
+    "F",
+    # pyupgrade
+    "UP",
+    # flake8-bugbear
+    "B",
+    # flake8-simplify
+    "SIM",
+    # isort
+    "I",
+    # flake8-comprehensions
+    "C4",
+    # eradicate
+    "ERA",
+    # pylint
+    "PL",
+]
+ignore = [
+    # ignore exception naming
+    "B904",
+    # ignore line-length violations
+    "E501",
+    # ignore imports which are not at the top of a module
+    "PLC0415",
+    # Too many arguments in function definition
+    "PLR0913",
+    # Too many branches
+    "PLR0912",
+    # Too many statements
+    "PLR0915",
+]
 
-[tool.versioneer]
-VCS = "git"
-style = "pep440-pre"
-versionfile_source = "pysqa/_version.py"
-parentdir_prefix = "pysqa"
-tag_prefix = "pysqa-"
+[tool.hatch.build]
+include = [
+    "src/pysqa"
+]
+
+[tool.hatch.build.hooks.vcs]
+version-file = "src/pysqa/_version.py"
+
+[tool.hatch.build.targets.sdist]
+include = [
+    "src/pysqa"
+]
+
+[tool.hatch.build.targets.wheel]
+packages = [
+    "src/pysqa"
+]
+
+[tool.hatch.version]
+source = "vcs"
+path = "src/pysqa/_version.py"
+
+[tool.coverage.run]
+source = ["pysqa"]
+command_line = "-m unittest discover tests"
