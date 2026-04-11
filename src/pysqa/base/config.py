@@ -9,6 +9,13 @@ from jinja2.exceptions import TemplateSyntaxError
 from pysqa.base.core import QueueAdapterCore, execute_command
 from pysqa.base.validate import check_queue_parameters, value_error_if_none
 
+try:
+    from pysqa.base.models import validate_config
+except ImportError:
+
+    def validate_config(config: dict) -> dict:
+        return config
+
 
 class Queues:
     """
@@ -73,10 +80,10 @@ class QueueAdapterWithConfig(QueueAdapterCore):
         directory: str = "~/.queues",
         execute_command: Callable = execute_command,
     ):
+        self._config = validate_config(config)
         super().__init__(
-            queue_type=config["queue_type"], execute_command=execute_command
+            queue_type=self._config["queue_type"], execute_command=execute_command
         )
-        self._config = config
         self._fill_queue_dict(queue_lst_dict=self._config["queues"])
         self._load_templates(queue_lst_dict=self._config["queues"], directory=directory)
         self._queues = Queues(self.queue_list)
@@ -309,7 +316,7 @@ class QueueAdapterWithConfig(QueueAdapterCore):
             directory (str, optional): The directory where the queue template files are located. Defaults to ".".
         """
         for queue_dict in queue_lst_dict.values():
-            if "script" in queue_dict:
+            if "script" in queue_dict and queue_dict["script"] is not None:
                 with open(os.path.join(directory, queue_dict["script"])) as f:
                     try:
                         queue_dict["template"] = Template(f.read())
