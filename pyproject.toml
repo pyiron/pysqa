@@ -50,7 +50,7 @@ remote = [
     "tqdm==4.67.3",
 ]
 twofactor = ["pyauthenticator==0.3.0"]
-pydantic = ["pydantic==2.13.2"]
+pydantic = ["pydantic==2.13.3"]
 
 [project.scripts]
 pysqa = "pysqa.cmd:command_line"
