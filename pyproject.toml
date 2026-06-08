@@ -1,7 +1,7 @@
 [build-system]
 requires = [
     "jinja2==3.1.6", 
-    "pandas==3.0.2", 
+    "pandas==3.0.3", 
     "pyyaml==6.0.3", 
     "hatchling==1.30.1",
     "hatch-vcs==0.5.0",
@@ -33,7 +33,7 @@ classifiers = [
 ]
 dependencies = [
     "jinja2==3.1.6",
-    "pandas==3.0.2",
+    "pandas==3.0.3",
     "pyyaml==6.0.3",
 ]
 dynamic = ["version"]
@@ -47,7 +47,7 @@ Repository = "https://github.com/pyiron/pysqa"
 sge = ["defusedxml==0.7.1"]
 remote = [
     "paramiko==5.0.0",
-    "tqdm==4.68.0",
+    "tqdm==4.68.1",
 ]
 twofactor = ["pyauthenticator==0.3.0"]
 pydantic = ["pydantic==2.13.4"]
