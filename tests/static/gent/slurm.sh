@@ -10,6 +10,6 @@
 {%- if memory_max %}
 #SBATCH --mem={{memory_max}}
 {%- endif %}
-#SBATCH --cpus-per-task={{cores}}
+#SBATCH --ntasks={{cores}}
 
 {{command}}

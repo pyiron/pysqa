@@ -125,7 +125,7 @@ class TestSlurmQueueAdapter(unittest.TestCase):
 #SBATCH --get-user-env=L
 #SBATCH --partition=slurm
 #SBATCH --time=4320
-#SBATCH --cpus-per-task=10
+#SBATCH --ntasks=10
 
 echo \"hello\""""
         self.assertEqual(content, output)
@@ -153,7 +153,7 @@ echo \"hello\""""
 #SBATCH --partition=slurm
 #SBATCH --account=123456
 #SBATCH --time=4320
-#SBATCH --cpus-per-task=10
+#SBATCH --ntasks=10
 
 echo \"hello\""""
         self.assertEqual(content, output)
@@ -309,7 +309,7 @@ class TestSlurmQueueAdapterDefault(unittest.TestCase):
 #SBATCH --get-user-env=L
 #SBATCH --partition=slurm
 #SBATCH --time=4320
-#SBATCH --cpus-per-task=10
+#SBATCH --ntasks=10
 
 echo \"hello\""""
         self.assertEqual(content, output)
@@ -335,7 +335,7 @@ echo \"hello\""""
 #SBATCH --get-user-env=L
 #SBATCH --partition=slurm
 #SBATCH --time=4320
-#SBATCH --cpus-per-task=10
+#SBATCH --ntasks=10
 
 echo \"hello\""""
         self.assertEqual(content, output)
