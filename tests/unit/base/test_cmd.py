@@ -80,7 +80,7 @@ class TestCMD(unittest.TestCase):
             "#SBATCH --time=1\n",
             '#SBATCH --dependency=afterok:1\n',
             "#SBATCH --mem=1GBG\n",
-            "#SBATCH --cpus-per-task=10\n",
+            "#SBATCH --ntasks=10\n",
             "\n",
             "echo hello",
         ]

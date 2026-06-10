@@ -165,7 +165,7 @@ The queue named `slurm` is defined based on a submission script template named `
 {%- if memory_max %}
 #SBATCH --mem={{memory_max}}G
 {%- endif %}
-#SBATCH --cpus-per-task={{cores}}
+#SBATCH --ntasks={{cores}}
 
 {{command}}
 ```
