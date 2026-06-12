@@ -87,7 +87,10 @@ class QueueAdapter(QueueAdapterAbstractClass):
                 execute_command=execute_command,
             )
         else:
-            raise ValueError()
+            raise ValueError(
+                "QueueAdapter requires either a 'directory' containing a "
+                "queue.yaml/clusters.yaml file or a 'queue_type' to be specified."
+            )
 
     def list_clusters(self) -> list[str]:
         """
@@ -252,7 +255,11 @@ class QueueAdapter(QueueAdapterAbstractClass):
         if isinstance(self._adapter, QueueAdapterWithConfig):
             self._adapter.get_job_from_remote(working_directory=working_directory)
         else:
-            raise TypeError()
+            raise TypeError(
+                "get_job_from_remote() is only available for a QueueAdapter "
+                "configured with a queue.yaml/clusters.yaml file, not for a "
+                "queue_type-only adapter."
+            )
 
     def transfer_file_to_remote(
         self,
@@ -275,7 +282,11 @@ class QueueAdapter(QueueAdapterAbstractClass):
                 delete_file_on_remote=delete_file_on_remote,
             )
         else:
-            raise TypeError()
+            raise TypeError(
+                "transfer_file_to_remote() is only available for a QueueAdapter "
+                "configured with a queue.yaml/clusters.yaml file, not for a "
+                "queue_type-only adapter."
+            )
 
     def convert_path_to_remote(self, path: str) -> str:
         """
@@ -290,7 +301,11 @@ class QueueAdapter(QueueAdapterAbstractClass):
         if isinstance(self._adapter, QueueAdapterWithConfig):
             return self._adapter.convert_path_to_remote(path=path)
         else:
-            raise TypeError()
+            raise TypeError(
+                "convert_path_to_remote() is only available for a QueueAdapter "
+                "configured with a queue.yaml/clusters.yaml file, not for a "
+                "queue_type-only adapter."
+            )
 
     def delete_job(self, process_id: int) -> str:
         """

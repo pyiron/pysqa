@@ -275,7 +275,7 @@ class QueueAdapterCore(QueueAdapterAbstractClass):
             process_id (int): The process ID.
 
         Returns:
-            str: The status of the job.results_lst.append(df_selected.values[0])
+            str: The status of the job.
         """
         df = self.get_queue_status()
         if df is not None:
@@ -418,7 +418,7 @@ class QueueAdapterCore(QueueAdapterAbstractClass):
 
         Args:
             queue (str, optional): The queue name. Defaults to None.
-            job_name (str, optional): The job name. Defaults to "job.py".
+            job_name (str, optional): The job name. Defaults to "pysqa".
             working_directory (str, optional): The working directory. Defaults to ".".
             cores (int, optional): The number of cores. Defaults to None.
             memory_max (int, optional): The maximum memory. Defaults to None.
@@ -430,7 +430,11 @@ class QueueAdapterCore(QueueAdapterAbstractClass):
             str: The job submission template.
         """
         if queue is not None:
-            raise ValueError()
+            raise ValueError(
+                "Named queues are only available when the QueueAdapter is initialized "
+                "with a configuration directory. A queue_type-only adapter cannot "
+                "resolve the queue '" + str(queue) + "'."
+            )
         if submission_template is None:
             submission_template = self._submission_template
         if self._commands is not None:

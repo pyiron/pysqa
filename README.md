@@ -81,6 +81,11 @@ from within `pysqa`, which are represented to the user as a single resource.
   * [Local Queuing System](https://pysqa.readthedocs.io/en/latest/debug.html#local-queuing-system)
   * [Remote HPC](https://pysqa.readthedocs.io/en/latest/debug.html#remote-hpc)
 
+## Contributing
+Contributions are welcome! Please see the [contribution guidelines](CONTRIBUTING.md) for how to report issues, 
+request features, seek support and submit code, and the [code of conduct](CODE_OF_CONDUCT.md) for our community 
+standards. Bugs and feature requests are tracked on the [issue tracker](https://github.com/pyiron/pysqa/issues). 
+
 ## License
 `pysqa` is released under the [BSD license](https://github.com/pyiron/pysqa/blob/main/LICENSE) . It is a spin-off of the 
 [pyiron project](https://pyiron.org) therefore if you use `pysqa` for calculation which result in a scientific 

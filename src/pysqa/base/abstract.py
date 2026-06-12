@@ -62,7 +62,7 @@ class QueueAdapterAbstractClass(ABC):
             process_id (int): The process ID.
 
         Returns:
-            str: The status of the job.results_lst.append(df_selected.values[0])
+            str: The status of the job.
         """
         pass
 

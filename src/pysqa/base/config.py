@@ -271,7 +271,11 @@ class QueueAdapterWithConfig(QueueAdapterCore):
             )
         )
         if cores_checked is None:
-            raise ValueError()
+            raise ValueError(
+                "The number of cores could not be determined for queue '"
+                + str(queue)
+                + "'."
+            )
         return super()._job_submission_template(
             queue=None,
             submission_template=active_queue["template"],

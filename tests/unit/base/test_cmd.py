@@ -1,7 +1,9 @@
 import os
 import io
 import json
+import unittest
 import unittest.mock
+from importlib.metadata import entry_points
 from pysqa.base.cmd import command_line
 
 
@@ -10,6 +12,30 @@ class TestCMD(unittest.TestCase):
     def setUpClass(cls):
         cls.test_dir = os.path.abspath(os.path.dirname(__file__))
         cls.config_dir = os.path.abspath(os.path.join(cls.test_dir, "..", "..", "static"))
+
+    def test_console_script_entry_point(self):
+        """The ``pysqa`` console script must point at an importable callable.
+
+        This guards against regressions where the ``[project.scripts]`` entry
+        point in ``pyproject.toml`` references a module that does not exist
+        (e.g. ``pysqa.cmd`` instead of ``pysqa.base.cmd``), which would make the
+        installed ``pysqa`` command fail with a ``ModuleNotFoundError``.
+        """
+        eps = entry_points()
+        # ``entry_points()`` returns a ``SelectableGroups`` mapping on Python
+        # 3.9 and an ``EntryPoints`` object with ``.select()`` on Python 3.10+.
+        if hasattr(eps, "select"):
+            console_scripts = eps.select(group="console_scripts")
+        else:
+            console_scripts = eps.get("console_scripts", [])
+        pysqa_scripts = {ep.name: ep for ep in console_scripts}
+        self.assertIn(
+            "pysqa",
+            pysqa_scripts,
+            "The 'pysqa' console script is not registered - is the package installed?",
+        )
+        # ``.load()`` imports the referenced module and raises if it is missing.
+        self.assertIs(pysqa_scripts["pysqa"].load(), command_line)
 
     @unittest.mock.patch("sys.stdout", new_callable=io.StringIO)
     def assert_stdout_command_line(

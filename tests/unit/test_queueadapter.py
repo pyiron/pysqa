@@ -26,8 +26,11 @@ class TestQueueAdapter(unittest.TestCase):
             QueueAdapter(directory=os.path.join(self.path, "../static"))
 
     def test_no_config(self):
-        with self.assertRaises(ValueError):
+        with self.assertRaises(ValueError) as context:
             QueueAdapter()
+        self.assertTrue(
+            str(context.exception), "Expected an informative error message."
+        )
 
     def test_bad_queue_template(self):
         with self.assertRaises(TemplateSyntaxError):
@@ -89,16 +92,25 @@ class TestNoneAdapter(unittest.TestCase):
         self.assertIsNone(self.multi.queues)
 
     def test_get_job_from_remote(self):
-        with self.assertRaises(TypeError):
+        with self.assertRaises(TypeError) as context:
             self.multi.get_job_from_remote(working_directory=".")
+        self.assertTrue(
+            str(context.exception), "Expected an informative error message."
+        )
 
     def test_transfer_file_to_remote(self):
-        with self.assertRaises(TypeError):
+        with self.assertRaises(TypeError) as context:
             self.multi.transfer_file_to_remote(file="test.py")
+        self.assertTrue(
+            str(context.exception), "Expected an informative error message."
+        )
 
     def test_convert_path_to_remote(self):
-        with self.assertRaises(TypeError):
+        with self.assertRaises(TypeError) as context:
             self.multi.convert_path_to_remote(path=".")
+        self.assertTrue(
+            str(context.exception), "Expected an informative error message."
+        )
 
     def test_check_queue_parameters(self):
         cores_input = 1
