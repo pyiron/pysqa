@@ -53,7 +53,7 @@ twofactor = ["pyauthenticator==0.3.0"]
 pydantic = ["pydantic==2.13.4"]
 
 [project.scripts]
-pysqa = "pysqa.cmd:command_line"
+pysqa = "pysqa.base.cmd:command_line"
 
 [tool.ruff]
 exclude = [".ci_support", "docs", "notebooks", "tests", "setup.py", "_version.py"]

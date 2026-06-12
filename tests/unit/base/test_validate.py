@@ -1,5 +1,5 @@
 import unittest
-from pysqa.base.validate import value_in_range, check_queue_parameters
+from pysqa.base.validate import value_error_if_none, value_in_range, check_queue_parameters
 
 
 class TestValidate(unittest.TestCase):
@@ -47,3 +47,16 @@ class TestValidate(unittest.TestCase):
         self.assertEqual(cores, 1)
         self.assertEqual(run_time_max, 100)
         self.assertEqual(memory_max, 10)
+
+    def test_value_error_if_none_raises_value_error(self):
+        with self.assertRaises(ValueError) as context:
+            value_error_if_none(None)
+        self.assertIn("None", str(context.exception))
+
+    def test_value_error_if_none_raises_type_error_with_message(self):
+        with self.assertRaises(TypeError) as context:
+            value_error_if_none(42)
+        self.assertIn("int", str(context.exception))
+
+    def test_value_error_if_none_passes_for_string(self):
+        value_error_if_none("valid")  # should not raise
