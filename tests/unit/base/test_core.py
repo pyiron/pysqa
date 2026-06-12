@@ -1,6 +1,6 @@
 import os
 import unittest
-from pysqa.base.core import execute_command
+from pysqa.base.core import QueueAdapterCore, execute_command
 
 
 class TestExecuteCommand(unittest.TestCase):
@@ -71,3 +71,11 @@ class TestExecuteCommand(unittest.TestCase):
             error = f.readlines()
         self.assertEqual(error, ["\n"])
         os.remove("pysqa_fails.err")
+
+
+class TestQueueAdapterCore(unittest.TestCase):
+    def test_job_submission_template_named_queue_raises_value_error(self):
+        qa = QueueAdapterCore(queue_type="SLURM")
+        with self.assertRaises(ValueError) as context:
+            qa._job_submission_template(queue="some_queue")
+        self.assertIn("some_queue", str(context.exception))

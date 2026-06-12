@@ -68,3 +68,19 @@ class TestConfig(unittest.TestCase):
             qa = QueueAdapterWithConfig(config=config)
             self.assertEqual(qa.config["queues"]["sq"]["extra_field"], "allowed")
             self.assertEqual(qa.config["extra_top_level"], "also_allowed")
+
+
+class TestQueueAdapterWithConfigErrors(unittest.TestCase):
+    def test_job_submission_template_none_cores_raises_value_error(self):
+        from pysqa.base.config import QueueAdapterWithConfig
+        from jinja2 import Template
+
+        config = {
+            "queue_type": "SLURM",
+            "queue_primary": "sq",
+            "queues": {"sq": {"template": Template("#!/bin/bash")}},
+        }
+        qa = QueueAdapterWithConfig(config=config)
+        with self.assertRaises(ValueError) as context:
+            qa._job_submission_template(queue="sq", cores=None, command="test")
+        self.assertIn("sq", str(context.exception))
