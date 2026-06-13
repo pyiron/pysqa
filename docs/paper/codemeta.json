@@ -26,5 +26,5 @@
   "keywords": "Python, High Performance Computing, Job Scheduler",
   "license": "BSD",
   "title": "pysqa",
-  "version": "0.3.0"
+  "version": "0.4.2"
 }
