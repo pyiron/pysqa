@@ -7,5 +7,6 @@ dependencies:
 - jinja2 =2.11.3
 - paramiko =2.7.1
 - tqdm =4.66.1
+- pydantic =2.5.3
 - hatchling =1.27.0
 - hatch-vcs =0.4.0

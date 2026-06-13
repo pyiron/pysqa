@@ -52,7 +52,7 @@ def value_error_if_none(value: Union[str, None]) -> None:
     if value is None:
         raise ValueError("Value cannot be None.")
     if not isinstance(value, str):
-        raise TypeError()
+        raise TypeError("Expected a string, but got " + type(value).__name__ + ".")
 
 
 def value_in_range(

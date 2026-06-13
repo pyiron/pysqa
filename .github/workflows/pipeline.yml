@@ -98,19 +98,14 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Setup environment
-        run: |
-          cp .ci_support/environment.yml environment.yml
-          sed -i '/defusedxml/d' environment.yml
-          sed -i '/paramiko/d' environment.yml
-          sed -i '/tqdm/d' environment.yml
-          echo -e "channels:\n  - conda-forge\n" > .condarc
+        run: echo -e "channels:\n  - conda-forge\n" > .condarc
       - name: Setup Mambaforge
         uses: conda-incubator/setup-miniconda@v3
         with:
           python-version: '3.14'
           miniforge-version: latest
           condarc-file: .condarc
-          environment-file: environment.yml
+          environment-file: .ci_support/environment-mini.yml
       - name: Test
         shell: bash -l {0}
         run: |
@@ -173,6 +168,18 @@ jobs:
           cat pyproject.toml
           pip install . --no-deps --no-build-isolation
           pip check
+
+  uv_check:
+    needs: [black]
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - uses: astral-sh/setup-uv@v7
+    - name: Install the project and pip check
+      shell: bash -l {0}
+      run: |
+        uv sync --all-extras --dev
+        pip check
 
   unittest_matrix:
     needs: [black]
@@ -303,7 +310,7 @@ jobs:
         flux start python -m unittest integration/test_flux_integration.py
 
   autobot:
-    needs: [unittest_old, unittest_matrix, pip_check, notebooks, minimal, coverage]
+    needs: [uv_check, unittest_old, unittest_matrix, pip_check, notebooks, minimal, coverage]
     permissions:
       contents: write
       pull-requests: write

@@ -2,6 +2,7 @@ queue_type: REMOTE
 queue_primary: remote
 ssh_host: test.rebex.net
 ssh_username: demo
+known_hosts: ~/.ssh/known_hosts
 ssh_password: password
 ssh_remote_config_dir: /
 ssh_remote_path: /

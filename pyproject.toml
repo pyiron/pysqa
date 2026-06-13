@@ -1,9 +1,9 @@
 [build-system]
 requires = [
     "jinja2==3.1.6", 
-    "pandas==3.0.1", 
+    "pandas==3.0.3", 
     "pyyaml==6.0.3", 
-    "hatchling==1.29.0",
+    "hatchling==1.30.1",
     "hatch-vcs==0.5.0",
 ]
 build-backend = "hatchling.build"
@@ -33,7 +33,7 @@ classifiers = [
 ]
 dependencies = [
     "jinja2==3.1.6",
-    "pandas==3.0.1",
+    "pandas==3.0.3",
     "pyyaml==6.0.3",
 ]
 dynamic = ["version"]
@@ -46,13 +46,14 @@ Repository = "https://github.com/pyiron/pysqa"
 [project.optional-dependencies]
 sge = ["defusedxml==0.7.1"]
 remote = [
-    "paramiko==4.0.0",
-    "tqdm==4.67.3",
+    "paramiko==5.0.0",
+    "tqdm==4.68.2",
 ]
 twofactor = ["pyauthenticator==0.3.0"]
+pydantic = ["pydantic==2.13.4"]
 
 [project.scripts]
-pysqa = "pysqa.cmd:command_line"
+pysqa = "pysqa.base.cmd:command_line"
 
 [tool.ruff]
 exclude = [".ci_support", "docs", "notebooks", "tests", "setup.py", "_version.py"]
