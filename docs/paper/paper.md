@@ -31,12 +31,13 @@ Unlike workflow orchestration frameworks, pysqa focuses exclusively on the sched
 # Statement of Need
 Modern computational research increasingly relies on automated execution of simulations, machine learning workloads, and data-processing pipelines on shared HPC infrastructure. While scheduler command-line tools such as sbatch, squeue, and scancel provide direct access to HPC resources, scientific applications often require programmatic job submission and monitoring capabilities. Embedding scheduler-specific commands directly into software reduces portability and increases maintenance costs when users operate across multiple clusters.
 
+# State of the field 
 Several software projects address related challenges. MyQueue [@myqueue] provides a higher-level task and workflow abstraction designed for scientific computing campaigns. PSI/J [@psij] offers a portable job execution API spanning multiple schedulers and execution backends. Jobflow-Remote focuses on remote execution of workflow graphs within the Jobflow ecosystem [@jobflow]. These tools provide broader workflow or interoperability capabilities, but they also introduce additional abstractions and infrastructure requirements.
 
 pysqa addresses a different use case. It provides a minimal abstraction layer between Python applications and HPC schedulers while deliberately avoiding workflow management, databases, or orchestration services. The resulting design minimizes dependencies, simplifies deployment, and allows users to continue working with familiar scheduler submission scripts. This approach is particularly valuable for scientific software projects that require scheduler portability without adopting a complete workflow framework. Additionaly, pysqa can also be implemented as a module in existing workflow frameworks [@pyiron] and task schedulers [@executorlib].
 
 
-# Features and Implementation
+# Software design
 The central abstraction in pysqa is the QueueAdapter, which provides a scheduler-independent Python interface for submitting, monitoring, and managing jobs. Rather than invoking scheduler commands such as `sbatch`, `qsub`, `bsub`, or `flux submit` directly from shell scripts, users can interact with HPC resources through a small set of Python methods:
 
 ```python
@@ -90,7 +91,7 @@ The use of Jinja2 templates preserves the familiar scheduler-native submission s
 
 This separation of concerns provides three advantages. First, application developers interact with a consistent Python API independent of the underlying scheduler. Second, cluster-specific configuration is maintained centrally in YAML files rather than being embedded in application code. Third, scheduler experts retain full control over the generated submission scripts using familiar scheduler directives and scripting practices. As a result, pysqa combines the programmability of a Python interface with the transparency and flexibility of traditional scheduler-native workflows.
 
-# Usage To-Date 
+# Research impact statement
 pysqa was initially developed as a module of the pyiron workflow environment [@pyiron]. It was spun-off into an standalone package to be used in different components of the pyiron ecosystem including executorlib [@executorlib]. Since the spin-off external projects started to use pysqa including ropt [@ropt], DREAMS [@dreams], nipoppy [@nipoppy] and matsci-agent [@matsci-agent].
 
 # Additional Details 
