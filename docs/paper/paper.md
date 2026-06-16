@@ -33,7 +33,7 @@ Modern computational research increasingly relies on automated execution of simu
 
 Several software projects address related challenges. MyQueue [@myqueue] provides a higher-level task and workflow abstraction designed for scientific computing campaigns. PSI/J [@psij] offers a portable job execution API spanning multiple schedulers and execution backends. Jobflow-Remote focuses on remote execution of workflow graphs within the Jobflow ecosystem [@jobflow]. These tools provide broader workflow or interoperability capabilities, but they also introduce additional abstractions and infrastructure requirements.
 
-pysqa addresses a different use case. It provides a minimal abstraction layer between Python applications and HPC schedulers while deliberately avoiding workflow management, databases, or orchestration services. The resulting design minimizes dependencies, simplifies deployment, and allows users to continue working with familiar scheduler submission scripts. This approach is particularly valuable for scientific software projects that require scheduler portability without adopting a complete workflow framework. Additionaly, pysqa can also be implemented as a module in existing workflow frameworks and task schedulers [@pyiron], [@executorlib].
+pysqa addresses a different use case. It provides a minimal abstraction layer between Python applications and HPC schedulers while deliberately avoiding workflow management, databases, or orchestration services. The resulting design minimizes dependencies, simplifies deployment, and allows users to continue working with familiar scheduler submission scripts. This approach is particularly valuable for scientific software projects that require scheduler portability without adopting a complete workflow framework. Additionaly, pysqa can also be implemented as a module in existing workflow frameworks [@pyiron] and task schedulers [@executorlib].
 
 
 # Features and Implementation
@@ -79,7 +79,7 @@ The scheduler submission scripts themselves are defined using Jinja2 templates. 
 ```
 #!/bin/bash
 #SBATCH --job-name={{job_name}}
-#SBATCH --cpus-per-task={{cores}}
+#SBATCH --ntasks={{cores}}
 #SBATCH --time={{run_time_max}}
 #SBATCH --output={{job_name}}.out
 
