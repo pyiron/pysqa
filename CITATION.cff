@@ -22,34 +22,10 @@ authors:
 license: BSD-3-Clause
 repository-code: "https://github.com/pyiron/pysqa"
 url: "https://pysqa.readthedocs.io"
+doi: 10.5281/zenodo.20719455
 keywords:
   - Python
   - High Performance Computing
   - Workflows
   - pyiron
   - queuing system
-preferred-citation:
-  type: article
-  title: "pyiron: An integrated development environment for computational materials science"
-  authors:
-    - family-names: Janssen
-      given-names: Jan
-    - family-names: Surendralal
-      given-names: Sudarsan
-    - family-names: Lysogorskiy
-      given-names: Yury
-    - family-names: Todorova
-      given-names: Mira
-    - family-names: Hickel
-      given-names: Tilmann
-    - family-names: Drautz
-      given-names: Ralf
-    - family-names: Neugebauer
-      given-names: Jörg
-  doi: "10.1016/j.commatsci.2018.07.043"
-  journal: "Computational Materials Science"
-  volume: 163
-  start: 24
-  end: 36
-  year: 2019
-  issn: "0927-0256"
