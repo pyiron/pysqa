@@ -20,7 +20,7 @@ bibliography: paper.bib
 ---
 
 # Summary
-High-performance computing (HPC) resources are commonly accessed through batch scheduling systems such as SLURM [@slurm], Moab [@moab], SGE [@sge], Torque/PBS [@torque], LSF [@lsf] and Flux [@flux]. These schedulers provide powerful command-line interfaces for job submission and resource management, but integrating scheduler interactions into Python applications often requires scheduler-specific scripts, shell wrappers, and custom parsing of scheduler outputs. As a result, scientific software frequently contains infrastructure code that is difficult to maintain and port across HPC environments.
+High-performance computing (HPC) resources are commonly accessed through batch scheduling systems such as LSF [@lsf], Torque/PBS [@pbs], SGE [@sge],  SLURM [@slurm], Moab [@moab] and Flux [@flux]. These schedulers provide powerful command-line interfaces for job submission and resource management, but integrating scheduler interactions into Python applications often requires scheduler-specific scripts, shell wrappers, and custom parsing of scheduler outputs. As a result, scientific software frequently contains infrastructure code that is difficult to maintain and port across HPC environments.
 
 ![Schematic overview of pysqa. The package provides a scheduler-independent interface for submitting, monitoring, and managing HPC jobs from Python or the command line. Reusable Jinja2-based templates are translated to the native syntax of supported queuing systems (e.g., SLURM, PBS, LSF, and SGE), while built-in support for remote connections, reservations, and job management simplifies the integration of HPC resources into scientific workflows.\label{fig:pysqa}](pysqa.png){width="100%"}
 
@@ -33,11 +33,11 @@ Modern computational research increasingly relies on automated execution of simu
 
 Several software projects address related challenges. MyQueue [@myqueue] provides a higher-level task and workflow abstraction designed for scientific computing campaigns. PSI/J [@psij] offers a portable job execution API spanning multiple schedulers and execution backends. Jobflow-Remote focuses on remote execution of workflow graphs within the Jobflow ecosystem [@jobflow]. These tools provide broader workflow or interoperability capabilities, but they also introduce additional abstractions and infrastructure requirements.
 
-pysqa addresses a different use case. It provides a minimal abstraction layer between Python applications and HPC schedulers while deliberately avoiding workflow management, databases, or orchestration services. The resulting design minimizes dependencies, simplifies deployment, and allows users to continue working with familiar scheduler submission scripts. This approach is particularly valuable for scientific software projects that require scheduler portability without adopting a complete workflow framework.
+pysqa addresses a different use case. It provides a minimal abstraction layer between Python applications and HPC schedulers while deliberately avoiding workflow management, databases, or orchestration services. The resulting design minimizes dependencies, simplifies deployment, and allows users to continue working with familiar scheduler submission scripts. This approach is particularly valuable for scientific software projects that require scheduler portability without adopting a complete workflow framework. Additionaly, pysqa can also be implemented as a module in existing workflow frameworks and task schedulers [@pyiron], [@executorlib].
 
 
 # Features and Implementation
-The central abstraction in pysqa is the QueueAdapter, which exposes a small set of scheduler-independent operations:
+The central abstraction in pysqa is the QueueAdapter, which provides a scheduler-independent Python interface for submitting, monitoring, and managing jobs. Rather than invoking scheduler commands such as `sbatch`, `qsub`, `bsub`, or `flux submit` directly from shell scripts, users can interact with HPC resources through a small set of Python methods:
 
 ```python
 from pysqa import QueueAdapter
@@ -56,7 +56,9 @@ status = queue_adapter.get_queue_status()
 queue_adapter.delete_job(job_id)
 ```
 
-The scheduler-specific details are defined in a queue configuration and associated Jinja2 templates. A simplified Slurm configuration is shown below:
+This Python interface simplifies the integration of HPC resources into scientific software, high-throughput simulation frameworks, and automated workflows. Resource requests and scheduler interactions can be expressed directly in Python without embedding scheduler-specific commands or parsing scheduler outputs. At the same time, pysqa does not replace the underlying scheduler command-line interface. Instead, it builds on top of existing scheduler functionality and generates standard submission scripts that remain fully transparent to users and administrators.
+
+To achieve portability across different computing environments, pysqa separates scheduler configuration from submission script generation. Cluster-specific settings are defined in a YAML configuration file, which describes available queues, resource limits, and scheduler properties:
 
 ```YAML
 queue_type: SLURM
@@ -70,7 +72,9 @@ queues:
     script: slurm.sh
 ```
 
-The corresponding Slurm submission template may be defined as:
+This configuration provides a machine-readable description of the HPC environment and can be shared across users and projects.
+
+The scheduler submission scripts themselves are defined using Jinja2 templates. For example, a Slurm submission template can be written as:
 
 ```
 #!/bin/bash
@@ -82,10 +86,12 @@ The corresponding Slurm submission template may be defined as:
 {{command}}
 ```
 
-During submission, pysqa renders the template using the supplied resource parameters and submits the resulting scheduler-native script. This template-based architecture allows users to preserve local scheduler conventions while exposing a consistent Python interface to scientific applications.
+The use of Jinja2 templates preserves the familiar scheduler-native submission scripts that HPC users and administrators already maintain. Existing Slurm, PBS, or Flux scripts can typically be converted with only minor modifications by replacing fixed values with template variables. During job submission, pysqa combines the resource parameters provided through the Python interface with the cluster configuration and renders the corresponding scheduler script before submitting it through the scheduler’s native command-line tools.
+
+This separation of concerns provides three advantages. First, application developers interact with a consistent Python API independent of the underlying scheduler. Second, cluster-specific configuration is maintained centrally in YAML files rather than being embedded in application code. Third, scheduler experts retain full control over the generated submission scripts using familiar scheduler directives and scripting practices. As a result, pysqa combines the programmability of a Python interface with the transparency and flexibility of traditional scheduler-native workflows.
 
 # Usage To-Date 
-pysqa was initially developed as a module of the pyiron workflow environment [@pyiron]. It was spun-off into an standalone package to be used in different components of the pyiron ecosystem including executorlib [@executorlib]. Since the spin-off external projects started to use pysqa including nipoppy [@nipoppy], DREAMS [@dreams], matsci-agent [@matsci-agent] and ropt [@ropt].
+pysqa was initially developed as a module of the pyiron workflow environment [@pyiron]. It was spun-off into an standalone package to be used in different components of the pyiron ecosystem including executorlib [@executorlib]. Since the spin-off external projects started to use pysqa including ropt [@ropt], DREAMS [@dreams], nipoppy [@nipoppy] and matsci-agent [@matsci-agent].
 
 # Additional Details 
 The full documentation including a number of examples for the individual features is available at [pysqa.readthedocs.io](https://pysqa.readthedocs.io) with the corresponding source code at [github.com/pyiron/pysqa](https://github.com/pyiron/pysqa). pysqa is developed an as open-source library with a focus on stability. 
