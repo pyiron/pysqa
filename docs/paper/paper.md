@@ -20,7 +20,7 @@ bibliography: paper.bib
 ---
 
 # Summary
-High-performance computing (HPC) resources are commonly accessed through batch scheduling systems such as SLURM [@slurm], PBS/Torque, SGE[@sge], LSF, Moab, and Flux [@flux]. These schedulers provide powerful command-line interfaces for job submission and resource management, but integrating scheduler interactions into Python applications often requires scheduler-specific scripts, shell wrappers, and custom parsing of scheduler outputs. As a result, scientific software frequently contains infrastructure code that is difficult to maintain and port across HPC environments.
+High-performance computing (HPC) resources are commonly accessed through batch scheduling systems such as SLURM [@slurm], Moab [@moab], SGE [@sge], Torque/PBS [@torque], LSF [@lsf] and Flux [@flux]. These schedulers provide powerful command-line interfaces for job submission and resource management, but integrating scheduler interactions into Python applications often requires scheduler-specific scripts, shell wrappers, and custom parsing of scheduler outputs. As a result, scientific software frequently contains infrastructure code that is difficult to maintain and port across HPC environments.
 
 ![Schematic overview of pysqa. The package provides a scheduler-independent interface for submitting, monitoring, and managing HPC jobs from Python or the command line. Reusable Jinja2-based templates are translated to the native syntax of supported queuing systems (e.g., SLURM, PBS, LSF, and SGE), while built-in support for remote connections, reservations, and job management simplifies the integration of HPC resources into scientific workflows.\label{fig:pysqa}](pysqa.png){width="100%"}
 
