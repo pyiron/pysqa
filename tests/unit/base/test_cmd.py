@@ -4,7 +4,15 @@ import json
 import unittest
 import unittest.mock
 from importlib.metadata import entry_points
+
 from pysqa.base.cmd import command_line
+
+try:
+    import defusedxml.ElementTree as ETree
+
+    skip_sge_test = False
+except ImportError:
+    skip_sge_test = True
 
 
 class TestCMD(unittest.TestCase):
@@ -201,6 +209,10 @@ class TestCMD(unittest.TestCase):
                 execute_command=None,
             )
 
+    @unittest.skipIf(
+        skip_sge_test,
+        "defusedxml is not installed, so the sun grid engine (SGE) tests are skipped.",
+    )
     def test_reservation_with_id(self):
         def execute_command(
             commands,

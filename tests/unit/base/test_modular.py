@@ -2,6 +2,13 @@ import unittest
 
 from pysqa.base.modular import ModularQueueAdapter
 
+try:
+    import defusedxml.ElementTree as ETree
+
+    skip_sge_test = False
+except ImportError:
+    skip_sge_test = True
+
 
 def _stub_execute_command(value):
     def execute_command(
@@ -17,6 +24,10 @@ def _stub_execute_command(value):
 
 
 class TestModularQueueAdapter(unittest.TestCase):
+    @unittest.skipIf(
+        skip_sge_test,
+        "defusedxml is not installed, so the sun grid engine (SGE) tests are skipped.",
+    )
     def test_unknown_cluster_raises_value_error(self):
         config = {
             "queue_type": "SGE",
@@ -35,6 +46,10 @@ class TestModularQueueAdapter(unittest.TestCase):
             ModularQueueAdapter(config=config, directory=".")
         self.assertIn("clusterB", str(context.exception))
 
+    @unittest.skipIf(
+        skip_sge_test,
+        "defusedxml is not installed, so the sun grid engine (SGE) tests are skipped.",
+    )
     def test_enable_reservation(self):
         config = {
             "queue_type": "SGE",
@@ -56,6 +71,10 @@ class TestModularQueueAdapter(unittest.TestCase):
         )
         self.assertEqual(qa.enable_reservation(process_id=10), "Reservation enabled")
 
+    @unittest.skipIf(
+        skip_sge_test,
+        "defusedxml is not installed, so the sun grid engine (SGE) tests are skipped.",
+    )
     def test_enable_reservation_no_output(self):
         config = {
             "queue_type": "SGE",
