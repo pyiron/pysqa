@@ -346,6 +346,10 @@ class TestRemoteQueueAdapterPublicMethods(unittest.TestCase):
             df_filtered = remote._adapter.get_queue_status(user="janj")
         self.assertEqual(list(df_filtered["jobid"]), [1])
 
+    @unittest.skipIf(
+        os.name == "nt",
+        "Skip on Windows because temp directory drive may differ from configured ssh local path.",
+    )
     def test_get_job_from_remote_with_directories(self):
         import tempfile
 
