@@ -1,5 +1,9 @@
 import unittest
-from pysqa.base.validate import value_error_if_none, value_in_range, check_queue_parameters
+from pysqa.base.validate import (
+    value_error_if_none,
+    value_in_range,
+    check_queue_parameters,
+)
 
 
 class TestValidate(unittest.TestCase):
@@ -37,9 +41,19 @@ class TestValidate(unittest.TestCase):
             "60G",
         )
 
+    def test_memory_string_comparison_non_memory_strings(self):
+        # "5x"/"3y"/"9z" contain a digit but are not valid memory specs, so
+        # _memory_spec_string_to_value() returns them unchanged (line 149).
+        self.assertEqual(value_in_range("5x", value_min="3y", value_max="9z"), "5x")
+
     def test_check_queue_parameters(self):
         cores, run_time_max, memory_max = check_queue_parameters(
-            active_queue={"cores_min": 1, "cores_max": 100, "memory_max": 12, "run_time_max": 1000},
+            active_queue={
+                "cores_min": 1,
+                "cores_max": 100,
+                "memory_max": 12,
+                "run_time_max": 1000,
+            },
             cores=1,
             run_time_max=100,
             memory_max=10,

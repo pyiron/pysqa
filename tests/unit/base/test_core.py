@@ -79,3 +79,24 @@ class TestQueueAdapterCore(unittest.TestCase):
         with self.assertRaises(ValueError) as context:
             qa._job_submission_template(queue="some_queue")
         self.assertIn("some_queue", str(context.exception))
+
+    def test_write_queue_script_command_as_list(self):
+        qa = QueueAdapterCore(queue_type="SLURM")
+        working_directory, queue_script_path = qa._write_queue_script(
+            command=["echo ", "hello"]
+        )
+        with open(queue_script_path) as f:
+            content = f.read()
+        self.assertTrue(content.endswith("echo hello"))
+        os.remove(queue_script_path)
+
+    def test_no_commands_for_remote_queue_type(self):
+        # The "REMOTE" queue type has no associated scheduler commands class,
+        # so QueueAdapterCore falls back to its no-op/None branches.
+        qa = QueueAdapterCore(queue_type="REMOTE")
+        self.assertIsNone(qa._commands)
+        self.assertIsNone(qa.enable_reservation(process_id=1))
+        self.assertIsNone(qa.delete_job(process_id=1))
+        self.assertIsNone(qa.get_queue_status())
+        self.assertEqual(qa._list_command_to_be_executed(queue_script_path="x"), [])
+        self.assertEqual(qa._job_submission_template(command="echo hello"), "")

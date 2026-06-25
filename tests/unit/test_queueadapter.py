@@ -37,6 +37,24 @@ class TestQueueAdapter(unittest.TestCase):
             QueueAdapter(directory=os.path.join(self.path, "../static/bad_template"))
 
 
+class TestQueueAdapterDelegation(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.path = os.path.dirname(os.path.abspath(__file__))
+        cls.slurm = QueueAdapter(directory=os.path.join(cls.path, "../static/slurm"))
+
+    def test_get_job_from_remote_delegates_to_adapter(self):
+        # QueueAdapterWithConfig (used for non-REMOTE queue types) does not
+        # implement get_job_from_remote, so the call is delegated and then
+        # raises NotImplementedError.
+        with self.assertRaises(NotImplementedError):
+            self.slurm.get_job_from_remote(working_directory=".")
+
+    def test_transfer_file_to_remote_delegates_to_adapter(self):
+        with self.assertRaises(NotImplementedError):
+            self.slurm.transfer_file_to_remote(file="test.py")
+
+
 @unittest.skipIf(
     skip_multi_test,
     "Either paramiko or tqdm are not installed, so the multi queue adapter tests are skipped.",
@@ -57,13 +75,13 @@ class TestMultiQueueAdapter(unittest.TestCase):
         self.assertEqual(self.multi.list_clusters(), ["local_slurm", "remote_slurm"])
 
     def test_switch_cluster(self):
-        self.assertEqual(self.multi.queue_list, ['slurm'])
+        self.assertEqual(self.multi.queue_list, ["slurm"])
         self.multi.switch_cluster("local_slurm")
-        self.assertEqual(self.multi.queue_list, ['slurm'])
+        self.assertEqual(self.multi.queue_list, ["slurm"])
         self.multi.switch_cluster("remote_slurm")
-        self.assertEqual(self.multi.queue_list, ['remote'])
+        self.assertEqual(self.multi.queue_list, ["remote"])
         self.multi.switch_cluster("local_slurm")
-        self.assertEqual(self.multi.queue_list, ['slurm'])
+        self.assertEqual(self.multi.queue_list, ["slurm"])
 
 
 @unittest.skipIf(
