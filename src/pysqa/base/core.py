@@ -135,6 +135,8 @@ class QueueAdapterCore(QueueAdapterAbstractClass):
         module_name = queue_type_dict[queue_type]["module_name"]
         if module_name is not None:
             self._submission_template = importlib.import_module(module_name).template
+        else:
+            self._submission_template = None
         self._execute_command_function = execute_command
 
     def submit_job(

@@ -8,7 +8,9 @@ class TestTorqueQueueAdapter(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.path = os.path.dirname(os.path.abspath(__file__))
-        cls.torque = QueueAdapter(directory=os.path.join(cls.path, "../../static/torque"))
+        cls.torque = QueueAdapter(
+            directory=os.path.join(cls.path, "../../static/torque")
+        )
 
     def test_config(self):
         self.assertEqual(self.torque.config["queue_type"], "TORQUE")
@@ -40,6 +42,14 @@ class TestTorqueQueueAdapter(unittest.TestCase):
                 [],
                 "here",
             )
+
+    def test_get_job_id_from_output(self):
+        self.assertEqual(
+            self.torque._adapter._commands.get_job_id_from_output(
+                "80005196.somehost\n"
+            ),
+            80005196,
+        )
 
     def test_convert_queue_status_torque(self):
         with open(
@@ -79,4 +89,9 @@ class TestTorqueQueueAdapter(unittest.TestCase):
 #PBS -l wd
  
 echo hello"""
-        self.assertEqual(self.torque._adapter._commands.render_submission_template(command="echo hello"), output_str)
+        self.assertEqual(
+            self.torque._adapter._commands.render_submission_template(
+                command="echo hello"
+            ),
+            output_str,
+        )

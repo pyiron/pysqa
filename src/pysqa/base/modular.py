@@ -42,7 +42,7 @@ class ModularQueueAdapter(QueueAdapterWithConfig):
                     "The cluster "
                     + v
                     + " was not found in the list of clusters "
-                    + str(list(self._config["cluster"].keys()))
+                    + str(list(self._config["cluster"]))
                 )
 
     def submit_job(
