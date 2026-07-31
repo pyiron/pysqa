@@ -60,8 +60,8 @@ In this case only the number of cores `cores`, the name of the job `job_name` , 
 `run_time_max` and the command `command` are communicated. The same template is stored in the `pysqa` package and can be
 imported using `from pysqa.wrapper.flux import template`. So the flux interface can be enabled by setting `queue_type="flux"`.
 
-## LFS
-For the load sharing facility framework from IBM the `queue.yaml` file defines the `queue_type` as `LSF`:
+## LSF
+For the Load Sharing Facility(LSF) framework from IBM the `queue.yaml` file defines the `queue_type` as `LSF`:
 ```
 queue_type: LSF
 queue_primary: lsf
