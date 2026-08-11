@@ -241,11 +241,11 @@ class TestCMD(unittest.TestCase):
 
     @unittest.mock.patch("sys.argv", ["pysqa", "--help"])
     def test_default_arguments_lst_uses_sys_argv(self):
+        from pysqa.base.cmd import _help_message
+
         with unittest.mock.patch("sys.stdout", new_callable=io.StringIO) as mock_stdout:
             command_line(arguments_lst=None, execute_command=None)
-        self.assertEqual(
-            mock_stdout.getvalue(), "python -m pysqa --help ... coming soon.\n"
-        )
+        self.assertEqual(mock_stdout.getvalue(), _help_message() + "\n")
 
     def test_list(self):
         def execute_command(
