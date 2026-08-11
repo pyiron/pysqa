@@ -56,7 +56,7 @@ def command_line(
             ],
         )
     except getopt.GetoptError:
-        print("python -m pysqa --help")
+        print(_help_message())
     else:
         mode_submit = False
         mode_delete = False
@@ -134,4 +134,55 @@ def command_line(
                 json.dumps({"dirs": sorted(remote_dirs), "files": sorted(remote_files)})
             )
         else:
-            print("python -m pysqa --help ... coming soon.")
+            print(_help_message())
+
+
+def _help_message() -> str:
+    return """\
+usage: python -m pysqa [options]
+
+Command line interface to submit, monitor and delete jobs on the queuing
+system configured in the pysqa configuration directory.
+
+Submit job:
+  -p, --submit                  submit a new job to the queuing system
+  -c, --command=COMMAND         command to execute as part of the job
+  -q, --queue=QUEUE             queue to submit to (default: primary_queue)
+  -j, --job_name=NAME           name of the submitted job
+  -w, --working_directory=DIR   working directory the job is executed in
+  -n, --cores=N                 number of cores to use (default: minimum for queue)
+  -m, --memory=MEMORY           memory to reserve for the job
+  -t, --run_time=SECONDS        maximum run time (default: maximum for queue)
+  -b, --dependency=ID           job id this job depends on (repeatable)
+
+  Example: python -m pysqa --submit --command hostname
+
+Enable reservation:
+  -r, --reservation             enable a reservation for an already submitted job
+  -i, --id=ID                   job id to add to the reservation
+
+  Example: python -m pysqa --reservation --id 123
+
+List jobs on the queuing system:
+  -s, --status                  list status of all jobs on the queuing system
+
+  Example: python -m pysqa --status
+
+Delete job:
+  -d, --delete                  delete a job from the queuing system
+  -i, --id=ID                   job id to delete
+
+  Example: python -m pysqa --delete --id 123
+
+List files:
+  -l, --list                    list files in the working directory
+  -w, --working_directory=DIR   directory whose files are listed
+
+  Example: python -m pysqa --list --working_directory /path/on/remote/hpc
+
+General options:
+  -f, --config_directory=DIR    pysqa configuration directory (default: ~/.queues)
+  -h, --help                    print this help message
+
+Full documentation: https://pysqa.readthedocs.io/en/latest/command.html
+"""

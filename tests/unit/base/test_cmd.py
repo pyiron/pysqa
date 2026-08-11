@@ -55,17 +55,21 @@ class TestCMD(unittest.TestCase):
         self.assertEqual(mock_stdout.getvalue(), expected_output)
 
     def test_help(self):
+        from pysqa.base.cmd import _help_message
+
         self.assert_stdout_command_line(
             ["--help"],
             None,
-            "python -m pysqa --help ... coming soon.\n",
+            _help_message() + "\n",
         )
 
     def test_wrong_option(self):
+        from pysqa.base.cmd import _help_message
+
         self.assert_stdout_command_line(
             ["--error"],
             None,
-            "python -m pysqa --help\n",
+            _help_message() + "\n",
         )
 
     def test_submit(self):
@@ -237,11 +241,11 @@ class TestCMD(unittest.TestCase):
 
     @unittest.mock.patch("sys.argv", ["pysqa", "--help"])
     def test_default_arguments_lst_uses_sys_argv(self):
+        from pysqa.base.cmd import _help_message
+
         with unittest.mock.patch("sys.stdout", new_callable=io.StringIO) as mock_stdout:
             command_line(arguments_lst=None, execute_command=None)
-        self.assertEqual(
-            mock_stdout.getvalue(), "python -m pysqa --help ... coming soon.\n"
-        )
+        self.assertEqual(mock_stdout.getvalue(), _help_message() + "\n")
 
     def test_list(self):
         def execute_command(
