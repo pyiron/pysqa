@@ -45,17 +45,21 @@ class TestCMD(unittest.TestCase):
         self.assertEqual(mock_stdout.getvalue(), expected_output)
 
     def test_help(self):
+        from pysqa.base.cmd import _help_message
+
         self.assert_stdout_command_line(
             ["--help"],
             None,
-            "python -m pysqa --help ... coming soon.\n",
+            _help_message() + "\n",
         )
 
     def test_wrong_option(self):
+        from pysqa.base.cmd import _help_message
+
         self.assert_stdout_command_line(
             ["--error"],
             None,
-            "python -m pysqa --help\n",
+            _help_message() + "\n",
         )
 
     def test_submit(self):
