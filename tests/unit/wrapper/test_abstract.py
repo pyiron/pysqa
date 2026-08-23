@@ -20,11 +20,11 @@ class TestAbstractSchedulerCommands(unittest.TestCase):
         self.assertIsNone(SchedulerCommands().submit_job_command)
 
     @patch.multiple(SchedulerCommands, __abstractmethods__=set())
-    def test_submit_job_command(self):
+    def test_delete_job_command(self):
         self.assertIsNone(SchedulerCommands().delete_job_command)
 
     @patch.multiple(SchedulerCommands, __abstractmethods__=set())
-    def test_submit_job_command(self):
+    def test_get_queue_status_command(self):
         self.assertIsNone(SchedulerCommands().get_queue_status_command)
 
 

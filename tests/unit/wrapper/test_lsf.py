@@ -53,8 +53,18 @@ class TestLsfQueueAdapter(unittest.TestCase):
                 "here",
             )
 
+    def test_get_job_id_from_output(self):
+        self.assertEqual(
+            self.lsf._adapter._commands.get_job_id_from_output(
+                "Job <5136563> is submitted to default queue <normal>."
+            ),
+            5136563,
+        )
+
     def test_convert_queue_status_sge(self):
-        with open(os.path.join(self.path, "../../static/lsf", "bjobs_output"), "r") as f:
+        with open(
+            os.path.join(self.path, "../../static/lsf", "bjobs_output"), "r"
+        ) as f:
             content = f.read()
         df = pandas.DataFrame(
             {

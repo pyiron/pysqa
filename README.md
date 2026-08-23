@@ -24,7 +24,7 @@ as well as the [command line interface](https://pysqa.readthedocs.io/en/latest/c
 
 ## Features
 The core feature of `pysqa` is the communication to HPC queuing systems including ([Flux](https://pysqa.readthedocs.io/en/latest/queue.html#flux), 
-[LFS](https://pysqa.readthedocs.io/en/latest/queue.html#lfs), [MOAB](https://pysqa.readthedocs.io/en/latest/queue.html#moab), 
+[LSF](https://pysqa.readthedocs.io/en/latest/queue.html#lsf), [MOAB](https://pysqa.readthedocs.io/en/latest/queue.html#moab), 
 [SGE](https://pysqa.readthedocs.io/en/latest/queue.html#sge), [SLURM](https://pysqa.readthedocs.io/en/latest/queue.html#slurm) 
 and [TORQUE](https://pysqa.readthedocs.io/en/latest/queue.html#torque)). This includes: 
 
@@ -53,7 +53,7 @@ from within `pysqa`, which are represented to the user as a single resource.
   * [conda-based installation](https://pysqa.readthedocs.io/en/latest/installation.html#conda-based-installation)
 * [Queuing Systems](https://pysqa.readthedocs.io/en/latest/queue.html)
   * [Flux](https://pysqa.readthedocs.io/en/latest/queue.html#flux)
-  * [LFS](https://pysqa.readthedocs.io/en/latest/queue.html#lfs)
+  * [LSF]](https://pysqa.readthedocs.io/en/latest/queue.html#lsf)
   * [MOAB](https://pysqa.readthedocs.io/en/latest/queue.html#moab)
   * [SGE](https://pysqa.readthedocs.io/en/latest/queue.html#sge)
   * [SLURM](https://pysqa.readthedocs.io/en/latest/queue.html#slurm)

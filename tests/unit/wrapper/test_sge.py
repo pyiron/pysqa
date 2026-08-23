@@ -103,6 +103,12 @@ class TestSGEQueueAdapter(unittest.TestCase):
                 "here",
             )
 
+    def test_get_job_id_from_output(self):
+        self.assertEqual(
+            self.sge._adapter._commands.get_job_id_from_output("2836045.somehost"),
+            2836045,
+        )
+
     def test_convert_queue_status_sge(self):
         with open(os.path.join(self.path, "../../static/sge", "qstat.xml"), "r") as f:
             content = f.read()

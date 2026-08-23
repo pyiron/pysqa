@@ -4,14 +4,24 @@ import json
 import unittest
 import unittest.mock
 from importlib.metadata import entry_points
+
 from pysqa.base.cmd import command_line
+
+try:
+    import defusedxml.ElementTree as ETree
+
+    skip_sge_test = False
+except ImportError:
+    skip_sge_test = True
 
 
 class TestCMD(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.test_dir = os.path.abspath(os.path.dirname(__file__))
-        cls.config_dir = os.path.abspath(os.path.join(cls.test_dir, "..", "..", "static"))
+        cls.config_dir = os.path.abspath(
+            os.path.join(cls.test_dir, "..", "..", "static")
+        )
 
     def test_console_script_entry_point(self):
         """The ``pysqa`` console script must point at an importable callable.
@@ -45,17 +55,21 @@ class TestCMD(unittest.TestCase):
         self.assertEqual(mock_stdout.getvalue(), expected_output)
 
     def test_help(self):
+        from pysqa.base.cmd import _help_message
+
         self.assert_stdout_command_line(
             ["--help"],
             None,
-            "python -m pysqa --help ... coming soon.\n",
+            _help_message() + "\n",
         )
 
     def test_wrong_option(self):
+        from pysqa.base.cmd import _help_message
+
         self.assert_stdout_command_line(
             ["--error"],
             None,
-            "python -m pysqa --help\n",
+            _help_message() + "\n",
         )
 
     def test_submit(self):
@@ -104,7 +118,7 @@ class TestCMD(unittest.TestCase):
             "#SBATCH --get-user-env=L\n",
             "#SBATCH --partition=slurm\n",
             "#SBATCH --time=1\n",
-            '#SBATCH --dependency=afterok:1\n',
+            "#SBATCH --dependency=afterok:1\n",
             "#SBATCH --mem=1GBG\n",
             "#SBATCH --ntasks=10\n",
             "\n",
@@ -143,9 +157,7 @@ class TestCMD(unittest.TestCase):
             shell=False,
             error_filename="pysqa.err",
         ):
-            with open(
-                os.path.join(self.config_dir, "slurm", "squeue_output")
-            ) as f:
+            with open(os.path.join(self.config_dir, "slurm", "squeue_output")) as f:
                 return f.read()
 
         self.assert_stdout_command_line(
@@ -179,6 +191,62 @@ class TestCMD(unittest.TestCase):
             + "\n",
         )
 
+    def test_delete_without_id_raises_value_error(self):
+        with self.assertRaises(ValueError):
+            command_line(
+                arguments_lst=[
+                    "--config_directory",
+                    os.path.join(self.config_dir, "slurm"),
+                    "--delete",
+                ],
+                execute_command=None,
+            )
+
+    def test_reservation_without_id_raises_value_error(self):
+        with self.assertRaises(ValueError):
+            command_line(
+                arguments_lst=[
+                    "--config_directory",
+                    os.path.join(self.config_dir, "slurm"),
+                    "--reservation",
+                ],
+                execute_command=None,
+            )
+
+    @unittest.skipIf(
+        skip_sge_test,
+        "defusedxml is not installed, so the sun grid engine (SGE) tests are skipped.",
+    )
+    def test_reservation_with_id(self):
+        def execute_command(
+            commands,
+            working_directory=None,
+            split_output=True,
+            shell=False,
+            error_filename="pysqa.err",
+        ):
+            return "Reservation enabled\n"
+
+        self.assert_stdout_command_line(
+            [
+                "--config_directory",
+                os.path.join(self.config_dir, "sge"),
+                "--reservation",
+                "--id",
+                "1",
+            ],
+            execute_command,
+            "R\n",
+        )
+
+    @unittest.mock.patch("sys.argv", ["pysqa", "--help"])
+    def test_default_arguments_lst_uses_sys_argv(self):
+        from pysqa.base.cmd import _help_message
+
+        with unittest.mock.patch("sys.stdout", new_callable=io.StringIO) as mock_stdout:
+            command_line(arguments_lst=None, execute_command=None)
+        self.assertEqual(mock_stdout.getvalue(), _help_message() + "\n")
+
     def test_list(self):
         def execute_command(
             commands,
@@ -203,16 +271,10 @@ class TestCMD(unittest.TestCase):
                     "dirs": [os.path.join(self.config_dir, "slurm")],
                     "files": sorted(
                         [
-                            os.path.join(
-                                self.config_dir, "slurm", "squeue_output"
-                            ),
-                            os.path.join(
-                                self.config_dir, "slurm", "slurm_extra.sh"
-                            ),
+                            os.path.join(self.config_dir, "slurm", "squeue_output"),
+                            os.path.join(self.config_dir, "slurm", "slurm_extra.sh"),
                             os.path.join(self.config_dir, "slurm", "slurm.sh"),
-                            os.path.join(
-                                self.config_dir, "slurm", "queue.yaml"
-                            ),
+                            os.path.join(self.config_dir, "slurm", "queue.yaml"),
                         ]
                     ),
                 }
