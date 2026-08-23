@@ -34,7 +34,7 @@ Modern computational research increasingly relies on automated execution of simu
 # State of the field 
 Several software projects address related challenges. MyQueue [@myqueue] provides a higher-level task and workflow abstraction designed for scientific computing campaigns. PSI/J [@psij] offers a portable job execution API spanning multiple schedulers and execution backends. Jobflow-Remote focuses on remote execution of workflow graphs within the Jobflow ecosystem [@jobflow]. These tools provide broader workflow or interoperability capabilities, but they also introduce additional abstractions and infrastructure requirements.
 
-pysqa addresses a different use case. It provides a minimal abstraction layer between Python applications and HPC schedulers while deliberately avoiding workflow management, databases, or orchestration services. The resulting design minimizes dependencies, simplifies deployment, and allows users to continue working with familiar scheduler submission scripts. This approach is particularly valuable for scientific software projects that require scheduler portability without adopting a complete workflow framework. Additionaly, pysqa can also be implemented as a module in existing workflow frameworks [@pyiron] and task schedulers [@executorlib].
+pysqa addresses a different use case. It provides a minimal abstraction layer between Python applications and HPC schedulers while deliberately avoiding workflow management, databases, or orchestration services. The resulting design minimizes dependencies, simplifies deployment, and allows users to continue working with familiar scheduler submission scripts. This approach is particularly valuable for scientific software projects that require scheduler portability without adopting a complete workflow framework. Additionally, pysqa can also be implemented as a module in existing workflow frameworks [@pyiron] and task schedulers [@executorlib].
 
 
 # Software design
@@ -75,7 +75,7 @@ queues:
 
 This configuration provides a machine-readable description of the HPC environment and can be shared across users and projects.
 
-The scheduler submission scripts themselves are defined using Jinja2 templates. For example, a Slurm submission template can be written as:
+The scheduler submission scripts themselves are defined using Jinja2 templates. For example, a SLURM submission template can be written as:
 
 ```
 #!/bin/bash
@@ -87,18 +87,18 @@ The scheduler submission scripts themselves are defined using Jinja2 templates. 
 {{command}}
 ```
 
-The use of Jinja2 templates preserves the familiar scheduler-native submission scripts that HPC users and administrators already maintain. Existing Slurm, PBS, or Flux scripts can typically be converted with only minor modifications by replacing fixed values with template variables. During job submission, pysqa combines the resource parameters provided through the Python interface with the cluster configuration and renders the corresponding scheduler script before submitting it through the scheduler’s native command-line tools.
+The use of Jinja2 templates preserves the familiar scheduler-native submission scripts that HPC users and administrators already maintain. Existing SLURM, PBS, or Flux scripts can typically be converted with only minor modifications by replacing fixed values with template variables. During job submission, pysqa combines the resource parameters provided through the Python interface with the cluster configuration and renders the corresponding scheduler script before submitting it through the scheduler’s native command-line tools.
 
 This separation of concerns provides three advantages. First, application developers interact with a consistent Python API independent of the underlying scheduler. Second, cluster-specific configuration is maintained centrally in YAML files rather than being embedded in application code. Third, scheduler experts retain full control over the generated submission scripts using familiar scheduler directives and scripting practices. As a result, pysqa combines the programmability of a Python interface with the transparency and flexibility of traditional scheduler-native workflows.
 
 # Research impact statement
-pysqa was initially developed as a module of the pyiron workflow environment [@pyiron]. It was spun-off into an standalone package to be used in different components of the pyiron ecosystem including executorlib [@executorlib]. Since the spin-off external projects started to use pysqa including ropt [@ropt], DREAMS [@dreams], nipoppy [@nipoppy] and matsci-agent [@matsci-agent].
+pysqa was initially developed as a module of the pyiron workflow environment [@pyiron]. It was spun off into a standalone package to be used in different components of the pyiron ecosystem including executorlib [@executorlib]. Since the spin-off external projects started to use pysqa including ropt [@ropt], DREAMS [@dreams], nipoppy [@nipoppy] and matsci-agent [@matsci-agent].
 
 # Additional Details 
-The full documentation including a number of examples for the individual features is available at [pysqa.readthedocs.io](https://pysqa.readthedocs.io) with the corresponding source code at [github.com/pyiron/pysqa](https://github.com/pyiron/pysqa). pysqa is developed an as open-source library with a focus on stability. 
+The full documentation including a number of examples for the individual features is available at [pysqa.readthedocs.io](https://pysqa.readthedocs.io) with the corresponding source code at [github.com/pyiron/pysqa](https://github.com/pyiron/pysqa). pysqa is developed as an open-source library with a focus on stability. 
 
 # AI usage disclosure
-The initial version of pysqa was developed without the usage of AI. Github Co-pilot and Claude Code from Anthropic were used to extend type hints, docstrings and encrich the documentation of pysqa. Finally, ChatGPT was used for writing the first draft of the manuscript, proofreading and the conceptualization of the visuals.
+The initial version of pysqa was developed without the usage of AI. Github Co-pilot and Claude Code from Anthropic were used to extend type hints, docstrings and enrich the documentation of pysqa. Finally, ChatGPT was used for writing the first draft of the manuscript, proofreading and the conceptualization of the visuals.
 
 # Acknowledgements
 J.J. and J.N. acknowledge funding from the Deutsche Forschungsgemeinschaft (DFG) through the CRC1394 “Structural and Chemical Atomic Complexity – From Defect Phase Diagrams to Material Properties”, project ID 409476157. 
