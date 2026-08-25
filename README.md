@@ -53,7 +53,7 @@ from within `pysqa`, which are represented to the user as a single resource.
   * [conda-based installation](https://pysqa.readthedocs.io/en/latest/installation.html#conda-based-installation)
 * [Queuing Systems](https://pysqa.readthedocs.io/en/latest/queue.html)
   * [Flux](https://pysqa.readthedocs.io/en/latest/queue.html#flux)
-  * [LSF]](https://pysqa.readthedocs.io/en/latest/queue.html#lsf)
+  * [LSF](https://pysqa.readthedocs.io/en/latest/queue.html#lsf)
   * [MOAB](https://pysqa.readthedocs.io/en/latest/queue.html#moab)
   * [SGE](https://pysqa.readthedocs.io/en/latest/queue.html#sge)
   * [SLURM](https://pysqa.readthedocs.io/en/latest/queue.html#slurm)
