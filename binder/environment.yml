@@ -11,4 +11,4 @@ dependencies:
 - tqdm =4.70.0
 - hatchling =1.32.0
 - hatch-vcs =0.5.0
-- pydantic =2.13.4
+- pydantic =2.13.5
