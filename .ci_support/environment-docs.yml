@@ -13,6 +13,6 @@ dependencies:
 - tqdm =4.70.0
 - jupyter-book =1.0.0
 - python =3.12
-- pydantic =2.13.4
+- pydantic =2.13.5
 - hatchling =1.32.0
 - hatch-vcs =0.5.0
