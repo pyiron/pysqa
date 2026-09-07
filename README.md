@@ -19,7 +19,7 @@ using the built-in functionality of the queuing system. Finally, `pysqa` enables
 using SSH including support for two factor authentication via [pyauthenticator](https://github.com/jan-janssen/pyauthenticator), 
 this allows the users to submit task from a python process on their local workstation to remote HPC clusters.
 
-All this functionality is available from both the [Python interface](https://pysqa.readthedocs.io/en/latest/example.html) 
+All this functionality is available from both the [Python interface](https://pysqa.readthedocs.io/en/latest/example_queue_type.html) 
 as well as the [command line interface](https://pysqa.readthedocs.io/en/latest/command.html). 
 
 ## Features
