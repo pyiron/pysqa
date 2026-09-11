@@ -4,6 +4,7 @@
 [![Documentation Status](https://readthedocs.org/projects/pysqa/badge/?version=latest)](https://pysqa.readthedocs.io/en/latest/?badge=latest)
 [![codecov](https://codecov.io/gh/pyiron/pysqa/graph/badge.svg?token=N753OWIAUW)](https://codecov.io/gh/pyiron/pysqa)
 [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/pyiron/pysqa/HEAD?labpath=example_config.ipynb)
+[![DOI](https://joss.theoj.org/papers/10.21105/joss.10961/status.svg)](https://doi.org/10.21105/joss.10961)
 ![GitHub Repo stars](https://img.shields.io/github/stars/pyiron/pysqa)
 
 High-performance computing (HPC) does not have to be hard. In this context the aim of the Python Simple Queuing System 
@@ -87,19 +88,18 @@ request features, seek support and submit code, and the [code of conduct](CODE_O
 standards. Bugs and feature requests are tracked on the [issue tracker](https://github.com/pyiron/pysqa/issues). 
 
 ## License
-`pysqa` is released under the [BSD license](https://github.com/pyiron/pysqa/blob/main/LICENSE) . It is a spin-off of the 
-[pyiron project](https://pyiron.org) therefore if you use `pysqa` for calculation which result in a scientific 
-publication, please cite: 
+`pysqa` is released under the [BSD license](https://github.com/pyiron/pysqa/blob/main/LICENSE) . Still if you use 
+`pysqa` for applications which result in a scientific publication, please cite: 
 
-    @article{pyiron-paper,
-      title = {pyiron: An integrated development environment for computational materials science},
-      journal = {Computational Materials Science},
-      volume = {163},
-      pages = {24 - 36},
-      year = {2019},
-      issn = {0927-0256},
-      doi = {https://doi.org/10.1016/j.commatsci.2018.07.043},
-      url = {http://www.sciencedirect.com/science/article/pii/S0927025618304786},
-      author = {Jan Janssen and Sudarsan Surendralal and Yury Lysogorskiy and Mira Todorova and Tilmann Hickel and Ralf Drautz and Jörg Neugebauer},
-      keywords = {Modelling workflow, Integrated development environment, Complex simulation protocols},
+    @article{pysqa,
+      author = {Janssen, Jan and Neugebauer, Joerg}, 
+      title = {pysqa - Python Simple Queuing System Adapter}, 
+      journal = {Journal of Open Source Software},
+      doi = {10.21105/joss.10961},
+      url = {https://doi.org/10.21105/joss.10961},
+      year = {2026},
+      publisher = {The Open Journal},
+      volume = {11},
+      number = {125},
+      pages = {10961}
     }
