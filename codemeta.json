@@ -1,0 +1,30 @@
+{
+  "@context": "https://raw.githubusercontent.com/codemeta/codemeta/master/codemeta.jsonld",
+  "@type": "Code",
+  "author": [
+    {
+      "@id": "https://orcid.org/0000-0001-9948-7119",
+      "@type": "Person",
+      "email": "j.janssen@mpi-susmat.de",
+      "name": "Jan Janssen",
+      "affiliation": "Max Planck Institute for Sustainable Materials, Düsseldorf, Germany"
+    },
+    {
+      "@id": "https://orcid.org/0000-0002-7903-2472",
+      "@type": "Person",
+      "email": "j.neugebauer@mpi-susmat.de",
+      "name": "Joerg Neugebauer",
+      "affiliation": "Max Planck Institute for Sustainable Materials, Düsseldorf, Germany"
+    }
+  ],
+  "identifier": "",
+  "codeRepository": "https://github.com/pyiron/pysqa",
+  "datePublished": "2026-06-14",
+  "dateModified": "2026-06-14",
+  "dateCreated": "2026-06-14",
+  "description": "Simple HPC queuing system adapter for Python on based jinja templates to automate the submission script creation.",
+  "keywords": "Python, High Performance Computing, Job Scheduler",
+  "license": "BSD",
+  "title": "pysqa",
+  "version": "0.4.2"
+}
