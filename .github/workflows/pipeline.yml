@@ -222,10 +222,13 @@ jobs:
           python-version: ${{ matrix.python-version }}
           miniforge-version: latest
           condarc-file: .condarc
+          run-init: "false"
           environment-file: .ci_support/environment.yml
       - name: Test
         shell: bash -l {0}
         run: |
+          source "$CONDA/etc/profile.d/conda.sh"
+          conda activate test
           mkdir -p ~/.ssh
           echo "test.rebex.net,195.144.107.198 ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBLZcZopPvkxYERubWeSrWOSHpxJdR14WFVES/Q3hFguTn6L+0EANqYcbRXhGBUV6SjR7SaxZACXSxOzgCtG4kwc=" > ~/.ssh/known_hosts
           pip install . --no-deps --no-build-isolation
