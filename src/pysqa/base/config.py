@@ -1,5 +1,5 @@
 import os
-from typing import Callable, Optional, Union
+from collections.abc import Callable
 
 import pandas
 import yaml
@@ -191,14 +191,12 @@ class QueueAdapterWithConfig(QueueAdapterCore):
 
     def check_queue_parameters(
         self,
-        queue: Optional[str],
+        queue: str | None,
         cores: int = 1,
-        run_time_max: Optional[int] = None,
-        memory_max: Optional[Union[int, str]] = None,
-        active_queue: Optional[dict] = None,
-    ) -> tuple[
-        Union[float, int, None], Union[float, int, None], Union[float, int, str, None]
-    ]:
+        run_time_max: int | None = None,
+        memory_max: int | str | None = None,
+        active_queue: dict | None = None,
+    ) -> tuple[float | int | None, float | int | None, float | int | str | None]:
         """
         Check the parameters of a queue.
 
@@ -223,14 +221,14 @@ class QueueAdapterWithConfig(QueueAdapterCore):
 
     def _job_submission_template(
         self,
-        queue: Optional[str] = None,
-        submission_template: Optional[Union[str, Template]] = None,
+        queue: str | None = None,
+        submission_template: str | Template | None = None,
         job_name: str = "job.py",
         working_directory: str = ".",
         cores: int = 1,
-        memory_max: Optional[Union[int, str]] = None,
-        run_time_max: Optional[int] = None,
-        dependency_list: Optional[list[int]] = None,
+        memory_max: int | str | None = None,
+        run_time_max: int | None = None,
+        dependency_list: list[int] | None = None,
         command: str = "",
         **kwargs,
     ) -> str:

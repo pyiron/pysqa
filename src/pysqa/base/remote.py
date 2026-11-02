@@ -2,7 +2,7 @@ import getpass
 import json
 import os
 import warnings
-from typing import Callable, Optional, Union
+from collections.abc import Callable
 
 import pandas
 import paramiko
@@ -99,7 +99,7 @@ class RemoteQueueAdapter(QueueAdapterWithConfig):
             )
         else:
             self._ssh_known_hosts = ""
-        self._ssh_ask_for_password: Union[bool, str] = False
+        self._ssh_ask_for_password: bool | str = False
         self._ssh_key = (
             os.path.abspath(os.path.expanduser(config["ssh_key"]))
             if "ssh_key" in config
@@ -126,8 +126,8 @@ class RemoteQueueAdapter(QueueAdapterWithConfig):
         )
         self._ssh_port = int(config.get("ssh_port", 22))
         self._ssh_continous_connection = config.get("ssh_continous_connection", False)
-        self._ssh_connection: Union[SSHClient, None] = None
-        self._ssh_proxy_connection: Union[SSHClient, None] = None
+        self._ssh_connection: SSHClient | None = None
+        self._ssh_proxy_connection: SSHClient | None = None
         self._python_executable = config.get("python_executable", "python")
         self._remote_flag = True
 
@@ -146,15 +146,15 @@ class RemoteQueueAdapter(QueueAdapterWithConfig):
 
     def submit_job(
         self,
-        queue: Optional[str] = None,
+        queue: str | None = None,
         job_name: str = "pysqa",
-        working_directory: Optional[str] = None,
+        working_directory: str | None = None,
         cores: int = 1,
-        memory_max: Optional[Union[int, str]] = None,
-        run_time_max: Optional[int] = None,
-        dependency_list: Optional[list[int]] = None,
+        memory_max: int | str | None = None,
+        run_time_max: int | None = None,
+        dependency_list: list[int] | None = None,
         command: str = "",
-        submission_template: Optional[Union[str, Template]] = None,
+        submission_template: str | Template | None = None,
         **kwargs,
     ) -> int:
         """
@@ -210,7 +210,7 @@ class RemoteQueueAdapter(QueueAdapterWithConfig):
             command=self._delete_command(job_id=process_id)
         )
 
-    def get_queue_status(self, user: Optional[str] = None) -> pandas.DataFrame:
+    def get_queue_status(self, user: str | None = None) -> pandas.DataFrame:
         """
         Retrieves the queue status.
 
@@ -492,12 +492,12 @@ class RemoteQueueAdapter(QueueAdapterWithConfig):
 
     def _submit_command(
         self,
-        queue: Optional[str] = None,
-        job_name: Optional[str] = None,
-        working_directory: Optional[str] = None,
+        queue: str | None = None,
+        job_name: str | None = None,
+        working_directory: str | None = None,
         cores: int = 1,
-        memory_max: Optional[int] = None,
-        run_time_max: Optional[int] = None,
+        memory_max: int | None = None,
+        run_time_max: int | None = None,
         command_str: str = "",
     ) -> str:
         """
@@ -596,7 +596,7 @@ class RemoteQueueAdapter(QueueAdapterWithConfig):
             os.path.relpath(working_directory, self._ssh_local_path),
         )
 
-    def _create_remote_dir(self, directory: Union[str, list[str]]) -> None:
+    def _create_remote_dir(self, directory: str | list[str]) -> None:
         """
         Creates a remote directory on the SSH server.
 

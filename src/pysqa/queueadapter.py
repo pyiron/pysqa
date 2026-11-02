@@ -1,5 +1,5 @@
 import os
-from typing import Callable, Optional, Union
+from collections.abc import Callable
 
 import pandas
 from jinja2 import Template
@@ -40,8 +40,8 @@ class QueueAdapter(QueueAdapterAbstractClass):
 
     def __init__(
         self,
-        directory: Optional[str] = None,
-        queue_type: Optional[str] = None,
+        directory: str | None = None,
+        queue_type: str | None = None,
         execute_command: Callable = execute_command,
     ):
         """
@@ -111,7 +111,7 @@ class QueueAdapter(QueueAdapterAbstractClass):
         self._adapter = self._queue_dict[cluster_name]
 
     @property
-    def config(self) -> Union[dict, None]:
+    def config(self) -> dict | None:
         """
         Get the QueueAdapter configuration.
 
@@ -150,7 +150,7 @@ class QueueAdapter(QueueAdapterAbstractClass):
             return False
 
     @property
-    def queue_list(self) -> Union[list[str], None]:
+    def queue_list(self) -> list[str] | None:
         """
         Get the list of available queues.
 
@@ -163,7 +163,7 @@ class QueueAdapter(QueueAdapterAbstractClass):
             return None
 
     @property
-    def queue_view(self) -> Union[pandas.DataFrame, None]:
+    def queue_view(self) -> pandas.DataFrame | None:
         """
         Get the Pandas DataFrame representation of the available queues.
 
@@ -176,7 +176,7 @@ class QueueAdapter(QueueAdapterAbstractClass):
             return None
 
     @property
-    def queues(self) -> Union[Queues, None]:
+    def queues(self) -> Queues | None:
         """
         Get the list of available queues.
 
@@ -190,15 +190,15 @@ class QueueAdapter(QueueAdapterAbstractClass):
 
     def submit_job(
         self,
-        queue: Optional[str] = None,
-        job_name: Optional[str] = None,
-        working_directory: Optional[str] = None,
-        cores: Optional[int] = None,
-        memory_max: Optional[Union[int, str]] = None,
-        run_time_max: Optional[int] = None,
-        dependency_list: Optional[list[int]] = None,
-        command: Optional[str] = None,
-        submission_template: Optional[Union[str, Template]] = None,
+        queue: str | None = None,
+        job_name: str | None = None,
+        working_directory: str | None = None,
+        cores: int | None = None,
+        memory_max: int | str | None = None,
+        run_time_max: int | None = None,
+        dependency_list: list[int] | None = None,
+        command: str | None = None,
+        submission_template: str | Template | None = None,
         **kwargs,
     ) -> int:
         """
@@ -319,7 +319,7 @@ class QueueAdapter(QueueAdapterAbstractClass):
         """
         return self._adapter.delete_job(process_id=process_id)
 
-    def get_queue_status(self, user: Optional[str] = None) -> pandas.DataFrame:
+    def get_queue_status(self, user: str | None = None) -> pandas.DataFrame:
         """
         Get the status of the queue.
 
@@ -368,12 +368,10 @@ class QueueAdapter(QueueAdapterAbstractClass):
         self,
         queue: str,
         cores: int = 1,
-        run_time_max: Optional[int] = None,
-        memory_max: Optional[int] = None,
-        active_queue: Optional[dict] = None,
-    ) -> tuple[
-        Union[float, int, None], Union[float, int, None], Union[float, int, str, None]
-    ]:
+        run_time_max: int | None = None,
+        memory_max: int | None = None,
+        active_queue: dict | None = None,
+    ) -> tuple[float | int | None, float | int | None, float | int | str | None]:
         """
         Check the parameters of a queue.
 

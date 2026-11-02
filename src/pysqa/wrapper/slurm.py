@@ -1,5 +1,4 @@
 import os
-from typing import Optional, Union
 
 import pandas
 from jinja2 import Template
@@ -58,7 +57,8 @@ class SlurmCommands(SchedulerCommands):
                 *[
                     (int(jobid), user, status.lower(), jobname, working_directory)
                     for jobid, user, status, jobname, working_directory in line_split_lst
-                ]
+                ],
+                strict=True,
             )
         else:
             job_id_lst, user_lst, status_lst, job_name_lst, working_directory_lst = (
@@ -92,13 +92,13 @@ class SlurmCommands(SchedulerCommands):
     @staticmethod
     def render_submission_template(
         command: str,
-        submission_template: Union[str, Template] = template,
+        submission_template: str | Template = template,
         job_name: str = "pysqa",
         working_directory: str = os.path.abspath("."),
         cores: int = 1,
-        memory_max: Optional[Union[int, str]] = None,
-        run_time_max: Optional[int] = None,
-        dependency_list: Optional[list[int]] = None,
+        memory_max: int | str | None = None,
+        run_time_max: int | None = None,
+        dependency_list: list[int] | None = None,
         **kwargs,
     ) -> str:
         """

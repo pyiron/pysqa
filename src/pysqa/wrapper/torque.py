@@ -1,6 +1,5 @@
 import os
 import re
-from typing import Optional, Union
 
 import pandas
 from jinja2 import Template
@@ -113,13 +112,13 @@ class TorqueCommands(SchedulerCommands):
     @staticmethod
     def render_submission_template(
         command: str,
-        submission_template: Union[str, Template] = template,
+        submission_template: str | Template = template,
         job_name: str = "pysqa",
         working_directory: str = os.path.abspath("."),
         cores: int = 1,
-        memory_max: Optional[Union[int, str]] = None,
-        run_time_max: Optional[int] = None,
-        dependency_list: Optional[list[int]] = None,
+        memory_max: int | str | None = None,
+        run_time_max: int | None = None,
+        dependency_list: list[int] | None = None,
         **kwargs,
     ) -> str:
         """

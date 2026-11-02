@@ -3,7 +3,7 @@ requires = [
     "jinja2==3.1.6", 
     "pandas==3.0.6", 
     "pyyaml==6.0.3", 
-    "hatchling==1.32.4",
+    "hatchling==1.33.0",
     "hatch-vcs==0.5.0",
 ]
 build-backend = "hatchling.build"
@@ -17,15 +17,13 @@ authors = [
 readme = "README.md"
 license = { file = "LICENSE" }
 keywords = ["pyiron"]
-requires-python = ">=3.9, <3.16"
+requires-python = ">=3.11, <3.16"
 classifiers = [
     "Development Status :: 5 - Production/Stable",
     "Topic :: Scientific/Engineering :: Physics",
     "License :: OSI Approved :: BSD License",
     "Intended Audience :: Science/Research",
     "Operating System :: OS Independent",
-    "Programming Language :: Python :: 3.9",
-    "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",

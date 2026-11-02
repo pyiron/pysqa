@@ -2,7 +2,7 @@ import getpass
 import importlib
 import os
 import subprocess
-from typing import Callable, Optional, Union
+from collections.abc import Callable
 
 import pandas
 from jinja2 import Template
@@ -10,7 +10,7 @@ from jinja2 import Template
 from pysqa.base.abstract import QueueAdapterAbstractClass
 from pysqa.wrapper.abstract import SchedulerCommands
 
-queue_type_dict: dict[str, dict[str, Union[str, None]]] = {
+queue_type_dict: dict[str, dict[str, str | None]] = {
     "SGE": {
         "class_name": "SunGridEngineCommands",
         "module_name": "pysqa.wrapper.sge",
@@ -47,12 +47,12 @@ queue_type_dict: dict[str, dict[str, Union[str, None]]] = {
 
 
 def execute_command(
-    commands: Union[str, list[str]],
-    working_directory: Optional[str] = None,
+    commands: str | list[str],
+    working_directory: str | None = None,
     split_output: bool = True,
     shell: bool = False,
     error_filename: str = "pysqa.err",
-) -> Union[str, list[str], None]:
+) -> str | list[str] | None:
     """
     A wrapper around the subprocess.check_output function.
 
@@ -90,7 +90,7 @@ def execute_command(
         return out
 
 
-def get_queue_commands(queue_type: str) -> Union[SchedulerCommands, None]:
+def get_queue_commands(queue_type: str) -> SchedulerCommands | None:
     """
     Load queuing system commands class
 
@@ -141,17 +141,17 @@ class QueueAdapterCore(QueueAdapterAbstractClass):
 
     def submit_job(
         self,
-        queue: Optional[str] = None,
+        queue: str | None = None,
         job_name: str = "pysqa",
-        working_directory: Optional[str] = None,
+        working_directory: str | None = None,
         cores: int = 1,
-        memory_max: Optional[Union[int, str]] = None,
-        run_time_max: Optional[int] = None,
-        dependency_list: Optional[list[int]] = None,
+        memory_max: int | str | None = None,
+        run_time_max: int | None = None,
+        dependency_list: list[int] | None = None,
         command: str = "",
-        submission_template: Optional[Union[str, Template]] = None,
+        submission_template: str | Template | None = None,
         **kwargs,
-    ) -> Union[int, None]:
+    ) -> int | None:
         """
         Submit a job to the queue.
 
@@ -217,7 +217,7 @@ class QueueAdapterCore(QueueAdapterAbstractClass):
                 return out[0]
         return None
 
-    def delete_job(self, process_id: int) -> Union[str, None]:
+    def delete_job(self, process_id: int) -> str | None:
         """
         Delete a job.
 
@@ -236,9 +236,7 @@ class QueueAdapterCore(QueueAdapterAbstractClass):
                 return out[0]
         return None
 
-    def get_queue_status(
-        self, user: Optional[str] = None
-    ) -> Union[pandas.DataFrame, None]:
+    def get_queue_status(self, user: str | None = None) -> pandas.DataFrame | None:
         """
         Get the status of the queue.
 
@@ -269,7 +267,7 @@ class QueueAdapterCore(QueueAdapterAbstractClass):
         """
         return self.get_queue_status(user=self._get_user())
 
-    def get_status_of_job(self, process_id: int) -> Union[str, None]:
+    def get_status_of_job(self, process_id: int) -> str | None:
         """
         Get the status of a job.
 
@@ -324,8 +322,8 @@ class QueueAdapterCore(QueueAdapterAbstractClass):
 
     def _execute_command(
         self,
-        commands: Union[str, list[str]],
-        working_directory: Optional[str] = None,
+        commands: str | list[str],
+        working_directory: str | None = None,
         split_output: bool = True,
         shell: bool = False,
         error_filename: str = "pysqa.err",
@@ -353,14 +351,14 @@ class QueueAdapterCore(QueueAdapterAbstractClass):
 
     def _write_queue_script(
         self,
-        queue: Optional[str] = None,
-        submission_template: Optional[Union[str, Template]] = None,
+        queue: str | None = None,
+        submission_template: str | Template | None = None,
         job_name: str = "pysqa",
-        working_directory: Optional[str] = None,
+        working_directory: str | None = None,
         cores: int = 1,
-        memory_max: Optional[Union[int, str]] = None,
-        run_time_max: Optional[int] = None,
-        dependency_list: Optional[list[int]] = None,
+        memory_max: int | str | None = None,
+        run_time_max: int | None = None,
+        dependency_list: list[int] | None = None,
         command: str = "",
         **kwargs,
     ) -> tuple[str, str]:
@@ -404,14 +402,14 @@ class QueueAdapterCore(QueueAdapterAbstractClass):
 
     def _job_submission_template(
         self,
-        queue: Optional[str] = None,
-        submission_template: Optional[Union[str, Template]] = None,
+        queue: str | None = None,
+        submission_template: str | Template | None = None,
         job_name: str = "pysqa",
         working_directory: str = ".",
         cores: int = 1,
-        memory_max: Optional[Union[int, str]] = None,
-        run_time_max: Optional[int] = None,
-        dependency_list: Optional[list[int]] = None,
+        memory_max: int | str | None = None,
+        run_time_max: int | None = None,
+        dependency_list: list[int] | None = None,
         command: str = "",
         **kwargs,
     ) -> str:
