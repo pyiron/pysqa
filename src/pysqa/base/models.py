@@ -1,5 +1,3 @@
-from typing import Optional, Union
-
 from pydantic import BaseModel, ConfigDict
 
 
@@ -10,11 +8,11 @@ class QueueModel(BaseModel):
 
     model_config = ConfigDict(extra="allow")
 
-    script: Optional[str] = None
-    cores_min: Optional[int] = None
-    cores_max: Optional[int] = None
-    run_time_max: Optional[int] = None
-    memory_max: Optional[Union[int, str]] = None
+    script: str | None = None
+    cores_min: int | None = None
+    cores_max: int | None = None
+    run_time_max: int | None = None
+    memory_max: int | str | None = None
 
 
 class ConfigModel(BaseModel):
@@ -25,24 +23,24 @@ class ConfigModel(BaseModel):
     model_config = ConfigDict(extra="allow")
 
     queue_type: str
-    queue_primary: Optional[str] = None
-    ssh_host: Optional[str] = None
-    ssh_username: Optional[str] = None
-    known_hosts: Optional[str] = None
-    ssh_key: Optional[str] = None
-    ssh_password: Optional[str] = None
-    ssh_ask_for_password: Optional[str] = None
-    ssh_key_passphrase: Optional[str] = None
+    queue_primary: str | None = None
+    ssh_host: str | None = None
+    ssh_username: str | None = None
+    known_hosts: str | None = None
+    ssh_key: str | None = None
+    ssh_password: str | None = None
+    ssh_ask_for_password: str | None = None
+    ssh_key_passphrase: str | None = None
     ssh_two_factor_authentication: bool = False
-    ssh_authenticator_service: Optional[str] = None
-    ssh_proxy_host: Optional[str] = None
-    ssh_remote_config_dir: Optional[str] = None
-    ssh_remote_path: Optional[str] = None
-    ssh_local_path: Optional[str] = None
-    ssh_port: Optional[int] = None
+    ssh_authenticator_service: str | None = None
+    ssh_proxy_host: str | None = None
+    ssh_remote_config_dir: str | None = None
+    ssh_remote_path: str | None = None
+    ssh_local_path: str | None = None
+    ssh_port: int | None = None
     ssh_continous_connection: bool = False
     ssh_delete_file_on_remote: bool = True
-    python_executable: Optional[str] = None
+    python_executable: str | None = None
     queues: dict[str, QueueModel]
 
 

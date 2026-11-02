@@ -2,14 +2,14 @@ import getopt
 import json
 import os
 import sys
-from typing import Callable, Optional
+from collections.abc import Callable
 
 from pysqa.base.core import execute_command
 from pysqa.queueadapter import QueueAdapter
 
 
 def command_line(
-    arguments_lst: Optional[list] = None, execute_command: Callable = execute_command
+    arguments_lst: list | None = None, execute_command: Callable = execute_command
 ) -> None:
     """
     Parse the command line arguments.

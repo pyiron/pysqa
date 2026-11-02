@@ -1,5 +1,4 @@
 from abc import ABC, abstractmethod
-from typing import Optional, Union
 
 import pandas
 from jinja2 import Template
@@ -9,17 +8,17 @@ class QueueAdapterAbstractClass(ABC):
     @abstractmethod
     def submit_job(
         self,
-        queue: Optional[str] = None,
+        queue: str | None = None,
         job_name: str = "pysqa",
-        working_directory: Optional[str] = None,
+        working_directory: str | None = None,
         cores: int = 1,
-        memory_max: Optional[Union[int, str]] = None,
-        run_time_max: Optional[int] = None,
-        dependency_list: Optional[list[int]] = None,
+        memory_max: int | str | None = None,
+        run_time_max: int | None = None,
+        dependency_list: list[int] | None = None,
         command: str = "",
-        submission_template: Optional[Union[str, Template]] = None,
+        submission_template: str | Template | None = None,
         **kwargs,
-    ) -> Union[int, None]:
+    ) -> int | None:
         pass
 
     @abstractmethod
@@ -27,11 +26,11 @@ class QueueAdapterAbstractClass(ABC):
         pass
 
     @abstractmethod
-    def delete_job(self, process_id: int) -> Union[str, None]:
+    def delete_job(self, process_id: int) -> str | None:
         pass
 
     @abstractmethod
-    def get_queue_status(self, user: Optional[str] = None) -> pandas.DataFrame:
+    def get_queue_status(self, user: str | None = None) -> pandas.DataFrame:
         """
         Get the status of the queue.
 
@@ -54,7 +53,7 @@ class QueueAdapterAbstractClass(ABC):
         pass
 
     @abstractmethod
-    def get_status_of_job(self, process_id: int) -> Union[str, None]:
+    def get_status_of_job(self, process_id: int) -> str | None:
         """
         Get the status of a job.
 

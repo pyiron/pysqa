@@ -1,15 +1,12 @@
 import re
-from typing import Optional, Union
 
 
 def check_queue_parameters(
     active_queue: dict[str, int],
-    cores: Union[float, int, None] = 1,
-    run_time_max: Optional[Union[float, int]] = None,
-    memory_max: Optional[Union[int, float, str]] = None,
-) -> tuple[
-    Union[float, int, None], Union[float, int, None], Union[str, float, int, None]
-]:
+    cores: float | int | None = 1,
+    run_time_max: float | int | None = None,
+    memory_max: int | float | str | None = None,
+) -> tuple[float | int | None, float | int | None, str | float | int | None]:
     """
     Check the parameters of a queue.
 
@@ -38,7 +35,7 @@ def check_queue_parameters(
     return cores, run_time_max, memory_max
 
 
-def value_error_if_none(value: Union[str, None]) -> None:
+def value_error_if_none(value: str | None) -> None:
     """
     Raise a ValueError if the value is None or not a string.
 
@@ -56,10 +53,10 @@ def value_error_if_none(value: Union[str, None]) -> None:
 
 
 def value_in_range(
-    value: Optional[Union[int, float]] = None,
-    value_min: Optional[Union[int, float]] = None,
-    value_max: Optional[Union[int, float]] = None,
-) -> Union[int, float, None]:
+    value: int | float | None = None,
+    value_min: int | float | None = None,
+    value_max: int | float | None = None,
+) -> int | float | None:
     """
     Check if a value is within a specified range.
 
@@ -113,10 +110,10 @@ def _is_memory_string(value: str) -> bool:
 
 
 def _memory_spec_string_to_value(
-    value: Union[str, int, float],
+    value: str | int | float,
     default_magnitude: str = "m",
     target_magnitude: str = "b",
-) -> Union[int, float, str]:
+) -> int | float | str:
     """
     Converts a valid memory string (tested by _is_memory_string) into an integer/float value of desired
     magnitude `default_magnitude`. If it is a plain integer string (e.g.: '50000') it will be interpreted with

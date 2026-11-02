@@ -1,4 +1,4 @@
-from typing import Callable, Optional, Union
+from collections.abc import Callable
 
 import pandas
 from jinja2 import Template
@@ -47,17 +47,17 @@ class ModularQueueAdapter(QueueAdapterWithConfig):
 
     def submit_job(
         self,
-        queue: Optional[str] = None,
+        queue: str | None = None,
         job_name: str = "pysqa",
-        working_directory: Optional[str] = None,
+        working_directory: str | None = None,
         cores: int = 1,
-        memory_max: Optional[Union[int, str]] = None,
-        run_time_max: Optional[int] = None,
-        dependency_list: Optional[list[int]] = None,
+        memory_max: int | str | None = None,
+        run_time_max: int | None = None,
+        dependency_list: list[int] | None = None,
         command: str = "",
-        submission_template: Optional[Union[str, Template]] = None,
+        submission_template: str | Template | None = None,
         **kwargs,
-    ) -> Union[int, None]:
+    ) -> int | None:
         """
         Submit a job to the queue.
 
@@ -160,9 +160,7 @@ class ModularQueueAdapter(QueueAdapterWithConfig):
                 return out[0]
         return None
 
-    def get_queue_status(
-        self, user: Optional[str] = None
-    ) -> Union[pandas.DataFrame, None]:
+    def get_queue_status(self, user: str | None = None) -> pandas.DataFrame | None:
         """
         Get the queue status.
 
