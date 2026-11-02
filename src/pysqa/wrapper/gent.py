@@ -59,7 +59,8 @@ class GentCommands(SlurmCommands):
             *[
                 (int(jobid), user, status.lower(), jobname, queue)
                 for jobid, user, status, jobname in line_split_lst
-            ]
+            ],
+            strict=True,
         )
         return pandas.DataFrame(
             {

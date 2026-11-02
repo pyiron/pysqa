@@ -58,7 +58,8 @@ class SlurmCommands(SchedulerCommands):
                 *[
                     (int(jobid), user, status.lower(), jobname, working_directory)
                     for jobid, user, status, jobname, working_directory in line_split_lst
-                ]
+                ],
+                strict=True,
             )
         else:
             job_id_lst, user_lst, status_lst, job_name_lst, working_directory_lst = (
