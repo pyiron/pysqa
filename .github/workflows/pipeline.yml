@@ -177,9 +177,7 @@ jobs:
     - uses: astral-sh/setup-uv@v7
     - name: Install the project and pip check
       shell: bash -l {0}
-      run: |
-        uv sync --all-extras --dev
-        pip check
+      run: uv run --all-extras --dev -- uv pip check
 
   unittest_matrix:
     needs: [black]
@@ -261,7 +259,7 @@ jobs:
 
   unittest_slurm:
     needs: [black]
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     services:
       mysql:
         image: mysql:8.0
