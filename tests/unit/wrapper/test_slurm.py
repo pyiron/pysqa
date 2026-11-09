@@ -191,6 +191,8 @@ echo \"hello\""""
             shell=False,
             error_filename="pysqa.err",
         ):
+            if commands[0] == "sacct":
+                return ""
             with open(os.path.join(self.path,  "..", "..", "static", "slurm", "squeue_output")) as f:
                 return f.read()
 
@@ -237,6 +239,66 @@ echo \"hello\""""
 
         with self.assertRaises(NotImplementedError):
             slurm_tmp._adapter.get_job_from_remote(working_directory=".")
+
+
+class TestSlurmAccounting(unittest.TestCase):
+    @staticmethod
+    def _get_queue_adapter(sacct_output):
+        def execute_command(
+            commands,
+            working_directory=None,
+            split_output=True,
+            shell=False,
+            error_filename="pysqa.err",
+        ):
+            if commands[0] == "sacct":
+                return sacct_output
+            return ""
+
+        return QueueAdapter(queue_type="SLURM", execute_command=execute_command)
+
+    def test_get_job_status_command(self):
+        from pysqa.wrapper.slurm import SlurmCommands
+
+        self.assertEqual(
+            SlurmCommands().get_job_status_command(process_id=123),
+            [
+                "sacct",
+                "--noheader",
+                "--parsable2",
+                "--allocations",
+                "--format=State",
+                "--jobs",
+                "123",
+            ],
+        )
+
+    def test_convert_job_status(self):
+        from pysqa.wrapper.slurm import SlurmCommands
+
+        self.assertEqual(SlurmCommands.convert_job_status("COMPLETED\n"), "finished")
+        self.assertEqual(SlurmCommands.convert_job_status("\nFAILED\n"), "error")
+        self.assertEqual(SlurmCommands.convert_job_status("TIMEOUT"), "error")
+        self.assertEqual(SlurmCommands.convert_job_status("OUT_OF_MEMORY"), "error")
+        self.assertEqual(SlurmCommands.convert_job_status("CANCELLED by 1001"), "error")
+        self.assertEqual(SlurmCommands.convert_job_status("RUNNING"), "running")
+        self.assertEqual(SlurmCommands.convert_job_status("COMPLETING"), "running")
+        self.assertEqual(SlurmCommands.convert_job_status("PENDING"), "pending")
+        self.assertIsNone(SlurmCommands.convert_job_status(""))
+
+    def test_get_status_of_job_fallback(self):
+        self.assertEqual(
+            self._get_queue_adapter("COMPLETED\n").get_status_of_job(process_id=1),
+            "finished",
+        )
+        self.assertEqual(
+            self._get_queue_adapter("CANCELLED by 1001\n").get_status_of_job(
+                process_id=1
+            ),
+            "error",
+        )
+        self.assertIsNone(self._get_queue_adapter("").get_status_of_job(process_id=1))
+        self.assertIsNone(self._get_queue_adapter(None).get_status_of_job(process_id=1))
 
 
 class TestSlurmQueueAdapterDefault(unittest.TestCase):
@@ -373,6 +435,8 @@ echo \"hello\""""
             shell=False,
             error_filename="pysqa.err",
         ):
+            if commands[0] == "sacct":
+                return ""
             with open(os.path.join(self.path,  "..", "..", "static", "slurm", "squeue_output")) as f:
                 return f.read()
 

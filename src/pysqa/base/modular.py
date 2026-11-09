@@ -191,6 +191,34 @@ class ModularQueueAdapter(QueueAdapterWithConfig):
         else:
             return df[df["user"] == user]
 
+    def _get_status_of_job_from_accounting(self, process_id: int) -> str | None:
+        """
+        Get the status of a job from the accounting database of the queuing system.
+
+        Args:
+            process_id (int): The process ID.
+
+        Returns:
+            str: The status of the job, None if the job is unknown or the queuing system has no accounting database.
+        """
+        if self._commands is None:
+            return None
+        cluster_module, cluster_queue_id = self._resolve_queue_id(
+            process_id=process_id, cluster_dict=self._config["cluster"]
+        )
+        commands = self._commands.get_job_status_command(process_id=cluster_queue_id)
+        if commands is None:
+            return None
+        out = self._execute_command(
+            commands=self._switch_cluster_command(cluster_module=cluster_module)
+            + commands,
+            split_output=False,
+            shell=True,
+        )
+        if out is None:
+            return None
+        return self._commands.convert_job_status(job_status_output=out)
+
     @staticmethod
     def _resolve_queue_id(process_id: int, cluster_dict: dict):
         """
