@@ -271,18 +271,21 @@ class QueueAdapterCore(QueueAdapterAbstractClass):
         """
         Get the status of a job.
 
+        Some queuing systems like SLURM only list active jobs in their queue status. For jobs which are no longer
+        listed, the accounting database of the queuing system is queried as fallback, if available.
+
         Args:
             process_id (int): The process ID.
 
         Returns:
-            str: The status of the job.
+            str: The status of the job, None if the job is unknown to the queuing system.
         """
         df = self.get_queue_status()
         if df is not None:
             df_selected = df[df["jobid"] == process_id]["status"]
             if len(df_selected) != 0:
                 return df_selected.values[0]
-        return None
+        return self._get_status_of_job_from_accounting(process_id=process_id)
 
     def get_status_of_jobs(self, process_id_lst: list[int]) -> list[str]:
         """
@@ -304,6 +307,26 @@ class QueueAdapterCore(QueueAdapterAbstractClass):
                 else:
                     results_lst.append("finished")
         return results_lst
+
+    def _get_status_of_job_from_accounting(self, process_id: int) -> str | None:
+        """
+        Get the status of a job from the accounting database of the queuing system.
+
+        Args:
+            process_id (int): The process ID.
+
+        Returns:
+            str: The status of the job, None if the job is unknown or the queuing system has no accounting database.
+        """
+        if self._commands is None:
+            return None
+        commands = self._commands.get_job_status_command(process_id=process_id)
+        if commands is None:
+            return None
+        out = self._execute_command(commands=commands, split_output=False)
+        if out is None:
+            return None
+        return self._commands.convert_job_status(job_status_output=out)
 
     def _list_command_to_be_executed(self, queue_script_path: str) -> list:
         """

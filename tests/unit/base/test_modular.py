@@ -112,3 +112,46 @@ class TestModularQueueAdapter(unittest.TestCase):
         }
         qa = ModularQueueAdapter(config=config, directory=".")
         self.assertIsNone(qa.get_queue_status())
+
+    def test_get_status_of_job_from_accounting_uses_cluster_and_job_id(self):
+        command_calls = []
+
+        def execute_command(
+            commands,
+            working_directory=None,
+            split_output=True,
+            shell=False,
+            error_filename="pysqa.err",
+        ):
+            command_calls.append(commands)
+            if "sacct" in commands:
+                return "COMPLETED\n"
+            return ""
+
+        config = {
+            "queue_type": "SLURM",
+            "queue_primary": "slurm",
+            "cluster": ["clusterA", "clusterB"],
+            "queues": {"slurm": {"cluster": "clusterA"}},
+        }
+        qa = ModularQueueAdapter(
+            config=config, directory=".", execute_command=execute_command
+        )
+
+        self.assertEqual(qa.get_status_of_job(process_id=121), "finished")
+        self.assertEqual(
+            command_calls[-1],
+            [
+                "module",
+                "--quiet",
+                "swap",
+                "cluster/clusterB;",
+                "sacct",
+                "--noheader",
+                "--parsable2",
+                "--allocations",
+                "--format=State",
+                "--jobs",
+                "12",
+            ],
+        )

@@ -27,6 +27,13 @@ class TestAbstractSchedulerCommands(unittest.TestCase):
     def test_get_queue_status_command(self):
         self.assertIsNone(SchedulerCommands().get_queue_status_command)
 
+    @patch.multiple(SchedulerCommands, __abstractmethods__=set())
+    def test_get_job_status_command(self):
+        self.assertIsNone(SchedulerCommands().get_job_status_command(process_id=1))
+
+    def test_convert_job_status(self):
+        self.assertIsNone(SchedulerCommands.convert_job_status("COMPLETED"))
+
 
 class TestSchedulerCommands(unittest.TestCase):
     @classmethod

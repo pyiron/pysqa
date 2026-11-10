@@ -49,6 +49,33 @@ class SchedulerCommands(ABC):
         """
         pass
 
+    def get_job_status_command(self, process_id: int) -> list[str] | None:
+        """
+        Returns the command to query the status of a single job from the accounting database of the scheduler. This is
+        used as fallback for jobs which are no longer listed in the queue status, for example because they already
+        finished. Queuing systems without such an accounting database return None.
+
+        Args:
+            process_id (int): The queuing system ID of the job.
+
+        Returns:
+            list[str] | None: The command to query the job status or None if not supported.
+        """
+        return None
+
+    @staticmethod
+    def convert_job_status(job_status_output: str) -> str | None:
+        """
+        Converts the output of the job status command to the pysqa job status.
+
+        Args:
+            job_status_output (str): The output of the job status command.
+
+        Returns:
+            str | None: The status of the job or None if the job is unknown.
+        """
+        return None
+
     @staticmethod
     def render_submission_template(
         command: str,

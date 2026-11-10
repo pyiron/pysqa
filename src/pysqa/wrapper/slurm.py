@@ -5,6 +5,25 @@ from jinja2 import Template
 
 from pysqa.wrapper.abstract import SchedulerCommands
 
+# Slurm job states which indicate the job is still active, see "JOB STATE CODES" in "man squeue".
+_slurm_pending_states = {
+    "PENDING",
+    "CONFIGURING",
+    "REQUEUED",
+    "RESV_DEL_HOLD",
+    "REQUEUE_FED",
+    "REQUEUE_HOLD",
+}
+_slurm_running_states = {
+    "RUNNING",
+    "COMPLETING",
+    "RESIZING",
+    "SUSPENDED",
+    "STOPPED",
+    "SIGNALING",
+    "STAGE_OUT",
+}
+
 template = """\
 #!/bin/bash
 #SBATCH --output=time.out
@@ -42,6 +61,39 @@ class SlurmCommands(SchedulerCommands):
     def get_queue_status_command(self) -> list[str]:
         """Returns the command to get the queue status from Slurm."""
         return ["squeue", "--format", "%A|%u|%t|%.15j|%Z", "--noheader"]
+
+    def get_job_status_command(self, process_id: int) -> list[str]:
+        """Returns the command to get the status of a single job from the Slurm accounting database."""
+        return [
+            "sacct",
+            "--noheader",
+            "--parsable2",
+            "--allocations",
+            "--format=State",
+            "--jobs",
+            str(process_id),
+        ]
+
+    @staticmethod
+    def convert_job_status(job_status_output: str) -> str | None:
+        """
+        Converts the output of the Slurm accounting command sacct to the pysqa job status. Successfully completed
+        jobs are reported as "finished", jobs which terminated in any other way (failed, cancelled, timeout, out of
+        memory, node failure, ...) are reported as "error".
+        """
+        for line in job_status_output.splitlines():
+            line_split = line.strip().split()
+            if len(line_split) > 0:
+                state = line_split[0].upper()
+                if state == "COMPLETED":
+                    return "finished"
+                elif state in _slurm_running_states:
+                    return "running"
+                elif state in _slurm_pending_states:
+                    return "pending"
+                else:
+                    return "error"
+        return None
 
     @staticmethod
     def get_job_id_from_output(queue_submit_output: str) -> int:

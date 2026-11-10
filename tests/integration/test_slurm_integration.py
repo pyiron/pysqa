@@ -32,7 +32,7 @@ class TestSlurm(unittest.TestCase):
         job_id = slurm_dynamic.submit_job(command="sleep 1", cores=1, submission_template=submission_template)
         self.assertEqual(slurm_dynamic.get_status_of_job(process_id=job_id), "pending")
         slurm_dynamic.delete_job(process_id=job_id)
-        self.assertIsNone(slurm_dynamic.get_status_of_job(process_id=job_id))
+        self.assertIn(slurm_dynamic.get_status_of_job(process_id=job_id), [None, "error"])
 
     def test_slurm_dependencies(self):
         slurm_dynamic = QueueAdapter(queue_type="slurm")
@@ -42,5 +42,5 @@ class TestSlurm(unittest.TestCase):
         self.assertEqual(slurm_dynamic.get_status_of_job(process_id=job_id_2), "pending")
         slurm_dynamic.delete_job(process_id=job_id_1)
         slurm_dynamic.delete_job(process_id=job_id_2)
-        self.assertIsNone(slurm_dynamic.get_status_of_job(process_id=job_id_1))
-        self.assertIsNone(slurm_dynamic.get_status_of_job(process_id=job_id_2))
+        self.assertIn(slurm_dynamic.get_status_of_job(process_id=job_id_1), [None, "error"])
+        self.assertIn(slurm_dynamic.get_status_of_job(process_id=job_id_2), [None, "error"])
