@@ -47,6 +47,33 @@ users. These new features include the support for remote queuing systems:
 Finally, there is current work in progress to support a combination of [multiple local and remote queuing systems](https://pysqa.readthedocs.io/en/latest/advanced.html) 
 from within `pysqa`, which are represented to the user as a single resource. 
 
+## Why pysqa?
+`pysqa` is the lightest path to submit, monitor and delete jobs on HPC queuing systems from Python, on the cluster or 
+from a local workstation via SSH, by reusing the submission scripts you already have as [jinja2](https://palletsprojects.com/p/jinja/) 
+templates. It deliberately has no workflow layer, no database and no daemon, so it can be embedded as a thin building 
+block inside your own workflow design or workflow framework.
+
+| | pysqa | [PSI/J](https://github.com/ExaWorks/psij-python) | [MyQueue](https://gitlab.com/myqueue/myqueue) | [jobflow-remote](https://github.com/Matgenix/jobflow-remote) |
+|---|---|---|---|---|
+| Focus | queuing system adapter | portable job API | task and workflow management | remote execution of [jobflow](https://github.com/materialsproject/jobflow) workflows |
+| Queuing systems | Flux, LSF, MOAB, SGE, SLURM, TORQUE | Cobalt, Flux, LSF, PBS, SLURM, ... | LSF, PBS, SLURM | PBS, SGE, SLURM |
+| User-defined submission script templates | ✅ | ⚠️ | ⚠️ | ✅ |
+| Remote submission via SSH | ✅ | ❌ | ❌ | ✅ |
+| Command line interface | ✅ | ❌ | ✅ | ✅ |
+| Workflow management | ❌ | ❌ | ✅ | ✅ |
+| Runs without database or daemon | ✅ | ✅ | ✅ | ❌ |
+| Setup / learning overhead | Low | Low | Low | Medium |
+
+✅ first-class · ⚠️ possible via configuration · ❌ not supported. 
+
+Choose another tool when:
+* **PSI/J** - you want a scheduler-agnostic job specification, where resources are described abstractly and translated 
+  to the queuing system, rather than maintaining your own submission script templates.
+* **MyQueue** - you want a ready-to-use task and workflow manager on the cluster, which remembers finished and failed 
+  tasks and automatically restarts tasks that ran out of time or memory.
+* **jobflow-remote** - your workflows are already written in [jobflow](https://github.com/materialsproject/jobflow) and 
+  you want their results stored in a database, managed by a runner daemon.
+
 ## Documentation
 
 * [Installation](https://pysqa.readthedocs.io/en/latest/installation.html)
