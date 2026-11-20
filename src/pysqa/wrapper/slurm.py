@@ -29,7 +29,7 @@ template = """\
 #SBATCH --output=time.out
 #SBATCH --job-name={{job_name}}
 #SBATCH --chdir={{working_directory}}
-#SBATCH --get-user-env=L
+#SBATCH --get-user-env
 #SBATCH --partition={{partition}}
 {%- if run_time_max %}
 #SBATCH --time={{ [1, run_time_max // 60]|max }}

@@ -122,7 +122,7 @@ class TestSlurmQueueAdapter(unittest.TestCase):
 #SBATCH --output=time.out
 #SBATCH --job-name=None
 #SBATCH --chdir=.
-#SBATCH --get-user-env=L
+#SBATCH --get-user-env
 #SBATCH --partition=slurm
 #SBATCH --time=4320
 #SBATCH --ntasks=10
@@ -149,7 +149,7 @@ echo \"hello\""""
 #SBATCH --output=time.out
 #SBATCH --job-name=None
 #SBATCH --chdir=.
-#SBATCH --get-user-env=L
+#SBATCH --get-user-env
 #SBATCH --partition=slurm
 #SBATCH --account=123456
 #SBATCH --time=4320
@@ -368,7 +368,7 @@ class TestSlurmQueueAdapterDefault(unittest.TestCase):
 #SBATCH --output=time.out
 #SBATCH --job-name=None
 #SBATCH --chdir=.
-#SBATCH --get-user-env=L
+#SBATCH --get-user-env
 #SBATCH --partition=slurm
 #SBATCH --time=4320
 #SBATCH --ntasks=10
@@ -394,7 +394,7 @@ echo \"hello\""""
 #SBATCH --output=time.out
 #SBATCH --job-name=None
 #SBATCH --chdir=.
-#SBATCH --get-user-env=L
+#SBATCH --get-user-env
 #SBATCH --partition=slurm
 #SBATCH --time=4320
 #SBATCH --ntasks=10
