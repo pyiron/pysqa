@@ -115,7 +115,7 @@ class TestCMD(unittest.TestCase):
             "#SBATCH --output=time.out\n",
             "#SBATCH --job-name=test\n",
             "#SBATCH --chdir=.\n",
-            "#SBATCH --get-user-env=L\n",
+            "#SBATCH --get-user-env\n",
             "#SBATCH --partition=slurm\n",
             "#SBATCH --time=1\n",
             "#SBATCH --dependency=afterok:1\n",
