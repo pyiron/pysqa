@@ -55,7 +55,7 @@ docs = [
     "nbsphinx",
     "sphinx",
     "sphinx_rtd_theme",
-    "jupyter-book==2.1.7",
+    "jupyter-book==1.0.0",
 ]
 
 [project.scripts]
