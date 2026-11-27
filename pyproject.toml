@@ -50,6 +50,13 @@ remote = [
 ]
 twofactor = ["pyauthenticator==0.4.1"]
 pydantic = ["pydantic==2.14.4"]
+docs = [
+    "myst-parser",
+    "nbsphinx",
+    "sphinx",
+    "sphinx_rtd_theme",
+    "jupyter-book==1.0.0",
+]
 
 [project.scripts]
 pysqa = "pysqa.base.cmd:command_line"
